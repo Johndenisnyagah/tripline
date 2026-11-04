@@ -1,0 +1,6 @@
+Nov  3 14:00:00 bastion01 sshd[5401]: Accepted password for dave from 198.51.100.44 port 55001 ssh2
+Nov  3 14:05:05 bastion01 sshd[5402]: Failed password for dave from 198.51.100.44 port 55005 ssh2
+Nov  3 14:05:35 bastion01 sshd[5403]: Failed password for dave from 198.51.100.44 port 55009 ssh2
+Nov  3 14:06:05 bastion01 sshd[5404]: Failed password for dave from 198.51.100.44 port 55013 ssh2
+Nov  3 14:06:35 bastion01 sshd[5405]: Failed password for dave from 198.51.100.44 port 55017 ssh2
+Nov  3 14:07:05 bastion01 sshd[5406]: Failed password for dave from 198.51.100.44 port 55021 ssh2

@@ -53,3 +53,15 @@ def _mutated(tmp_path: Path, old: str, new: str) -> Path:
 def test_checker_rejects(tmp_path: Path, old: str, new: str, expected: str) -> None:
     problems = check_rule_file(_mutated(tmp_path, old, new))
     assert any(expected in p for p in problems), problems
+
+
+def test_checker_rejects_dangling_correlation_reference(tmp_path: Path) -> None:
+    rule = Path(__file__).parent.parent / "rules/linux/sshd/lnx_sshd_brute_force_success.yml"
+    text = rule.read_text(encoding="utf-8")
+    broken = text.replace("        - lnx_sshd_bfs_failure_burst\n", "        - lnx_sshd_typo\n")
+    assert broken != text
+    path = tmp_path / rule.name
+    path.write_text(broken, encoding="utf-8")
+    problems = check_rule_file(path)
+    assert any("'lnx_sshd_typo' before it is defined" in p for p in problems), problems
+    assert any("not used by any correlation" in p for p in problems), problems

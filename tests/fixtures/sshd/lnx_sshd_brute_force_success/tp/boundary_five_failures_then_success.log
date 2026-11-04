@@ -1,0 +1,6 @@
+Nov  3 10:00:05 bastion01 sshd[5001]: Failed password for root from 192.0.2.60 port 51001 ssh2
+Nov  3 10:01:10 bastion01 sshd[5002]: Failed password for root from 192.0.2.60 port 51007 ssh2
+Nov  3 10:02:20 bastion01 sshd[5003]: Failed password for admin from 192.0.2.60 port 51013 ssh2
+Nov  3 10:03:30 bastion01 sshd[5004]: Failed password for admin from 192.0.2.60 port 51019 ssh2
+Nov  3 10:04:40 bastion01 sshd[5005]: Failed password for deploy from 192.0.2.60 port 51025 ssh2
+Nov  3 10:06:15 bastion01 sshd[5006]: Accepted password for deploy from 192.0.2.60 port 51031 ssh2

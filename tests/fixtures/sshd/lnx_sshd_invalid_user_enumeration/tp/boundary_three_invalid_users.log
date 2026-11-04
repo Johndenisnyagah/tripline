@@ -1,0 +1,6 @@
+Nov  3 15:00:10 bastion01 sshd[6001]: Invalid user oracle from 192.0.2.70 port 56001
+Nov  3 15:00:10 bastion01 sshd[6001]: Failed password for invalid user oracle from 192.0.2.70 port 56001 ssh2
+Nov  3 15:03:40 bastion01 sshd[6002]: Invalid user postgres from 192.0.2.70 port 56007
+Nov  3 15:03:40 bastion01 sshd[6002]: Failed password for invalid user postgres from 192.0.2.70 port 56007 ssh2
+Nov  3 15:09:55 bastion01 sshd[6003]: Invalid user git from 192.0.2.70 port 56013
+Nov  3 15:09:55 bastion01 sshd[6003]: Failed password for invalid user git from 192.0.2.70 port 56013 ssh2

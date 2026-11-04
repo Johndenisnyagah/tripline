@@ -56,12 +56,31 @@ rebuilds them, and CI fails if the committed files differ.
   It's left as generated and documented here; changing the SPL by hand would defeat the drift
   check.
 
+### Chained correlations (rule 2)
+
+- Rule 2 chains an `event_count` burst (`generate: false`) into a `temporal_ordered` sequence.
+  The sqlite backend converts the chain, and measures the sequence `timespan` from the burst's
+  alert time, which is the failure that reached the threshold. So a success up to 10 minutes
+  after the 5th failure fires, even if the first failure was earlier. The hand-written KQL
+  implements the same rule, and the doc note explains the edge-case difference from soc-triage.
+- **pySigma-backend-splunk 2.1.0 does not support `temporal_ordered`** ("Correlation type
+  'temporal_ordered' is not supported by backend"). Rules 2 and 4 therefore get **no generated
+  SPL**. `tripline/convert.py` lists them in `SPL_UNSUPPORTED` with the reason, so no other rule
+  can lose its SPL silently. This contradicts the plan's assumption that all 20 rules get SPL.
+
 ## Splunk field names
 
 - **sshd.** tripline's sshd fields follow Sentinel's `Syslog` table, which Splunk doesn't have.
   `splunk_sshd.yml` maps them to the Splunk Add-on for Unix and Linux (`linux_secure`):
   `SyslogMessage` → `_raw`, `SourceIp` → `src`, `User` → `user`, `ProcessName` → `process`. It
   also adds `sourcetype="linux_secure" process="sshd"`.
+- **`startswith` on sshd messages.** Sentinel's `SyslogMessage` is only the message part
+  (`Invalid user admin from …`), but Splunk's `_raw` is the whole line, with timestamp, host and
+  `sshd[pid]:` prefix. A `startswith` maps to `_raw="Invalid user *"` and can never match there.
+  sshd rules therefore use `contains`, and `tests/test_convert.py` fails if any sshd SPL anchors
+  a `_raw` match without a leading `*`.
+- **`dc()` is case-sensitive** in Splunk. Rule 3's SPL counts `admin` and `Admin` as two users,
+  while the harness and the KQL count them as one.
 - **CloudTrail.** The Splunk Add-on for AWS keeps CloudTrail's JSON names
   (`requestParameters.policyArn`), so fields pass through. `splunk_cloudtrail.yml` only adds
   `sourcetype="aws:cloudtrail"`.

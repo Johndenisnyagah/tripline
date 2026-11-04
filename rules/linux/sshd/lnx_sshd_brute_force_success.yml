@@ -1,0 +1,100 @@
+title: SSH Failed Password Authentication (Success-After-Brute-Force Base)
+id: 6ce7aa3e-aa33-45a6-ae7d-9fcc8f51e443
+name: lnx_sshd_bfs_failed_password
+status: experimental
+description: |
+    Detects a single failed SSH password authentication. Base rule for the
+    success-after-brute-force correlation in this file; too noisy to alert on alone.
+references:
+    - https://github.com/openssh/openssh-portable/blob/3c6ec4c637342c51d9c54bbeecef25fd185cfdb8/auth.c#L283-L298
+author: John Denis Nyagah
+date: 2026-11-04
+tags:
+    - attack.credential-access
+    - attack.t1110.001
+logsource:
+    product: linux
+    service: sshd
+detection:
+    selection:
+        SyslogMessage|contains: 'Failed password for '
+    condition: selection
+falsepositives:
+    - Users mistyping their password
+level: informational
+---
+title: SSH Accepted Password Authentication
+id: 882adb1b-bee1-44cd-bc43-21ff1a610eb6
+name: lnx_sshd_bfs_accepted_password
+status: experimental
+description: |
+    Detects a successful SSH password authentication. Base rule for the
+    success-after-brute-force correlation in this file; normal activity on its own.
+references:
+    - https://github.com/openssh/openssh-portable/blob/3c6ec4c637342c51d9c54bbeecef25fd185cfdb8/auth.c#L283-L298
+author: John Denis Nyagah
+date: 2026-11-04
+logsource:
+    product: linux
+    service: sshd
+detection:
+    selection:
+        SyslogMessage|contains: 'Accepted password for '
+    condition: selection
+falsepositives:
+    - Every legitimate password login
+level: informational
+---
+title: SSH Password Failure Burst From One Source
+id: 9efdc7e3-3bdd-4ab0-8da7-f6113c32adbb
+name: lnx_sshd_bfs_failure_burst
+status: experimental
+description: |
+    Detects five or more failed SSH passwords from one source IP within 10 minutes.
+    Intermediate correlation for the success-after-brute-force rule in this file.
+references:
+    - https://github.com/Johndenisnyagah/soc-triage/blob/efd910cd7b881a5d4e95088670b1b7cfe5e1c64b/backend/app/detection/library.py#L44-L49
+author: John Denis Nyagah
+date: 2026-11-04
+tags:
+    - attack.credential-access
+    - attack.t1110.001
+correlation:
+    type: event_count
+    rules:
+        - lnx_sshd_bfs_failed_password
+    group-by:
+        - SourceIp
+    timespan: 10m
+    condition:
+        gte: 5
+    generate: false
+falsepositives:
+    - A user or script retrying a stale password from one host
+level: medium
+---
+title: SSH Successful Password Login After Brute Force
+id: 36fadf73-33ac-4671-945a-0532db7b5153
+status: experimental
+description: |
+    Detects a successful SSH password login from a source IP that, within the preceding
+    10 minutes, produced a burst of five or more failed passwords: the guessing worked.
+references:
+    - https://github.com/Johndenisnyagah/soc-triage/blob/efd910cd7b881a5d4e95088670b1b7cfe5e1c64b/backend/app/detection/library.py#L74-L98
+author: John Denis Nyagah
+date: 2026-11-04
+tags:
+    - attack.credential-access
+    - attack.t1110.001
+correlation:
+    type: temporal_ordered
+    rules:
+        - lnx_sshd_bfs_failure_burst
+        - lnx_sshd_bfs_accepted_password
+    group-by:
+        - SourceIp
+    timespan: 10m
+falsepositives:
+    - A user who mistypes a password five or more times and then gets it right
+    - A shared NAT address where one user fails repeatedly and another logs in
+level: critical

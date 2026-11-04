@@ -5,6 +5,9 @@ All notable changes to this project are recorded here.
 ## [Unreleased]
 
 ### Added
+- sshd rules `lnx_sshd_brute_force_success` (chained correlation) and
+  `lnx_sshd_invalid_user_enumeration` (value_count), with soc-triage and synthetic fixtures,
+  hand-written KQL and doc notes.
 - KQL execution: `test-kql` CI job runs generated and hand-written KQL in the Kusto
   emulator against the rule fixtures; hand-written KQL for `lnx_sshd_brute_force_password_guessing`.
 - Conversion: Kusto pipelines (Syslog, AWSCloudTrail), Splunk pipelines (sshd, CloudTrail),

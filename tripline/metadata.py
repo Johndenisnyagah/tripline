@@ -71,17 +71,27 @@ def check_rule_file(path: Path, index: AttackIndex | None = None) -> list[str]:
     docs = load_documents(path)
     if not docs:
         return [*problems, "file contains no YAML documents"]
-    # The last document is the one that alerts: the single rule, or the correlation.
+    # The last document is the one that alerts: the single rule, or the final correlation.
+    # Earlier documents are named building blocks: base rules, or intermediate correlations
+    # (chaining, e.g. an event_count burst feeding a temporal_ordered sequence).
     *bases, main = docs
-    base_names = set()
-    for base in bases:
-        if "correlation" in base or "name" not in base:
-            problems.append("only the last document may be a correlation; bases need `name`")
-        base_names.add(base.get("name"))
-    if bases:
-        referenced = set((main.get("correlation") or {}).get("rules") or [])
-        if referenced != base_names:
-            problems.append(f"correlation rules {referenced} != base rule names {base_names}")
+    if bases and "correlation" not in main:
+        problems.append("a multi-document file must end with its correlation")
+    defined: list[str] = []
+    referenced: set[str] = set()
+    for doc in docs:
+        refs = (doc.get("correlation") or {}).get("rules") or []
+        for ref in refs:
+            if ref not in defined:
+                problems.append(f"correlation references {ref!r} before it is defined")
+        referenced.update(refs)
+        if doc is not main:
+            if "name" not in doc:
+                problems.append(f"{doc.get('title')}: building-block documents need `name`")
+            defined.append(doc.get("name"))
+    unused = set(defined) - referenced
+    if unused:
+        problems.append(f"named documents not used by any correlation: {sorted(unused)}")
 
     for doc in docs:
         title = doc.get("title", "<untitled>")

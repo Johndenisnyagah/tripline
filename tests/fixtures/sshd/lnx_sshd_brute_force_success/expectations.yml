@@ -1,0 +1,33 @@
+rule_id: lnx_sshd_brute_force_success
+tests:
+  # 203.0.113.5: 11 failures 04:41-04:44, then "Accepted password for deploy" at 04:48:41.
+  # 198.51.100.77 has 7 failures but never succeeds, so it must not fire.
+  - file: tp/soc-triage_auth.log
+    origin: soc-triage
+    synthetic: false
+    expect: {min_matches: 1, groups: ["203.0.113.5"]}
+  # Exactly 5 failures, then success 95 s after the 5th.
+  - file: tp/boundary_five_failures_then_success.log
+    origin: synthetic
+    synthetic: true
+    expect: {min_matches: 1, groups: ["192.0.2.60"]}
+  # One failure short: 4 typos, then the right password.
+  - file: benign/four_failures_then_success.log
+    origin: synthetic
+    synthetic: true
+    expect: {matches: 0}
+  # Burst ends 12:02:05; success 18 minutes later.
+  - file: benign/success_long_after_burst.log
+    origin: synthetic
+    synthetic: true
+    expect: {matches: 0}
+  # Burst from .42, success from .43 (different source).
+  - file: benign/success_from_other_source.log
+    origin: synthetic
+    synthetic: true
+    expect: {matches: 0}
+  # Wrong order: logged in first, typos afterwards.
+  - file: benign/success_before_failures.log
+    origin: synthetic
+    synthetic: true
+    expect: {matches: 0}

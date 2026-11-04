@@ -11,9 +11,12 @@ commit or version, and licence.
 == Copied dataset files ==
 
 tests/fixtures/sshd/lnx_sshd_brute_force_password_guessing/tp/soc-triage_auth.log
+tests/fixtures/sshd/lnx_sshd_brute_force_success/tp/soc-triage_auth.log
+tests/fixtures/sshd/lnx_sshd_invalid_user_enumeration/tp/soc-triage_auth.log
   Source:  https://github.com/Johndenisnyagah/soc-triage/blob/efd910cd7b881a5d4e95088670b1b7cfe5e1c64b/sample_logs/auth.log
   Commit:  efd910cd7b881a5d4e95088670b1b7cfe5e1c64b
-  Licence: MIT, Copyright (c) John Denis Nyagah (same author). Copied unchanged.
+  Licence: MIT, Copyright (c) John Denis Nyagah (same author). Copied unchanged
+           (three identical copies, one per sshd rule).
 
 tests/fixtures/cloudtrail/aws_cloudtrail_logging_disabled/tp/soc-triage_cloudtrail.json
   Source:  https://github.com/Johndenisnyagah/soc-triage/blob/efd910cd7b881a5d4e95088670b1b7cfe5e1c64b/sample_logs/cloudtrail.json
