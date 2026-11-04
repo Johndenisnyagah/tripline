@@ -22,6 +22,7 @@ dependencies = [
     "pySigma-validators-sigmahq==0.21.0",
     "python-evtx==0.8.1",
     "pyyaml",
+    "requests",
 ]
 
 [project.optional-dependencies]

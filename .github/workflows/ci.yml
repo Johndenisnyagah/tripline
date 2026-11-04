@@ -83,6 +83,35 @@ jobs:
             queries/kql/
             queries/spl/
 
+  test-kql:
+    needs: convert
+    runs-on: ubuntu-latest
+    services:
+      # Azure Data Explorer emulator. Used under its licence terms (https://aka.ms/adx.emulator.license)
+      # for automated testing only; see the Decisions log in CLAUDE.md.
+      kusto:
+        image: mcr.microsoft.com/azuredataexplorer/kustainer-linux:2026.10.20.1451-2641-19d68ab-weeklyproduction
+        env:
+          ACCEPT_EULA: "Y"
+        ports:
+          - 8080:8080
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0  # v7.1.0
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Install
+        run: pip install -e ".[dev]"
+
+      - name: KQL in the Kusto emulator
+        run: pytest -m kql tests/test_kql.py -v
+
   test-logic:
     needs: lint
     runs-on: ubuntu-latest
@@ -101,4 +130,4 @@ jobs:
         run: pip install -e ".[dev]"
 
       - name: Rule logic and parser tests
-        run: pytest tests/test_rules.py tests/test_parsers.py
+        run: pytest tests/test_rules.py tests/test_parsers.py tests/test_kql_sources.py

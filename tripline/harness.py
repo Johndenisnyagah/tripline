@@ -134,13 +134,16 @@ class Case:
         emits one row per qualifying window, so a burst of 8 failures yields several rows;
         `groups` pins down *which* group-by values fired (exact set).
         """
-        matches = len(rows)
+        return self.check_counts(len(rows), alert_groups(rows))
+
+    def check_counts(self, matches: int, groups: set[str]) -> str | None:
+        """Shared by the SQLite harness and the Kusto emulator tests."""
         if "matches" in self.expect and matches != self.expect["matches"]:
             return f"expected exactly {self.expect['matches']} matches, got {matches}"
         if "min_matches" in self.expect and matches < self.expect["min_matches"]:
             return f"expected at least {self.expect['min_matches']} matches, got {matches}"
         if "groups" in self.expect:
-            fired = sorted(alert_groups(rows))
+            fired = sorted(groups)
             if fired != sorted(self.expect["groups"]):
                 return f"expected groups {sorted(self.expect['groups'])}, fired for {fired}"
         return None
@@ -150,6 +153,9 @@ def alert_groups(rows: list[sqlite3.Row]) -> set[str]:
     """Group-by values of correlation alerts, joined with '|' for multi-field group-by."""
     groups = set()
     for row in rows:
+        # sqlite3.Row: `in row` tests values, so .keys() is needed. Single-event rows have none.
+        if "group_keys" not in row.keys():  # noqa: SIM118
+            continue
         keys = json.loads(row["group_keys"])
         groups.add("|".join(str(v) for v in keys.values()))
     return groups
