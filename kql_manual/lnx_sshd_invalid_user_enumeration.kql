@@ -1,0 +1,30 @@
+// Rule:    SSH Username Enumeration From One Source
+// Sigma:   rules/linux/sshd/lnx_sshd_invalid_user_enumeration.yml
+//          correlation id 79ba31e4-d7f2-44b3-852b-3f04890927ef (value_count >= 3 distinct User
+//          per SourceIp in 10m)
+// Author:  John Denis Nyagah
+// Why hand-written: pySigma-backend-kusto 1.0.1 cannot convert Sigma correlation rules, and the
+// Syslog table has no source-IP or user column, so both are extracted from SyslogMessage here.
+// Window:  sliding, like the Sigma rule. Usernames are lower-cased before counting, so admin,
+// Admin and ADMIN are one probed account (as in soc-triage and the SQLite harness).
+// Output:  one row per source IP that probed >= 3 distinct non-existent users in a window.
+let window = 10m;
+let threshold = 3;
+let attempts = Syslog
+    | where ProcessName =~ "sshd" and SyslogMessage contains "Invalid user "
+    | extend
+        SourceIp = extract(@" from ([0-9A-Fa-f.:]+) port \d+", 1, SyslogMessage),
+        User = tolower(extract(@"(?i)invalid user (\S+) from ", 1, SyslogMessage))
+    | where isnotempty(SourceIp) and isnotempty(User)
+    | project TimeGenerated, SourceIp, User;
+attempts
+| join kind=inner (attempts | project WindowEnd = TimeGenerated, SourceIp) on SourceIp
+| where TimeGenerated between ((WindowEnd - window) .. WindowEnd)
+| summarize DistinctUsers = count_distinct(User), WindowStart = min(TimeGenerated)
+    by SourceIp, WindowEnd
+| where DistinctUsers >= threshold
+| summarize
+    FirstSeen = min(WindowStart),
+    LastSeen = max(WindowEnd),
+    MaxDistinctUsers = max(DistinctUsers)
+    by SourceIp

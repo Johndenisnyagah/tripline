@@ -15,9 +15,9 @@ synthetic logs, converted to Sentinel KQL and Splunk SPL, KQL executed in the Ku
 - Ask John before changing rules, thresholds, datasets, README claims or anything in soc-triage.
 
 ## Current phase
-Step 3 (KQL execution): Kusto emulator CI job, Sentinel table schemas, fixture ingestion,
-tests/test_kql.py, hand-written KQL for rule 1.
-Next: step 4 (sshd rules 2-3).
+Step 4 (sshd rules): rules 2 (success after brute force) and 3 (username enumeration),
+hand-written KQL and doc notes for rules 1-3.
+Next: step 5 (CloudTrail rules 4 and 6).
 
 ## Decisions
 - 2026-11-04 — second backend is Splunk SPL; it converts all four sources and supports correlations — John
@@ -51,3 +51,7 @@ Next: step 4 (sshd rules 2-3).
 - 2026-11-04 — hand-written correlation KQL uses a self-join so the window slides like Sigma's, instead of bin(TimeGenerated, 10m) (tumbling) — Claude
 - 2026-11-04 — emulator tables are created from the full Sentinel schemas (pySigma-backend-kusto's copy, matches Microsoft's reference); fixtures are mapped to columns by tripline/kusto.py independently of the conversion pipelines — Claude
 - 2026-11-04 — CI caches ~/.cache/pysigma with the ATT&CK bundle and retries `sigma check` once: pySigma tag validators download MITRE ATT&CK/D3FEND at runtime (30 s timeout) and a cold download timed out once — Claude
+- 2026-11-04 — rule 2 is a chained correlation (event_count burst, generate: false -> temporal_ordered with Accepted password); window measured from the burst end, as the sqlite backend does; KQL matches that — Claude
+- 2026-11-04 — rules using temporal_ordered (2 and 4) have no SPL: pySigma-backend-splunk 2.1.0 cannot convert them, and no hand-written SPL is added (it could not be executed in CI). Results table shows "SPL: n/a (backend unsupported)"; listed in convert.SPL_UNSUPPORTED — John
+- 2026-11-04 — rule 3 matches `SyslogMessage|contains: 'Invalid user '` (not startswith) because Splunk's _raw includes the syslog prefix; distinct usernames are case-insensitive (NOCASE in SQLite, tolower in KQL) — Claude
+- 2026-11-04 — metadata checker allows intermediate named correlations; every named document must be used and every reference must resolve to an earlier document — Claude

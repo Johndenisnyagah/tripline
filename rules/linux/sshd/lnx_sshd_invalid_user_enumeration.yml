@@ -1,0 +1,56 @@
+title: SSH Login Attempt For Non-Existent User
+id: 990e49dc-accd-48b5-a9e4-b07a6beed304
+name: lnx_sshd_invalid_user
+status: experimental
+description: |
+    Detects an sshd login attempt for an account that does not exist on the host
+    ("Invalid user X" and its companion "Failed password for invalid user X" line, which
+    names the same user). Base rule for the enumeration correlation below.
+references:
+    - https://github.com/openssh/openssh-portable/blob/3c6ec4c637342c51d9c54bbeecef25fd185cfdb8/auth.c#L498
+author: John Denis Nyagah
+date: 2026-11-04
+tags:
+    - attack.discovery
+    - attack.t1087
+logsource:
+    product: linux
+    service: sshd
+detection:
+    selection:
+        # contains, not startswith: Splunk matches against the full _raw line.
+        SyslogMessage|contains: 'Invalid user '
+    condition: selection
+falsepositives:
+    - Users mistyping their own username
+level: informational
+---
+title: SSH Username Enumeration From One Source
+id: 79ba31e4-d7f2-44b3-852b-3f04890927ef
+status: experimental
+description: |
+    Detects username enumeration over SSH: login attempts for three or more distinct
+    non-existent usernames from one source IP within 10 minutes.
+references:
+    - https://github.com/Johndenisnyagah/soc-triage/blob/efd910cd7b881a5d4e95088670b1b7cfe5e1c64b/backend/app/detection/library.py#L100-L139
+author: John Denis Nyagah
+date: 2026-11-04
+tags:
+    - attack.discovery
+    - attack.t1087
+    - attack.credential-access
+    - attack.t1110
+correlation:
+    type: value_count
+    rules:
+        - lnx_sshd_invalid_user
+    group-by:
+        - SourceIp
+    timespan: 10m
+    condition:
+        gte: 3
+        field: User
+falsepositives:
+    - An administrator trying several account names while setting up a new host
+    - Configuration management or monitoring probes that log in with a list of service accounts
+level: medium

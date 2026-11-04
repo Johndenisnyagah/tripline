@@ -5,7 +5,7 @@
 
 KQL is generated only for single-event rules. The Kusto backend cannot convert Sigma
 correlation rules, so those get hand-written KQL in kql_manual/ instead. SPL is generated
-for every rule, correlations included.
+for every rule the Splunk backend can convert (see SPL_UNSUPPORTED).
 """
 
 from __future__ import annotations
@@ -52,6 +52,15 @@ TARGETS: dict[tuple[str | None, str | None, str | None], Target] = {
 }
 
 
+#: Rules the Splunk backend cannot convert, with the reason. Listed explicitly so that a rule
+#: never loses its SPL silently: any other conversion error fails `python -m tripline.convert`.
+SPL_UNSUPPORTED: dict[str, str] = {
+    "lnx_sshd_brute_force_success": (
+        "pySigma-backend-splunk 2.1.0 does not support temporal_ordered correlations"
+    ),
+}
+
+
 def _logsource_key(docs: list[dict]) -> tuple[str | None, str | None, str | None]:
     ls = next(d["logsource"] for d in docs if "logsource" in d)
     return ls.get("product"), ls.get("service"), ls.get("category")
@@ -74,8 +83,9 @@ def convert_rule(path: Path) -> dict[str, str]:
     is_correlation = "correlation" in docs[-1]
 
     out: dict[str, str] = {}
-    spl = SplunkBackend(_pipeline(target.spl)).convert(SigmaCollection.from_yaml(text))
-    out["spl"] = "\n\n".join(spl)
+    if path.stem not in SPL_UNSUPPORTED:
+        spl = SplunkBackend(_pipeline(target.spl)).convert(SigmaCollection.from_yaml(text))
+        out["spl"] = "\n\n".join(spl)
     if not is_correlation:
         backend = KustoBackend(_pipeline(target.kql, target.kql_azure_monitor))
         out["kql"] = "\n\n".join(backend.convert(SigmaCollection.from_yaml(text)))

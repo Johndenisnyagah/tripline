@@ -1,0 +1,27 @@
+rule_id: lnx_sshd_invalid_user_enumeration
+tests:
+  # 203.0.113.5 probes admin/oracle/postgres (04:43-04:44) and jenkins/gitlab/ansible (04:57-04:58).
+  - file: tp/soc-triage_auth.log
+    origin: soc-triage
+    synthetic: false
+    expect: {min_matches: 1, groups: ["203.0.113.5"]}
+  # Exactly 3 distinct invalid users within 9m45s.
+  - file: tp/boundary_three_invalid_users.log
+    origin: synthetic
+    synthetic: true
+    expect: {min_matches: 1, groups: ["192.0.2.70"]}
+  # Volume, not variety: admin/Admin/ADMIN count as one account, plus "test" = 2 distinct.
+  - file: benign/same_invalid_user_retried.log
+    origin: synthetic
+    synthetic: true
+    expect: {matches: 0}
+  # 3 distinct usernames, but each from a different source IP.
+  - file: benign/invalid_users_from_many_sources.log
+    origin: synthetic
+    synthetic: true
+    expect: {matches: 0}
+  # 3 distinct usernames 6 minutes apart: never 3 inside one 10-minute window.
+  - file: benign/invalid_users_spread_out.log
+    origin: synthetic
+    synthetic: true
+    expect: {matches: 0}

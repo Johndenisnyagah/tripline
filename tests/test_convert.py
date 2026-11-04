@@ -80,3 +80,12 @@ def test_cloudtrail_spl_passes_fields_through() -> None:
     )
     assert spl.startswith('sourcetype="aws:cloudtrail" eventName="AttachUserPolicy"')
     assert 'requestParameters.policyArn="*/AdministratorAccess"' in spl
+
+
+def test_sshd_spl_never_anchors_on_raw() -> None:
+    """Splunk's _raw is the whole syslog line (timestamp, host, process prefix), so a
+    startswith/equals match on _raw can never hit. sshd rules must use contains."""
+    for path, query in generate().items():
+        if path.suffix == ".spl" and 'sourcetype="linux_secure"' in query:
+            for part in query.split('_raw="')[1:]:
+                assert part.startswith("*"), f"{path}: _raw match not prefixed with *: {part[:40]}"

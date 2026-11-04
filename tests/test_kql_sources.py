@@ -21,7 +21,7 @@ def test_every_rule_has_exactly_one_kql(path) -> None:
 
 def test_hand_written_kql_has_header() -> None:
     for path in sorted((kusto.REPO_ROOT / "kql_manual").glob("*.kql")):
-        header = path.read_text(encoding="utf-8").splitlines()[:6]
+        header = path.read_text(encoding="utf-8").splitlines()[:10]
         assert any(path.stem in line for line in header), f"{path.name}: header must name rule"
         assert any(line.startswith("// Why hand-written:") for line in header), path.name
 

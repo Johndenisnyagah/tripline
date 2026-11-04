@@ -1,0 +1,40 @@
+// Rule:    SSH Successful Password Login After Brute Force
+// Sigma:   rules/linux/sshd/lnx_sshd_brute_force_success.yml
+//          correlation id 36fadf73-33ac-4671-945a-0532db7b5153: temporal_ordered
+//          [failure burst (event_count >= 5 per SourceIp in 10m), accepted password] within 10m
+// Author:  John Denis Nyagah
+// Why hand-written: pySigma-backend-kusto 1.0.1 cannot convert Sigma correlation rules, and the
+// Syslog table has no source-IP column, so SourceIp is extracted from SyslogMessage here.
+// Semantics (same as the Sigma rule in the SQLite harness): a burst ends at any failure that has
+// >= 5 failures from the same IP in the 10 minutes up to it; the rule fires when an
+// "Accepted password" from that IP follows within 10 minutes of such a burst end.
+// Output:  one row per source IP whose guessing was followed by a successful login.
+let window = 10m;
+let threshold = 5;
+let ip_pattern = @" from ([0-9A-Fa-f.:]+) port \d+";
+let failures = Syslog
+    | where ProcessName =~ "sshd" and SyslogMessage contains "Failed password for "
+    | extend SourceIp = extract(ip_pattern, 1, SyslogMessage)
+    | where isnotempty(SourceIp)
+    | project TimeGenerated, SourceIp;
+let bursts = failures
+    | join kind=inner (failures | project BurstEnd = TimeGenerated, SourceIp) on SourceIp
+    | where TimeGenerated between ((BurstEnd - window) .. BurstEnd)
+    | summarize FailuresInWindow = count() by SourceIp, BurstEnd
+    | where FailuresInWindow >= threshold;
+let successes = Syslog
+    | where ProcessName =~ "sshd" and SyslogMessage contains "Accepted password for "
+    | extend
+        SourceIp = extract(ip_pattern, 1, SyslogMessage),
+        User = extract(@"Accepted password for (\S+) from ", 1, SyslogMessage)
+    | where isnotempty(SourceIp)
+    | project SuccessTime = TimeGenerated, SourceIp, User;
+bursts
+| join kind=inner successes on SourceIp
+| where SuccessTime between (BurstEnd .. (BurstEnd + window))
+| summarize
+    FirstSuccess = min(SuccessTime),
+    LastBurstEnd = max(BurstEnd),
+    MaxFailuresInWindow = max(FailuresInWindow),
+    Users = make_set(User)
+    by SourceIp
