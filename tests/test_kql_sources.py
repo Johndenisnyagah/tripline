@@ -89,9 +89,9 @@ def test_sysmon_row_uses_parser_columns() -> None:
         "Provider_Name": "Microsoft-Windows-Sysmon",
         "Channel": "Microsoft-Windows-Sysmon/Operational",
         "Computer": "wks01",
-        "Image": "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe",
+        "Image": r"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe",
         "CommandLine": "powershell.exe -enc SQBFAFgA",
-        "ParentImage": "C:\Windows\explorer.exe",
+        "ParentImage": r"C:\Windows\explorer.exe",
         "NotAParserColumn": "x",
     }
     row = kusto.sysmon_row(event)
