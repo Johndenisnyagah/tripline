@@ -1,0 +1,14 @@
+rule_id: proc_creation_win_certutil_download
+# No real certutil download in a small, licence-compatible dataset (Splunk's certutil dataset is
+# 300 MB): all fixtures are synthetic.
+tests:
+  # -urlcache -split -f http://..., and /verifyctl /f with an https URL.
+  - file: tp/certutil_downloads.xml
+    origin: synthetic
+    synthetic: true
+    expect: {matches: 2}
+  # -hashfile, -decode, and clearing the URL cache (-urlcache without a URL).
+  - file: benign/certutil_without_download.xml
+    origin: synthetic
+    synthetic: true
+    expect: {matches: 0}

@@ -1,0 +1,34 @@
+title: Process Created Via WMIC Process Call Create
+id: 90849cfe-a817-447e-a2e6-8cc6bbee33dc
+related:
+    - id: 526be59f-a573-4eea-b5f7-f0973207634d
+      type: derived
+status: experimental
+description: |
+    Detects wmic.exe asked to start a process ("process call create"), locally or on a remote
+    host with /node. The new process is started by the WMI provider host, which breaks the
+    parent-child link defenders usually follow.
+references:
+    - https://github.com/SigmaHQ/sigma/blob/c68bb91abb1146b8a6a65caf6819b1836d97f09d/rules/windows/process_creation/proc_creation_win_wmic_process_creation.yml
+    - https://learn.microsoft.com/en-us/windows/win32/cimwin32prov/create-method-in-class-win32-process
+author: John Denis Nyagah
+date: 2026-11-04
+tags:
+    - attack.execution
+    - attack.t1047
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection_img:
+        - Image|endswith: '\wmic.exe'
+        - OriginalFileName: 'wmic.exe'
+    selection_cli:
+        CommandLine|contains|all:
+            - 'process'
+            - 'call'
+            - 'create'
+    condition: all of selection_*
+falsepositives:
+    - Legacy admin and deployment scripts that start installers remotely with wmic /node
+level: medium

@@ -15,9 +15,9 @@ synthetic logs, converted to Sentinel KQL and Splunk SPL, KQL executed in the Ku
 - Ask John before changing rules, thresholds, datasets, README claims or anything in soc-triage.
 
 ## Current phase
-Step 7 (Windows Security): Windows parser (XML, Splunk XML, EVTX), rules 12-14 (password
-spraying, local account created, Security log cleared), SecurityEvent in the emulator.
-Next: step 8 (process rules 15-20, Sysmon parser target).
+Step 8 (process rules): rules 15-20 on the Sysmon parser function. All 20 rules are tested in
+the SQLite harness and the Kusto emulator.
+Next: step 9 (background corpora: Loghub, flaws.cloud, evtx-baseline).
 
 ## Decisions
 - 2026-11-04 — second backend is Splunk SPL; it converts all four sources and supports correlations — John
@@ -70,3 +70,8 @@ Next: step 8 (process rules 15-20, Sysmon parser target).
 - 2026-11-04 — Splunk attack_data used: PurpleSharp remote spray (rule 12) and a real 1102 (rule 14), Apache-2.0, LFS objects fetched at commit c8af10d and copied unchanged; datasets made with Atomic Red Team (4720 samples) deliberately not used — Claude
 - 2026-11-04 — EVTX: parser reads .evtx through python-evtx, but no EVTX fixture is committed (no licence-compatible small EVTX among the §11 sources); EVTX gets exercised on Nextron evtx-baseline in step 9 — Claude
 - 2026-11-04 — soc-triage's windows_security.xml is a benign near-miss for rule 12 (4 distinct accounts from 203.0.113.200, threshold is 5) — Claude
+- 2026-11-04 — Sysmon KQL pipeline is pipelines/kusto_sysmon.yml (kusto_windows.yml already holds Windows Security); emulator table `Sysmon` uses the 100 columns of Microsoft's parser function — Claude
+- 2026-11-04 — process-rule SPL uses pipelines/splunk_sysmon.yml (Sysmon source + EventCode 1/10) because splunk_windows adds nothing for process_creation/process_access — Claude
+- 2026-11-04 — harness feeds Sysmon rules only the events of their category (EventID 1 or 10), matching the KQL/SPL conditions — Claude
+- 2026-11-04 — rules without a real true positive after step 8: 10 (S3 Block Public Access), 16 (WMIC process call create; real benign only), 17 (certutil download), 19 (LSASS access); no small non-ART capture exists in the §11 sources — Claude
+- 2026-11-04 — rule 18 (ClickFix) got a real TP after all: Splunk attack_data encoded_powershell/explorer_spawns (explorer -> padded, hidden, -enc PowerShell) — Claude

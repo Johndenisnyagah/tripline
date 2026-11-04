@@ -35,7 +35,13 @@ PARSERS: dict[str, Callable[[Path], Iterator[dict]]] = {
     "sshd": sshd.parse_file,
     "cloudtrail": cloudtrail.parse_file,
     "windows_security": windows.parse_file,
+    "sysmon": windows.parse_file,
 }
+
+#: Sysmon EventID per Sigma logsource category. A Sysmon fixture holds a whole log (process
+#: creation, network, file events...); the rule only sees the events of its category, as the
+#: KQL pipeline's `EventID ==` condition and Splunk's sourcetype mapping do.
+SYSMON_CATEGORY_EVENT_ID = {"process_creation": "1", "process_access": "10"}
 
 
 def rule_path(rule_id: str) -> Path:
@@ -202,5 +208,18 @@ def all_cases() -> list[Case]:
     return [case for path in expectation_files() for case in load_cases(path)]
 
 
+def rule_category(rule_id: str) -> str | None:
+    docs = [d for d in yaml.safe_load_all(rule_path(rule_id).read_text(encoding="utf-8")) if d]
+    return next((d["logsource"].get("category") for d in docs if "logsource" in d), None)
+
+
+def case_events(case: Case) -> list[dict]:
+    events = case.events()
+    if case.source == "sysmon":
+        event_id = SYSMON_CATEGORY_EVENT_ID[rule_category(case.rule_id)]
+        events = [e for e in events if e.get("EventID") == event_id]
+    return events
+
+
 def run_case(case: Case) -> list[sqlite3.Row]:
-    return run_rule(rule_path(case.rule_id), case.events())
+    return run_rule(rule_path(case.rule_id), case_events(case))

@@ -1,0 +1,58 @@
+title: ClickFix Command Pasted Into The Run Dialog
+id: a46afee1-6239-4ad4-bacd-5fc9427ddf02
+related:
+    - id: 3ae9974a-eb09-4044-8e70-8980a50c12c8
+      type: derived
+    - id: d487ed4a-fd24-436d-a0b2-f4e95f7b2635
+      type: derived
+status: experimental
+description: |
+    Detects a shell started by explorer.exe (the Win+R Run dialog) with a command line that
+    looks pasted from a ClickFix lure: a '#' comment, long whitespace padding that hides the
+    real command, a hidden window, or a URL.
+references:
+    - https://github.com/SigmaHQ/sigma/blob/c68bb91abb1146b8a6a65caf6819b1836d97f09d/rules/windows/process_creation/proc_creation_win_susp_clickfix_filefix_whitespace_padding.yml
+    - https://github.com/SigmaHQ/sigma/blob/c68bb91abb1146b8a6a65caf6819b1836d97f09d/rules/windows/process_creation/proc_creation_win_susp_clickfix_filefix_execution.yml
+author: John Denis Nyagah
+date: 2026-11-04
+tags:
+    - attack.execution
+    - attack.t1204.004
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection_parent:
+        ParentImage|endswith: '\explorer.exe'
+    selection_child:
+        - Image|endswith:
+              - '\powershell.exe'
+              - '\pwsh.exe'
+              - '\mshta.exe'
+              - '\cmd.exe'
+        - OriginalFileName:
+              - 'PowerShell.EXE'
+              - 'pwsh.dll'
+              - 'MSHTA.EXE'
+              - 'Cmd.Exe'
+    lure_comment:
+        # Lures end the command with a comment such as "# I am not a robot - verification ID".
+        CommandLine|contains: '#'
+    lure_padding:
+        # Twenty spaces: padding that pushes the real command out of the Run dialog's view.
+        CommandLine|contains: '                    '
+    lure_hidden_window:
+        CommandLine|windash|contains:
+            - ' -w hidden'
+            - ' -win hidden'
+            - ' -windowstyle hidden'
+            - ' -w h '
+    lure_url:
+        CommandLine|contains:
+            - 'http://'
+            - 'https://'
+    condition: selection_parent and selection_child and 1 of lure_*
+falsepositives:
+    - Users double-clicking shortcuts (.lnk) whose arguments contain a URL or a hidden window
+    - Power users typing commands with URLs into the Run dialog
+level: high

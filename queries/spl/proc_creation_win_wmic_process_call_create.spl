@@ -1,0 +1,1 @@
+source="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1 Image="*\\wmic.exe" OR OriginalFileName="wmic.exe" CommandLine="*process*" CommandLine="*call*" CommandLine="*create*"

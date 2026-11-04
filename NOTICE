@@ -101,6 +101,17 @@ tests/fixtures/windows_security/win_security_password_spraying/tp/splunk-attack-
 tests/fixtures/windows_security/win_security_security_log_cleared/tp/splunk-attack-data_windows_event_log_cleared.log
   Source:  datasets/attack_techniques/T1070.001/windows_event_log_cleared/windows-security.log
            (sha256 fd483a9c...0dce87)
+tests/fixtures/sysmon/proc_creation_win_powershell_encoded_command/tp/splunk-attack-data_encoded_powershell_explorer_spawns.log
+tests/fixtures/sysmon/proc_creation_win_clickfix_paste_and_run/tp/splunk-attack-data_encoded_powershell_explorer_spawns.log
+  Source:  datasets/attack_techniques/T1059.001/encoded_powershell/explorer_spawns_windows-sysmon.log
+           (manual generation of encoded PowerShell, author Patrick Bareiss; two identical copies;
+           sha256 9200692a...fc39b8b22)
+tests/fixtures/sysmon/proc_creation_win_wmic_process_call_create/benign/splunk-attack-data_wmic_classes.log
+  Source:  datasets/attack_techniques/T1047/wmic_classes/wmic_cmd.log
+           (Teoderick Contreras, Splunk; sha256 4d4894fe...51fe4f8e5)
+tests/fixtures/sysmon/proc_creation_win_shadow_copy_deletion/tp/splunk-attack-data_shadowcopy_del.log
+  Source:  datasets/attack_techniques/T1490/shadowcopy_del/wmicshadowcopydelete_sysmon.log
+           (Bhavin Patel; sha256 b943f1ca...5ad539b7)
 
 == Rules derived from SigmaHQ (DRL 1.1) ==
 
@@ -152,6 +163,55 @@ rules/windows/security/win_security_security_log_cleared.yml
   Source:       https://github.com/SigmaHQ/sigma/blob/c68bb91abb1146b8a6a65caf6819b1836d97f09d/rules/windows/builtin/security/win_security_audit_log_cleared.yml
   Licence:      Detection Rule License 1.1
   Changes:      drops the legacy event 517 selection; see docs/rules/win_security_security_log_cleared.md
+
+rules/windows/process_creation/proc_creation_win_powershell_encoded_command.yml
+  Derived from: "Suspicious Execution of Powershell with Base64" (id fb843269-508c-4b76-8b8d-88679db22ce7)
+  Author:       frack113
+  Source:       https://github.com/SigmaHQ/sigma/blob/c68bb91abb1146b8a6a65caf6819b1836d97f09d/rules/windows/process_creation/proc_creation_win_powershell_encode.yml
+  Licence:      Detection Rule License 1.1
+  Changes:      adds windash and OriginalFileName; drops the Azure guest-configuration filter
+
+rules/windows/process_creation/proc_creation_win_wmic_process_call_create.yml
+  Derived from: "Process Creation Attempt via Wmic.EXE" (id 526be59f-a573-4eea-b5f7-f0973207634d)
+  Author:       Michael Haag, Florian Roth (Nextron Systems), juju4, oscd.community
+  Source:       https://github.com/SigmaHQ/sigma/blob/c68bb91abb1146b8a6a65caf6819b1836d97f09d/rules/windows/process_creation/proc_creation_win_wmic_process_creation.yml
+  Licence:      Detection Rule License 1.1
+  Changes:      same logic; tests and documented blind spots
+
+rules/windows/process_creation/proc_creation_win_certutil_download.yml
+  Derived from: "Suspicious Download Via Certutil.EXE" (id 19b08b1c-861d-4e75-a1ef-ea0c1baf202b)
+  Author:       Florian Roth (Nextron Systems), Jonhnathan Ribeiro, oscd.community, Nasreddine Bencherchali (Nextron Systems)
+  Source:       https://github.com/SigmaHQ/sigma/blob/c68bb91abb1146b8a6a65caf6819b1836d97f09d/rules/windows/process_creation/proc_creation_win_certutil_download.yml
+  Licence:      Detection Rule License 1.1
+  Changes:      windash flags incl. -f; T1105 only
+
+rules/windows/process_creation/proc_creation_win_clickfix_paste_and_run.yml
+  Derived from: "Suspicious Explorer Process with Whitespace Padding - ClickFix/FileFix" (id 3ae9974a-eb09-4044-8e70-8980a50c12c8)
+  Author:       Swachchhanda Shrawan Poudel (Nextron Systems)
+  Source:       https://github.com/SigmaHQ/sigma/blob/c68bb91abb1146b8a6a65caf6819b1836d97f09d/rules/windows/process_creation/proc_creation_win_susp_clickfix_filefix_whitespace_padding.yml
+  Licence:      Detection Rule License 1.1
+  Changes:      explorer -> shell plus any one lure trait; also derived from d487ed4a (below)
+
+rules/windows/process_creation/proc_creation_win_clickfix_paste_and_run.yml
+  Derived from: "Suspicious ClickFix/FileFix Execution Pattern" (id d487ed4a-fd24-436d-a0b2-f4e95f7b2635)
+  Author:       montysecurity, Swachchhanda Shrawan Poudel (Nextron Systems)
+  Source:       https://github.com/SigmaHQ/sigma/blob/c68bb91abb1146b8a6a65caf6819b1836d97f09d/rules/windows/process_creation/proc_creation_win_susp_clickfix_filefix_execution.yml
+  Licence:      Detection Rule License 1.1
+  Changes:      see above
+
+rules/windows/process_access/proc_access_win_lsass_suspicious_access.yml
+  Derived from: "Potentially Suspicious GrantedAccess Flags On LSASS" (id a18dd26b-6450-46de-8c91-9659150cf088)
+  Author:       Florian Roth, Roberto Rodriguez, Dimitrios Slamaris, Mark Russinovich, Thomas Patzke, Teymur Kheirkhabarov, Sherif Eldeeb, James Dickenson, Aleksey Potapov, oscd.community
+  Source:       https://github.com/SigmaHQ/sigma/blob/c68bb91abb1146b8a6a65caf6819b1836d97f09d/rules/windows/process_access/proc_access_win_lsass_susp_access_flag.yml
+  Licence:      Detection Rule License 1.1
+  Changes:      explicit access-mask list incl. 0x1010; narrow OS/Defender filter
+
+rules/windows/process_creation/proc_creation_win_shadow_copy_deletion.yml
+  Derived from: "Shadow Copies Deletion Using Operating Systems Utilities" (id c947b146-0abc-4c87-9c64-b17e9d7274a2)
+  Author:       Florian Roth (Nextron Systems), Michael Haag, Teymur Kheirkhabarov, Daniil Yugoslavskiy, oscd.community, Andreas Hunkeler (@Karneades)
+  Source:       https://github.com/SigmaHQ/sigma/blob/c68bb91abb1146b8a6a65caf6819b1836d97f09d/rules/windows/process_creation/proc_creation_win_susp_shadow_copies_deletion.yml
+  Licence:      Detection Rule License 1.1
+  Changes:      vssadmin/wmic/wbadmin only; T1490 only
 
 == Downloaded in CI only, not copied ==
 

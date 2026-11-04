@@ -34,6 +34,7 @@ SOURCE_TABLE = {
     "sshd": "Syslog",
     "cloudtrail": "AWSCloudTrail",
     "windows_security": "SecurityEvent",
+    "sysmon": "Sysmon",
 }
 
 _KUSTO_TYPES = {
@@ -46,6 +47,114 @@ _KUSTO_TYPES = {
     "boolean": "bool",
     "dynamic": "dynamic",
     "guid": "guid",
+}
+
+
+#: Columns of Microsoft's Sysmon parser function (Azure-Sentinel
+#: Parsers/Sysmon/Sysmon-AllVersions_Parser.txt @ 800b0bd): TimeGenerated and EventID come from
+#: the Event table, every Sysmon field is a string. The emulator gets a table of this shape
+#: named `Sysmon`, standing in for the saved function.
+SYSMON_SCHEMA: dict[str, str] = {
+    "TimeGenerated": "datetime",
+    "Source": "string",
+    "EventLog": "string",
+    "Computer": "string",
+    "EventLevel": "string",
+    "EventLevelName": "string",
+    "EventID": "int",
+    "UserName": "string",
+    "RenderedDescription": "string",
+    "MG": "string",
+    "ManagementGroupName": "string",
+    "_ResourceId": "string",
+    "UtcTime": "string",
+    "ID": "string",
+    "Description": "string",
+    "RuleName": "string",
+    "ProcessGuid": "string",
+    "ProcessId": "string",
+    "Image": "string",
+    "FileVersion": "string",
+    "Product": "string",
+    "Company": "string",
+    "OriginalFileName": "string",
+    "CommandLine": "string",
+    "CurrentDirectory": "string",
+    "User": "string",
+    "LogonGuid": "string",
+    "LogonId": "string",
+    "TerminalSessionId": "string",
+    "IntegrityLevel": "string",
+    "Hashes": "string",
+    "ParentProcessGuid": "string",
+    "ParentProcessId": "string",
+    "ParentImage": "string",
+    "ParentCommandLine": "string",
+    "ParentUser": "string",
+    "TargetFilename": "string",
+    "CreationUtcTime": "string",
+    "PreviousCreationUtcTime": "string",
+    "Protocol": "string",
+    "Initiated": "string",
+    "SourceIsIpv6": "string",
+    "SourceIp": "string",
+    "SourceHostname": "string",
+    "SourcePort": "string",
+    "SourcePortName": "string",
+    "DestinationIsIpv6": "string",
+    "DestinationIp": "string",
+    "DestinationHostname": "string",
+    "DestinationPort": "string",
+    "DestinationPortName": "string",
+    "State": "string",
+    "Version": "string",
+    "SchemaVersion": "string",
+    "ImageLoaded": "string",
+    "Signed": "string",
+    "Signature": "string",
+    "SignatureStatus": "string",
+    "SourceProcessGuid": "string",
+    "SourceProcessId": "string",
+    "SourceImage": "string",
+    "TargetProcessGuid": "string",
+    "TargetProcessId": "string",
+    "TargetImage": "string",
+    "NewThreadId": "string",
+    "StartAddress": "string",
+    "StartModule": "string",
+    "StartFunction": "string",
+    "SourceUser": "string",
+    "TargetUser": "string",
+    "Device": "string",
+    "SourceProcessGUID": "string",
+    "SourceThreadId": "string",
+    "TargetProcessGUID": "string",
+    "GrantedAccess": "string",
+    "CallTrace": "string",
+    "EventType": "string",
+    "TargetObject": "string",
+    "Details": "string",
+    "NewName": "string",
+    "Hash": "string",
+    "Contents": "string",
+    "Configuration": "string",
+    "ConfigurationFileHash": "string",
+    "PipeName": "string",
+    "Operation": "string",
+    "EventNamespace": "string",
+    "Name": "string",
+    "Query": "string",
+    "Type": "string",
+    "Destination": "string",
+    "Consumer": "string",
+    "Filter": "string",
+    "QueryName": "string",
+    "QueryStatus": "string",
+    "QueryResults": "string",
+    "IsExecutable": "string",
+    "Archived": "string",
+    "Session": "string",
+    "ClientInfo": "string",
 }
 
 
@@ -90,6 +199,8 @@ def wait_until_ready(timeout: float = 300) -> None:
 
 
 def table_schema(table: str) -> dict[str, str]:
+    if table == "Sysmon":
+        return dict(SYSMON_SCHEMA)
     return {
         column: _KUSTO_TYPES[spec["data_type"].lower()]
         for column, spec in AZURE_MONITOR_TABLES[table].items()
@@ -224,6 +335,20 @@ def security_event_row(event: dict) -> dict:
     return row
 
 
+def sysmon_row(event: dict) -> dict:
+    """One parsed Sysmon event -> a row of the Sysmon parser function's output."""
+    row: dict = {
+        "TimeGenerated": event["timestamp"],
+        "Source": event.get("Provider_Name"),
+        "EventLog": event.get("Channel"),
+        "EventID": int(event["EventID"]),
+    }
+    for key, value in event.items():
+        if key in SYSMON_SCHEMA and key not in row and value is not None:
+            row[key] = value
+    return row
+
+
 def fixture_rows(source: str, path: Path) -> list[dict]:
     if source == "sshd":
         return [syslog_row(e) for e in sshd.parse_file(path)]
@@ -232,6 +357,8 @@ def fixture_rows(source: str, path: Path) -> list[dict]:
         return [cloudtrail_row(r) for r in cloudtrail.load_records(path)]
     if source == "windows_security":
         return [security_event_row(e) for e in windows.parse_file(path)]
+    if source == "sysmon":
+        return [sysmon_row(e) for e in windows.parse_file(path)]
     raise ValueError(f"no Sentinel table mapping for source {source!r}")
 
 

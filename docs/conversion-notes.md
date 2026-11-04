@@ -12,7 +12,7 @@ rebuilds them, and CI fails if the committed files differ.
 | Linux sshd | `Syslog` | `pipelines/kusto_syslog.yml` + `azure_monitor` | `pipelines/splunk_sshd.yml` |
 | AWS CloudTrail | `AWSCloudTrail` | `pipelines/kusto_cloudtrail.yml` only | `pipelines/splunk_cloudtrail.yml` |
 | Windows Security | `SecurityEvent` | `pipelines/kusto_windows.yml` + `azure_monitor` | `splunk_windows` |
-| Process creation / access | `Sysmon` (parser function) | `pipelines/kusto_windows.yml` (step 8) | `splunk_windows` (step 8) |
+| Process creation / access | `Sysmon` (parser function) | `pipelines/kusto_sysmon.yml` | `pipelines/splunk_sysmon.yml` |
 
 ## CloudTrail → `AWSCloudTrail`
 
@@ -73,6 +73,27 @@ rebuilds them, and CI fails if the committed files differ.
   - Data indexed as `XmlWinEventLog:Security` (as in Splunk attack_data) needs the source
     adjusted.
   - Untested, since there's no Splunk in CI.
+
+## Process creation / access → `Sysmon` function
+
+- `pipelines/kusto_sysmon.yml` sets the table to `Sysmon`, adds `EventID == 1` (process_creation)
+  or `EventID == 10` (process_access), and prepends `Sysmon | where` with a template. It doesn't
+  use `azure_monitor`, because `Sysmon` is a saved function, not a table in its schema. Fields
+  pass through unmapped, since Sysmon's names are Sigma's.
+- In the emulator, `Sysmon` is a table with the 100 output columns of Microsoft's parser
+  (`tripline/kusto.py`, `SYSMON_SCHEMA`).
+- **Splunk:** `splunk_windows` (backend 2.1.0) adds **nothing** for these categories, so the
+  SPL would have searched every event in the index. `pipelines/splunk_sysmon.yml` adds
+  `source="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational"` and `EventCode=1`/`10`.
+- **SPL operator precedence:** the generated SPL writes, for example,
+  `Image IN (...) OR OriginalFileName IN (...) CommandLine="*-enc*" OR ...` without brackets.
+  It's only correct because Splunk evaluates `OR` before the implicit `AND`.
+  pySigma-backend-splunk 3.0.0 fixes cases where this widens queries, but 3.0 needs pySigma 2
+  (see the Dependabot decision). Untested, since there's no Splunk in CI.
+- **Harness:** a Sysmon fixture is a whole log (process, network, file events). The harness
+  only feeds a rule the events of its category (event 1 or 10), as the KQL `EventID` condition
+  and the Splunk `EventCode` do. A benign fixture for rule 19 checks this with a
+  process-creation event that mentions lsass.
 
 ## Correlation rules
 
@@ -146,5 +167,5 @@ the rules use, and matches the test data, which is Sysmon from Splunk attack_dat
 Trade-off: the README must say that the process rules need the Sysmon parser function
 deployed in Sentinel; they don't run against a default workspace.
 
-**Decision (John, 2026-11-04): (c), Microsoft's Sysmon parser function.** The pipeline
-(`pipelines/kusto_windows.yml`) arrives with the process rules in step 8.
+**Decision (John, 2026-11-04): (c), Microsoft's Sysmon parser function.** Implemented in step 8 as
+`pipelines/kusto_sysmon.yml` (`kusto_windows.yml` went to Windows Security in step 7).

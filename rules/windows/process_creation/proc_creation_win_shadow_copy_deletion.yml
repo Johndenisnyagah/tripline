@@ -1,0 +1,48 @@
+title: Shadow Copies Or Backup Catalog Deleted
+id: e40cdc15-b502-4416-acd8-bbe8a61a2118
+related:
+    - id: c947b146-0abc-4c87-9c64-b17e9d7274a2
+      type: derived
+status: experimental
+description: |
+    Detects deletion of Volume Shadow Copies (vssadmin delete shadows, wmic shadowcopy delete)
+    or of the Windows Server Backup catalog (wbadmin delete catalog), the step ransomware takes
+    to stop victims restoring their files.
+references:
+    - https://github.com/SigmaHQ/sigma/blob/c68bb91abb1146b8a6a65caf6819b1836d97f09d/rules/windows/process_creation/proc_creation_win_susp_shadow_copies_deletion.yml
+    - https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/vssadmin-delete-shadows
+author: John Denis Nyagah
+date: 2026-11-04
+tags:
+    - attack.impact
+    - attack.t1490
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    vssadmin_img:
+        - Image|endswith: '\vssadmin.exe'
+        - OriginalFileName: 'VSSADMIN.EXE'
+    vssadmin_cli:
+        CommandLine|contains|all:
+            - 'delete'
+            - 'shadows'
+    wmic_img:
+        - Image|endswith: '\wmic.exe'
+        - OriginalFileName: 'wmic.exe'
+    wmic_cli:
+        CommandLine|contains|all:
+            - 'shadowcopy'
+            - 'delete'
+    wbadmin_img:
+        - Image|endswith: '\wbadmin.exe'
+        - OriginalFileName: 'WBADMIN.EXE'
+    wbadmin_cli:
+        CommandLine|contains|all:
+            - 'delete'
+            - 'catalog'
+    condition: (all of vssadmin_*) or (all of wmic_*) or (all of wbadmin_*)
+falsepositives:
+    - Administrators freeing disk space by deleting old shadow copies
+    - Backup software rebuilding a corrupted backup catalog
+level: high

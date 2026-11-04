@@ -1,0 +1,20 @@
+rule_id: proc_creation_win_wmic_process_call_create
+# No real capture of "process call create" in a small, non-Atomic-Red-Team Splunk dataset: the
+# true positives are synthetic. The real file below is a near-miss.
+tests:
+  # Local and remote (/node) process creation through WMIC.
+  - file: tp/wmic_process_call_create.xml
+    origin: synthetic
+    synthetic: true
+    expect: {matches: 2}
+  # Splunk attack_data (wmic_classes): an infostealer querying WMI classes with
+  # "wmic ... get ..." through cmd.exe: wmic, but no process creation.
+  - file: benign/splunk-attack-data_wmic_classes.log
+    origin: splunk-attack-data
+    synthetic: false
+    expect: {matches: 0}
+  # "process list" and "process ... call terminate": process and call, but not create.
+  - file: benign/wmic_other_process_verbs.xml
+    origin: synthetic
+    synthetic: true
+    expect: {matches: 0}

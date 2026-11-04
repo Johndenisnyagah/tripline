@@ -1,0 +1,15 @@
+rule_id: proc_access_win_lsass_suspicious_access
+# No small, licence-compatible Sysmon EventID 10 capture of LSASS dumping outside Atomic Red Team
+# datasets: all fixtures are synthetic.
+tests:
+  # Unknown binary with 0x1010 (Mimikatz sekurlsa style); rundll32 + comsvcs.dll with full access.
+  - file: tp/lsass_dumping_access.xml
+    origin: synthetic
+    synthetic: true
+    expect: {matches: 2}
+  # Defender and wininit with full access (filtered), svchost with 0x1000 (query only), full access
+  # to notepad (not LSASS), and a process-creation event mentioning lsass (wrong category).
+  - file: benign/lsass_access_near_misses.xml
+    origin: synthetic
+    synthetic: true
+    expect: {matches: 0}

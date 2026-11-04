@@ -59,6 +59,13 @@ TARGETS: dict[tuple[str | None, str | None, str | None], Target] = {
     ("windows", "security", None): Target(
         kql=("kusto_windows.yml",), kql_azure_monitor=True, spl=("splunk_windows",)
     ),
+    # Sysmon via Microsoft's Sysmon parser function (John's decision, step 2).
+    ("windows", None, "process_creation"): Target(
+        kql=("kusto_sysmon.yml",), kql_azure_monitor=False, spl=("splunk_sysmon.yml",)
+    ),
+    ("windows", None, "process_access"): Target(
+        kql=("kusto_sysmon.yml",), kql_azure_monitor=False, spl=("splunk_sysmon.yml",)
+    ),
 }
 
 

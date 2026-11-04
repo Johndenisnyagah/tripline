@@ -1,0 +1,52 @@
+title: LSASS Opened With Credential-Dumping Access Rights
+id: 51f99531-6be1-4718-a574-5fe0af4f826b
+related:
+    - id: a18dd26b-6450-46de-8c91-9659150cf088
+      type: derived
+status: experimental
+description: |
+    Detects a process opening lsass.exe with an access mask that credential dumpers use to read
+    its memory (e.g. 0x1010 for Mimikatz sekurlsa, 0x1fffff for full access), excluding the
+    Windows and Defender processes that legitimately hold such handles.
+references:
+    - https://github.com/SigmaHQ/sigma/blob/c68bb91abb1146b8a6a65caf6819b1836d97f09d/rules/windows/process_access/proc_access_win_lsass_susp_access_flag.yml
+    - https://learn.microsoft.com/en-us/windows/win32/procthread/process-security-and-access-rights
+author: John Denis Nyagah
+date: 2026-11-04
+tags:
+    - attack.credential-access
+    - attack.t1003.001
+logsource:
+    category: process_access
+    product: windows
+detection:
+    selection_target:
+        TargetImage|endswith: '\lsass.exe'
+    selection_access:
+        GrantedAccess:
+            - '0x1010'
+            - '0x1410'
+            - '0x1418'
+            - '0x1438'
+            - '0x143a'
+            - '0x1f0fff'
+            - '0x1f1fff'
+            - '0x1f2fff'
+            - '0x1f3fff'
+            - '0x1fffff'
+            - '0x40'
+    filter_os:
+        SourceImage:
+            - 'C:\Windows\system32\wininit.exe'
+            - 'C:\Windows\system32\csrss.exe'
+            - 'C:\Windows\system32\services.exe'
+            - 'C:\Windows\system32\lsm.exe'
+            - 'C:\Windows\system32\svchost.exe'
+    filter_defender:
+        SourceImage|contains: '\Windows Defender\'
+        SourceImage|endswith: '\MsMpEng.exe'
+    condition: all of selection_* and not 1 of filter_*
+falsepositives:
+    - Other EDR and antivirus agents that scan LSASS (add their paths as filters per environment)
+    - Windows Error Reporting and crash dump tools during an LSASS crash
+level: high
