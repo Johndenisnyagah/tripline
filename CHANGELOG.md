@@ -5,5 +5,10 @@ All notable changes to this project are recorded here.
 ## [Unreleased]
 
 ### Added
+- Harness spike: sshd and CloudTrail parsers, SQLite test harness (correlations via
+  pySigma-backend-sqlite), `expectations.yml` format, metadata checks with ATT&CK v20
+  revoked-ID detection, `sigma check` config, `test-logic` CI job.
+- Rules `lnx_sshd_brute_force_password_guessing` (correlation) and
+  `aws_cloudtrail_logging_disabled`, with fixtures and doc notes.
 - Scaffold: pinned toolchain in `pyproject.toml`, MIT and DRL 1.1 licences, NOTICE stub,
   CLAUDE.md, folder layout, `lint` CI job and Dependabot config.

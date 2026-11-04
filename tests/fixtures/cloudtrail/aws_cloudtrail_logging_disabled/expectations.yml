@@ -1,0 +1,17 @@
+rule_id: aws_cloudtrail_logging_disabled
+tests:
+  # One StopLogging attempt (denied with AccessDenied) among IAM and console-login events.
+  - file: tp/soc-triage_cloudtrail.json
+    origin: soc-triage
+    synthetic: true
+    expect: {matches: 1}
+  # PutEventSelectors that drops write events, UpdateTrail to another bucket, DeleteTrail.
+  - file: tp/trail_reconfigured_then_deleted.json
+    origin: synthetic
+    synthetic: true
+    expect: {matches: 3}
+  # Read-only trail calls plus CreateTrail and StartLogging: same service, no reduction.
+  - file: benign/trail_read_create_start.json
+    origin: synthetic
+    synthetic: true
+    expect: {matches: 0}

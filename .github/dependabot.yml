@@ -22,3 +22,8 @@ updates:
         versions: [">=2"]
       - dependency-name: sigma-cli
         versions: [">=4"]
+      # The first releases that require pySigma >=2: splunk 3.0.0, sqlite 2.1.x.
+      - dependency-name: pySigma-backend-splunk
+        versions: [">=3"]
+      - dependency-name: pySigma-backend-sqlite
+        versions: [">=2.1"]

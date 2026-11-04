@@ -15,7 +15,8 @@ synthetic logs, converted to Sentinel KQL and Splunk SPL, KQL executed in the Ku
 - Ask John before changing rules, thresholds, datasets, README claims or anything in soc-triage.
 
 ## Current phase
-Step 0 (scaffold): pinned toolchain, licences, folder layout, lint CI job, Dependabot. No rules yet.
+Step 1 (harness spike): sshd + CloudTrail parsers, SQLite harness, metadata checks with the
+ATT&CK v20 bundle, rules 1 and 5 with fixtures. Next: step 2 (conversion to KQL/SPL).
 
 ## Decisions
 - 2026-11-04 — second backend is Splunk SPL; it converts all four sources and supports correlations — John
@@ -27,3 +28,13 @@ Step 0 (scaffold): pinned toolchain, licences, folder layout, lint CI job, Depen
 - 2026-11-04 — all spec pins (incl. pySigma-backend-sqlite 2.0.0 and pySigma-validators-sigmahq 0.21.0) install together with pySigma 1.5.1 on Python 3.12; none dropped — Claude
 - 2026-11-04 — pytest skips `-m kql` tests by default (addopts); the test-kql CI job selects them explicitly — Claude
 - 2026-11-04 — `sigma check` is not in the step-0 lint job because rules/ is empty; it joins in step 1 with tests/sigma_check.yml — Claude
+- 2026-11-04 — correlation path: pySigma-backend-sqlite 2.0.0 converts event_count, value_count and temporal_ordered itself (sliding windows over `timestamp`); boundary-tested in the spike, so no tripline/correlate.py — Claude
+- 2026-11-04 — all 20 technique IDs in spec §5 resolve and are not revoked in the pinned v20.0 bundle; no corrections needed — Claude
+- 2026-11-04 — ATT&CK v20.0 bundle pinned by attack-stix-data commit + sha256, downloaded and cached (.cache/attack), never committed — Claude
+- 2026-11-04 — sshd events use Sentinel `Syslog` column names (HostName, ProcessName, ProcessID, SyslogMessage) plus parser-extracted SourceIp and User for group-by; only sshd lines are emitted (logsource service: sshd) — Claude
+- 2026-11-04 — syslog lines have no year; the sshd parser assumes 2026 (the soc-triage samples' year), times are UTC — Claude
+- 2026-11-04 — harness columns are TEXT COLLATE NOCASE because Sigma matching is case-insensitive and SQLite `=` is not — Claude
+- 2026-11-04 — expectations may add `groups:` (exact set of group-by values that fire), because the sqlite backend emits one row per qualifying window and a row count alone can't show both IPs fired — Claude
+- 2026-11-04 — `sigma check` disables tlptag/tlpv1_tag/tlpv2_tag (no TLP tags) and sigmahq_correlation_filename_prefix (conflicts with the lnx_sshd_*/aws_cloudtrail_* naming rule) — Claude
+- 2026-11-04 — soc-triage sample_logs are labelled `synthetic: true`: they are a hand-written scenario (RFC 5737 IPs, scripted story), not captured telemetry. Open question for John, see PR #3 — Claude
+- 2026-11-04 — Dependabot also ignores pySigma-backend-splunk >=3 and pySigma-backend-sqlite >=2.1: both require pySigma >=2 (Dependabot PR #2 tried them) — Claude

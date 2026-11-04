@@ -1,0 +1,35 @@
+title: AWS CloudTrail Logging Stopped Or Reduced
+id: ea698dea-6095-4190-9f3e-540d852c796f
+related:
+    - id: 4db60cc0-36fb-42b7-9b58-a5b53019fb74
+      type: derived
+status: experimental
+description: |
+    Detects an attempt to stop, delete or reconfigure a CloudTrail trail, including changes
+    to its event selectors that can silently reduce what is logged. Fires on denied
+    attempts too: a credential steered at the audit trail is worth a look either way.
+references:
+    - https://github.com/SigmaHQ/sigma/blob/c68bb91abb1146b8a6a65caf6819b1836d97f09d/rules/cloud/aws/cloudtrail/aws_cloudtrail_disable_logging.yml
+    - https://github.com/Johndenisnyagah/soc-triage/blob/efd910cd7b881a5d4e95088670b1b7cfe5e1c64b/backend/app/detection/library.py#L170-L201
+    - https://docs.aws.amazon.com/awscloudtrail/latest/APIReference/API_PutEventSelectors.html
+author: John Denis Nyagah
+date: 2026-11-04
+tags:
+    - attack.defense-impairment
+    - attack.t1685.002
+logsource:
+    product: aws
+    service: cloudtrail
+detection:
+    selection:
+        eventSource: cloudtrail.amazonaws.com
+        eventName:
+            - StopLogging
+            - DeleteTrail
+            - UpdateTrail
+            - PutEventSelectors
+    condition: selection
+falsepositives:
+    - Planned trail changes by administrators or infrastructure-as-code (Terraform, CloudFormation)
+    - Trail teardown when an account is decommissioned
+level: high

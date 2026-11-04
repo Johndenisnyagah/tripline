@@ -1,0 +1,13 @@
+# Validator config for `sigma check -c tests/sigma_check.yml rules/`.
+# Start from every installed validator (pySigma + pySigma-validators-sigmahq) and
+# switch off only the ones that conflict with tripline's conventions.
+validators:
+  - all
+  # tripline rules carry no TLP tags (public repo); the TLP validators only add noise.
+  - -tlptag
+  - -tlpv1_tag
+  - -tlpv2_tag
+  # SigmaHQ wants correlation rule files named `correlation_*`. tripline names every file by
+  # what it detects (lnx_sshd_*, aws_cloudtrail_*, win_security_*, ...) and keeps the base
+  # rule and its correlation in one multi-document file, so the prefix would hide the source.
+  - -sigmahq_correlation_filename_prefix
