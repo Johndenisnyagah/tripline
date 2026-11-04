@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# Background corpora are downloaded in CI, never committed (see tests/corpora/manifest.yml)
+tests/corpora/cache/

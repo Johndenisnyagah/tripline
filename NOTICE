@@ -1,0 +1,21 @@
+tripline
+Copyright (c) 2026 John Denis Nyagah
+
+Code is licensed under the MIT License (LICENSE).
+Detection rules under rules/ are licensed under the Detection Rule License 1.1 (rules/LICENSE).
+
+This file lists every third-party dataset file copied into this repository and every
+detection rule derived from a SigmaHQ rule. Each entry records the file path, source URL,
+commit or version, and licence.
+
+== Copied dataset files ==
+
+(none yet)
+
+== Rules derived from SigmaHQ (DRL 1.1) ==
+
+(none yet)
+
+== Downloaded in CI only, not copied ==
+
+(none yet)
