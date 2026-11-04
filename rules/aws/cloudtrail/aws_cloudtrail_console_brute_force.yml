@@ -1,0 +1,58 @@
+title: AWS Console Login Failure (Brute Force Base)
+id: 08253c2f-c3bf-4dd4-b135-a48db9f4e874
+name: aws_cloudtrail_cbf_console_login_failure
+related:
+    - id: 6393e346-1977-46ef-8987-ad414a145fad
+      type: derived
+status: experimental
+description: |
+    Detects a failed AWS console sign-in. Base rule for the console brute-force correlation
+    in this file; a single failure is normal user behaviour.
+references:
+    - https://github.com/SigmaHQ/sigma/blob/c68bb91abb1146b8a6a65caf6819b1836d97f09d/rules/cloud/aws/cloudtrail/aws_cloudtrail_console_login_failed_authentication.yml
+    - https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference-aws-console-sign-in-events.html
+author: John Denis Nyagah
+date: 2026-11-04
+logsource:
+    product: aws
+    service: cloudtrail
+detection:
+    selection:
+        eventSource: signin.amazonaws.com
+        eventName: ConsoleLogin
+        responseElements.ConsoleLogin: Failure
+    condition: selection
+falsepositives:
+    - Users mistyping their console password
+level: informational
+---
+title: AWS Console Brute Force From One Source
+id: 3d7fb57e-f684-41b6-95de-4967a0907133
+related:
+    - id: 6393e346-1977-46ef-8987-ad414a145fad
+      type: derived
+status: experimental
+description: |
+    Detects password guessing against the AWS console: five or more failed console sign-ins
+    from one source IP within 10 minutes.
+references:
+    - https://github.com/SigmaHQ/sigma/blob/c68bb91abb1146b8a6a65caf6819b1836d97f09d/rules/cloud/aws/cloudtrail/aws_cloudtrail_console_login_failed_authentication.yml
+    - https://github.com/Johndenisnyagah/soc-triage/blob/efd910cd7b881a5d4e95088670b1b7cfe5e1c64b/backend/app/detection/library.py#L44-L72
+author: John Denis Nyagah
+date: 2026-11-04
+tags:
+    - attack.credential-access
+    - attack.t1110
+correlation:
+    type: event_count
+    rules:
+        - aws_cloudtrail_cbf_console_login_failure
+    group-by:
+        - sourceIPAddress
+    timespan: 10m
+    condition:
+        gte: 5
+falsepositives:
+    - A user repeatedly retrying a forgotten or rotated console password
+    - Several users behind one corporate NAT or VPN address failing in the same 10 minutes
+level: high

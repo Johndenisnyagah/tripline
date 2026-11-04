@@ -1,0 +1,117 @@
+{
+  "Records": [
+    {
+      "eventVersion": "1.11",
+      "userIdentity": {
+        "type": "IAMUser",
+        "principalId": "AIDAEXAMPLEID0000003",
+        "arn": "arn:aws:iam::111122223333:user/ops-admin",
+        "accountId": "111122223333",
+        "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+        "userName": "ops-admin"
+      },
+      "eventTime": "2026-11-03T13:00:00Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "CreateUser",
+      "awsRegion": "eu-central-1",
+      "sourceIPAddress": "192.0.2.100",
+      "userAgent": "aws-cli/2.17.0 Python/3.12.6 Linux/6.8.0 exe/x86_64.ubuntu.24",
+      "requestParameters": {
+        "userName": "svc-reports"
+      },
+      "responseElements": null,
+      "requestID": "3270ab59-b3f8-5e55-8dd4-6c8fef23e5da",
+      "eventID": "64889dfb-f276-5b32-ac1e-bb179f1ccd45",
+      "readOnly": false,
+      "eventType": "AwsApiCall",
+      "managementEvent": true,
+      "recipientAccountId": "111122223333",
+      "eventCategory": "Management"
+    },
+    {
+      "eventVersion": "1.11",
+      "userIdentity": {
+        "type": "IAMUser",
+        "principalId": "AIDAEXAMPLEID0000003",
+        "arn": "arn:aws:iam::111122223333:user/ops-admin",
+        "accountId": "111122223333",
+        "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+        "userName": "ops-admin"
+      },
+      "eventTime": "2026-11-03T13:00:05Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "GetLoginProfile",
+      "awsRegion": "eu-central-1",
+      "sourceIPAddress": "192.0.2.100",
+      "userAgent": "aws-cli/2.17.0 Python/3.12.6 Linux/6.8.0 exe/x86_64.ubuntu.24",
+      "requestParameters": {
+        "userName": "svc-reports"
+      },
+      "responseElements": null,
+      "requestID": "d9128563-c791-5134-9d20-4c9536188d15",
+      "eventID": "fc0fc2b4-5b1b-515d-95f8-ab89cae89e9c",
+      "readOnly": true,
+      "eventType": "AwsApiCall",
+      "managementEvent": true,
+      "recipientAccountId": "111122223333",
+      "eventCategory": "Management"
+    },
+    {
+      "eventVersion": "1.11",
+      "userIdentity": {
+        "type": "IAMUser",
+        "principalId": "AIDAEXAMPLEID0000003",
+        "arn": "arn:aws:iam::111122223333:user/ops-admin",
+        "accountId": "111122223333",
+        "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+        "userName": "ops-admin"
+      },
+      "eventTime": "2026-11-03T13:00:10Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "DeleteLoginProfile",
+      "awsRegion": "eu-central-1",
+      "sourceIPAddress": "192.0.2.100",
+      "userAgent": "aws-cli/2.17.0 Python/3.12.6 Linux/6.8.0 exe/x86_64.ubuntu.24",
+      "requestParameters": {
+        "userName": "old-contractor"
+      },
+      "responseElements": null,
+      "requestID": "6f17d1f0-b7a2-5a8e-8815-4db044550ed2",
+      "eventID": "f4afa1b7-6797-5cd1-962c-5a06591a5d14",
+      "readOnly": false,
+      "eventType": "AwsApiCall",
+      "managementEvent": true,
+      "recipientAccountId": "111122223333",
+      "eventCategory": "Management"
+    },
+    {
+      "eventVersion": "1.11",
+      "userIdentity": {
+        "type": "IAMUser",
+        "principalId": "AIDAEXAMPLEID0000003",
+        "arn": "arn:aws:iam::111122223333:user/ops-admin",
+        "accountId": "111122223333",
+        "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+        "userName": "ops-admin"
+      },
+      "eventTime": "2026-11-03T13:00:15Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "UpdateLoginProfile",
+      "awsRegion": "eu-central-1",
+      "sourceIPAddress": "192.0.2.100",
+      "userAgent": "aws-cli/2.17.0 Python/3.12.6 Linux/6.8.0 exe/x86_64.ubuntu.24",
+      "requestParameters": {
+        "userName": "ops-admin",
+        "passwordResetRequired": false
+      },
+      "responseElements": null,
+      "requestID": "a9a2dd6e-d6cf-5f66-a23c-a53e2438cf58",
+      "eventID": "0b71b38c-000c-5c7c-8a58-0af5b060ff5d",
+      "readOnly": false,
+      "eventType": "AwsApiCall",
+      "managementEvent": true,
+      "recipientAccountId": "111122223333",
+      "eventCategory": "Management"
+    }
+  ]
+}

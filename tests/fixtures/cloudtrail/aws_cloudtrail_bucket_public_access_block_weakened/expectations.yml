@@ -1,0 +1,19 @@
+rule_id: aws_cloudtrail_bucket_public_access_block_weakened
+# No real capture found: Stratus Red Team 2.37.2 has no Block Public Access technique and the
+# Invictus dataset contains no PutBucketPublicAccessBlock events. All fixtures are synthetic.
+tests:
+  # PutBucketPublicAccessBlock with BlockPublicPolicy false, the other three still true.
+  - file: tp/block_public_policy_turned_off.json
+    origin: synthetic
+    synthetic: true
+    expect: {matches: 1}
+  # DeleteBucketPublicAccessBlock removes the protection entirely.
+  - file: tp/public_access_block_deleted.json
+    origin: synthetic
+    synthetic: true
+    expect: {matches: 1}
+  # PutBucketPublicAccessBlock with all four flags true, plus a read.
+  - file: benign/public_access_block_enforced_and_read.json
+    origin: synthetic
+    synthetic: true
+    expect: {matches: 0}

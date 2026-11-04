@@ -1,0 +1,41 @@
+{
+  "Records": [
+    {
+      "eventVersion": "1.11",
+      "userIdentity": {
+        "type": "IAMUser",
+        "principalId": "AIDAEXAMPLEID0000003",
+        "arn": "arn:aws:iam::111122223333:user/ops-admin",
+        "accountId": "111122223333",
+        "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+        "userName": "ops-admin"
+      },
+      "eventTime": "2026-11-03T16:00:00Z",
+      "eventSource": "s3.amazonaws.com",
+      "eventName": "PutBucketPublicAccessBlock",
+      "awsRegion": "eu-central-1",
+      "sourceIPAddress": "192.0.2.100",
+      "userAgent": "aws-cli/2.17.0 Python/3.12.6 Linux/6.8.0 exe/x86_64.ubuntu.24",
+      "requestParameters": {
+        "bucketName": "finance-exports-111122223333",
+        "Host": "finance-exports-111122223333.s3.eu-central-1.amazonaws.com",
+        "publicAccessBlock": "",
+        "PublicAccessBlockConfiguration": {
+          "xmlns": "http://s3.amazonaws.com/doc/2006-03-01/",
+          "BlockPublicAcls": true,
+          "IgnorePublicAcls": true,
+          "BlockPublicPolicy": false,
+          "RestrictPublicBuckets": true
+        }
+      },
+      "responseElements": null,
+      "requestID": "bfea11fa-a0a2-5b0d-b52f-bf4c24132961",
+      "eventID": "f55dbb1b-7a41-5b93-9a34-91ce8f30baca",
+      "readOnly": false,
+      "eventType": "AwsApiCall",
+      "managementEvent": true,
+      "recipientAccountId": "111122223333",
+      "eventCategory": "Management"
+    }
+  ]
+}

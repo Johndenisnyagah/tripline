@@ -30,6 +30,20 @@ rebuilds them, and CI fails if the committed files differ.
   `replace` postprocessing step rewrites it to `tostring(parse_json(...).x)`. A
   `simple_template` step prepends `AWSCloudTrail | where`. `tests/test_convert.py` pins the
   exact output, including inside a `not(...)`.
+- **Doubled quotes inside `contains` lists.** For a list of `contains` values (rule 11), the
+  backend quotes the field name twice (`''parse_json(...).add.items''`). The first version of
+  the rewrite pattern only handled single quotes, so rule 11's KQL compared a string constant.
+  The pattern now accepts one or two quotes, and `tests/test_convert.py` fails if any generated
+  KQL still contains a quoted `parse_json(` or `tostring(`.
+- **Booleans.** CloudTrail logs flags such as `BlockPublicAcls` as JSON `true`/`false`. Rules
+  compare them to the text `'false'`. In KQL that becomes `tostring(...) =~ "false"`, which
+  works because `tostring(false)` is `"false"`. The CloudTrail parser turns booleans into the
+  same text, so the SQLite harness agrees (SQLite would otherwise store them as 0/1).
+- **Lists.** Values such as `createVolumePermission.add.items` are JSON arrays. Rule 11
+  matches them as JSON text (`contains 'userId'`), which works in the harness and in KQL. In
+  Splunk the add-on extracts array elements as `…items{}.userId`, so the generated SPL
+  `…add.items IN ("*userId*", …)` probably needs `spath` there. Untested, since there's no
+  Splunk in CI.
 - **Flat fields** map to Sentinel's columns: `eventName` → `EventName`, `sourceIPAddress` →
   `SourceIpAddress`, `userIdentity.type` → `UserIdentityType`, and so on (full list in
   `kusto_cloudtrail.yml`). Note the Sentinel spelling `UserIdentityPrincipalid` (lower-case *i*

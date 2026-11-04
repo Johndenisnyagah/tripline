@@ -1,0 +1,44 @@
+{
+  "Records": [
+    {
+      "eventVersion": "1.11",
+      "userIdentity": {
+        "type": "IAMUser",
+        "principalId": "AIDAEXAMPLEID0000003",
+        "arn": "arn:aws:iam::111122223333:user/ops-admin",
+        "accountId": "111122223333",
+        "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+        "userName": "ops-admin"
+      },
+      "eventTime": "2026-11-03T18:00:00Z",
+      "eventSource": "ec2.amazonaws.com",
+      "eventName": "ModifySnapshotAttribute",
+      "awsRegion": "eu-central-1",
+      "sourceIPAddress": "192.0.2.100",
+      "userAgent": "aws-cli/2.17.0 Python/3.12.6 Linux/6.8.0 exe/x86_64.ubuntu.24",
+      "requestParameters": {
+        "snapshotId": "snap-0123456789abcdef0",
+        "attributeType": "CREATE_VOLUME_PERMISSION",
+        "createVolumePermission": {
+          "add": {
+            "items": [
+              {
+                "group": "all"
+              }
+            ]
+          }
+        }
+      },
+      "responseElements": {
+        "_return": true
+      },
+      "requestID": "bc943616-840d-5df4-8cc3-5c59aafd848f",
+      "eventID": "1fd1aa6d-c73e-5d75-92f9-35ed1e588de7",
+      "readOnly": false,
+      "eventType": "AwsApiCall",
+      "managementEvent": true,
+      "recipientAccountId": "111122223333",
+      "eventCategory": "Management"
+    }
+  ]
+}

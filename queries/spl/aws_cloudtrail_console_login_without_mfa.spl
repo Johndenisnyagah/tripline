@@ -1,0 +1,1 @@
+sourcetype="aws:cloudtrail" eventSource="signin.amazonaws.com" eventName="ConsoleLogin" responseElements.ConsoleLogin="Success" additionalEventData.MFAUsed="No" OR userIdentity.type="Root"

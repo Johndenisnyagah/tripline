@@ -1,0 +1,73 @@
+{
+  "Records": [
+    {
+      "eventVersion": "1.11",
+      "userIdentity": {
+        "type": "IAMUser",
+        "principalId": "AIDAEXAMPLEID0000003",
+        "arn": "arn:aws:iam::111122223333:user/ops-admin",
+        "accountId": "111122223333",
+        "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+        "userName": "ops-admin"
+      },
+      "eventTime": "2026-11-03T19:00:00Z",
+      "eventSource": "ec2.amazonaws.com",
+      "eventName": "ModifySnapshotAttribute",
+      "awsRegion": "eu-central-1",
+      "sourceIPAddress": "192.0.2.100",
+      "userAgent": "aws-cli/2.17.0 Python/3.12.6 Linux/6.8.0 exe/x86_64.ubuntu.24",
+      "requestParameters": {
+        "snapshotId": "snap-0123456789abcdef0",
+        "attributeType": "CREATE_VOLUME_PERMISSION",
+        "createVolumePermission": {
+          "remove": {
+            "items": [
+              {
+                "userId": "444455556666"
+              }
+            ]
+          }
+        }
+      },
+      "responseElements": {
+        "_return": true
+      },
+      "requestID": "773231b7-439b-5baf-959c-61e5fcb88420",
+      "eventID": "cad445cc-76b0-5b00-a0ee-84300fe45d4f",
+      "readOnly": false,
+      "eventType": "AwsApiCall",
+      "managementEvent": true,
+      "recipientAccountId": "111122223333",
+      "eventCategory": "Management"
+    },
+    {
+      "eventVersion": "1.11",
+      "userIdentity": {
+        "type": "IAMUser",
+        "principalId": "AIDAEXAMPLEID0000003",
+        "arn": "arn:aws:iam::111122223333:user/ops-admin",
+        "accountId": "111122223333",
+        "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+        "userName": "ops-admin"
+      },
+      "eventTime": "2026-11-03T19:00:05Z",
+      "eventSource": "ec2.amazonaws.com",
+      "eventName": "DescribeSnapshotAttribute",
+      "awsRegion": "eu-central-1",
+      "sourceIPAddress": "192.0.2.100",
+      "userAgent": "aws-cli/2.17.0 Python/3.12.6 Linux/6.8.0 exe/x86_64.ubuntu.24",
+      "requestParameters": {
+        "snapshotId": "snap-0123456789abcdef0",
+        "attribute": "createVolumePermission"
+      },
+      "responseElements": null,
+      "requestID": "4c6d0c51-f229-51ed-941e-583bf95bcd66",
+      "eventID": "0e7f0a93-a2fa-5c97-8015-ec6dd6588a00",
+      "readOnly": true,
+      "eventType": "AwsApiCall",
+      "managementEvent": true,
+      "recipientAccountId": "111122223333",
+      "eventCategory": "Management"
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+sourcetype="aws:cloudtrail" eventSource="signin.amazonaws.com" eventName="ConsoleLogin" responseElements.ConsoleLogin="Failure"
+
+| bin _time span=10m
+| stats count as event_count by _time sourceIPAddress
+
+| search event_count >= 5

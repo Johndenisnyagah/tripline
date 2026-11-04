@@ -75,21 +75,37 @@ def _converted(path: Path) -> tuple[tuple[str, ...], frozenset[str]]:
     return tuple(queries), frozenset(rule_fields(collection))
 
 
+def _fold_case(event: dict) -> dict:
+    """Key the event by lower-cased field name, keeping the first non-empty value.
+
+    Real CloudTrail can carry the same parameter in two spellings (maxResults / MaxResults);
+    SQLite would reject them as duplicate columns.
+    """
+    folded: dict = {}
+    for key, value in event.items():
+        if folded.get(key.lower()) is None:
+            folded[key.lower()] = value
+    return folded
+
+
 def run_rule(path: Path, events: Iterable[dict]) -> list[sqlite3.Row]:
     """Return every row (match or correlation alert) the rule produces on the events."""
     queries, fields = _converted(path)
-    events = list(events)
-    columns = sorted({"timestamp", *fields, *(k for e in events for k in e)})
+    events = [_fold_case(e) for e in events]
+    # SQLite column names are case-insensitive: one column per case-folded name.
+    columns: dict[str, str] = {}
+    for name in sorted({"timestamp", *fields, *(k for e in events for k in e)}):
+        columns.setdefault(name.lower(), name)
 
     db = sqlite3.connect(":memory:")
     db.row_factory = sqlite3.Row
-    column_sql = ", ".join(f'"{c}" TEXT COLLATE NOCASE' for c in columns)
+    column_sql = ", ".join(f'"{c}" TEXT COLLATE NOCASE' for c in columns.values())
     db.execute(f"CREATE TABLE logs ({column_sql})")
     placeholders = ", ".join("?" for _ in columns)
-    quoted = ", ".join(f'"{c}"' for c in columns)
+    quoted = ", ".join(f'"{c}"' for c in columns.values())
     db.executemany(
         f"INSERT INTO logs ({quoted}) VALUES ({placeholders})",
-        [[e.get(c) for c in columns] for e in events],
+        [[e.get(key) for key in columns] for e in events],
     )
     rows: list[sqlite3.Row] = []
     for query in queries:

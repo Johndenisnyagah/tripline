@@ -1,0 +1,27 @@
+rule_id: aws_cloudtrail_console_login_without_mfa
+tests:
+  # Stratus aws.initial-access.console-login-without-mfa: successful IAM-user sign-in, MFAUsed No.
+  - file: tp/stratus-2.37.2_console-login-without-mfa.json
+    origin: stratus-red-team-2.37.2
+    synthetic: false
+    expect: {matches: 1}
+  # Invictus dataset: a recorded Stratus run, successful sign-in with MFAUsed No.
+  - file: tp/invictus_20230710T1225Z_4iD2boYSOwmb6sWd.json
+    origin: invictus
+    synthetic: false
+    expect: {matches: 1}
+  # Root sign-in that did use MFA: fires on the root branch alone.
+  - file: tp/root_login_with_mfa.json
+    origin: synthetic
+    synthetic: true
+    expect: {matches: 1}
+  # Invictus dataset: a real IAM user signing in with MFA (MFAUsed Yes, MFAIdentifier set).
+  - file: benign/invictus_20230710T1230Z_AvIajGd5rkz6vTy4.json
+    origin: invictus
+    synthetic: false
+    expect: {matches: 0}
+  # Success with MFA; failed sign-in without MFA; failed root sign-in.
+  - file: benign/near_miss_logins.json
+    origin: synthetic
+    synthetic: true
+    expect: {matches: 0}
