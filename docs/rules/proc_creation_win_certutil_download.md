@@ -26,6 +26,8 @@
     found; Splunk's certutil dataset is 300 MB and about certificate extraction.
   - `tp/certutil_downloads.xml`: `-urlcache -split -f http://…` and `/verifyctl /f https://…`.
   - Results table: generated in a later step; it will mark this rule synthetic-only.
+- **Background corpora** (hits on unlabelled logs: not pass/fail, not a false-positive rate; numbers from step 9):
+  evtx-baseline Sysmon log (1,165 process creations): 0.
 - **SigmaHQ relation:** derived from `proc_creation_win_certutil_download.yml` (Florian Roth,
   Jonhnathan Ribeiro, oscd.community, Nasreddine Bencherchali). Differences:
   - Uses `windash` flags with a leading space, instead of `'urlcache '` etc. with a trailing

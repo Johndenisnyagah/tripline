@@ -25,6 +25,8 @@
     from an Attack Range domain controller.
   - 1 synthetic benign file.
   - Results table: generated in a later step.
+- **Background corpora** (hits on unlabelled logs: not pass/fail, not a false-positive rate; numbers from step 9):
+  evtx-baseline Security log: 0. The baseline has no 1102, so the zero says nothing about false positives.
 - **SigmaHQ relation:** derived from `win_security_audit_log_cleared.yml` (Florian Roth). It
   keeps the 1102 + provider selection and drops the legacy Windows 2003 event 517.
 - **KQL:** generated, on `SecurityEvent`. `Provider_Name` maps to `EventSourceName` through

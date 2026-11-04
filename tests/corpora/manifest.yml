@@ -1,0 +1,61 @@
+# Background corpora: real logs that are downloaded in CI, never copied into the repo.
+#
+# Every rule runs over the corpora of its log source. The result is a count of hits on an
+# unlabelled corpus: NOT pass/fail and NOT a false-positive rate (the corpora are not labelled,
+# and two of them contain attack traffic). Surprising counts are investigated in the rule's
+# doc note. See tripline/corpora.py.
+#
+# Fields: id, source (fixture source the rules use), label, url (pinned), sha256 of the
+# download, licence, and optionally `member` (file inside an archive; .gz is decompressed) and
+# `max_records` (a fixed subset of a large log, for CI run time).
+corpora:
+  - id: loghub-openssh-2k
+    source: sshd
+    label: "mixed (lab traffic, unlabelled)"
+    url: https://raw.githubusercontent.com/logpai/loghub/dd61d0952749ee7963bde24220d1be5ede023033/OpenSSH/OpenSSH_2k.log
+    sha256: 1e4912727fa88245113d41b16a0cd25ceadba7f931e1c406542885b91254264f
+    licence: >-
+      Loghub licence: free for research or academic work; cite Zhu et al., "Loghub", ISSRE 2023,
+      and refer to https://github.com/logpai/loghub. Download only.
+    description: >-
+      2,000 sshd lines from an OpenSSH server in the Loghub authors' lab (28+ days of internet
+      exposure), the 2k sample of Loghub's OpenSSH dataset.
+
+  - id: flaws-cloudtrail-00
+    source: cloudtrail
+    label: "mixed (contains attack and scanner traffic)"
+    url: https://summitroute.com/downloads/flaws_cloudtrail_logs.tar
+    sha256: f26c2b8da56bb00d695a57f00f86208117582b9216bb52424d68e718ca2a96aa
+    member: flaws_cloudtrail_logs/flaws_cloudtrail00.json.gz
+    licence: >-
+      No licence stated by Summit Route (flaws.cloud). Download only; the 252 MB archive is
+      fetched in CI and only member 00 is read.
+    description: >-
+      CloudTrail from the flaws.cloud CTF account, file 00 of 20: 100,000 events from
+      2017-02-12 to 2018-04-17 (players, scanners and the owner). Chosen before running the
+      rules because it holds the most events the rules look at (failed console logins, policy
+      attachments, access keys, snapshot attribute changes, a trail update); files 04-15 hold
+      none at all.
+
+  - id: evtx-baseline-win2022-security
+    source: windows_security
+    label: "benign baseline"
+    url: https://github.com/NextronSystems/evtx-baseline/releases/download/v0.8.5/win2022-evtx.tgz
+    sha256: 29406757f9761b56372d40550c9bef4eb2bf82ec21ba15115910742b03c4aab2
+    member: win2022-evtx/Security.evtx
+    licence: Apache-2.0 (Nextron Systems evtx-baseline). Download only.
+    description: >-
+      Security log of a Windows Server 2022 VM with software installation and basic user
+      interaction, no attacks (Nextron evtx-baseline v0.8.5, donated by Florian Roth).
+
+  - id: evtx-baseline-win2022-sysmon
+    source: sysmon
+    label: "benign baseline"
+    url: https://github.com/NextronSystems/evtx-baseline/releases/download/v0.8.5/win2022-evtx.tgz
+    sha256: 29406757f9761b56372d40550c9bef4eb2bf82ec21ba15115910742b03c4aab2
+    member: win2022-evtx/Microsoft-Windows-Sysmon%4Operational.evtx
+    licence: Apache-2.0 (Nextron Systems evtx-baseline). Download only.
+    description: >-
+      The same VM's full Sysmon log (222 MB). A first-20,000-records subset was tried and
+      dropped: it held only registry events (13/12), no process creation (1) or access (10).
+      Parsed once with python-evtx (~15 minutes) and cached as JSON lines.

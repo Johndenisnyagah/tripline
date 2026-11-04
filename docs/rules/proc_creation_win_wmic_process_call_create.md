@@ -24,6 +24,8 @@
     are synthetic, because no small, non-Atomic-Red-Team dataset with this command was found.
   - The real file is a benign near-miss.
   - Results table: generated in a later step.
+- **Background corpora** (hits on unlabelled logs: not pass/fail, not a false-positive rate; numbers from step 9):
+  evtx-baseline Sysmon log (1,165 process creations): 0.
 - **SigmaHQ relation:** derived from `proc_creation_win_wmic_process_creation.yml` (Michael
   Haag, Florian Roth, juju4, oscd.community). Same logic. tripline adds tests, fixtures and
   the documented blind spots.

@@ -28,6 +28,8 @@
     style): PowerShell running `WMIC.exe shadowcopy delete`.
   - `tp/vssadmin_and_wbadmin_deletion.xml` (synthetic): the other two tools.
   - Results table: generated in a later step.
+- **Background corpora** (hits on unlabelled logs: not pass/fail, not a false-positive rate; numbers from step 9):
+  evtx-baseline Sysmon log (1,165 process creations): 0.
 - **SigmaHQ relation:** derived from `proc_creation_win_susp_shadow_copies_deletion.yml`
   (Florian Roth et al.).
   - SigmaHQ also matches PowerShell and `diskshadow`, and `vssadmin resize shadowstorage`.

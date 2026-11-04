@@ -128,3 +128,47 @@ def test_windows_file_shapes(tmp_path) -> None:
     splunk.write_text(WIN_4625 + "\n" + WIN_1102.replace("<UserData>", "\n<UserData>\n") + "\n")
     for path in (wrapped, splunk):
         assert [e["EventID"] for e in windows.parse_file(path)] == ["4625", "1102"]
+
+
+def test_windows_timestamp_from_evtx_rendering() -> None:
+    """python-evtx renders SystemTime with a space and a +00:00 offset."""
+    from tripline.parsers import windows
+
+    xml = WIN_4625.replace("2022-09-08T21:56:17.382220600Z", "2022-04-04 13:07:04.036406+00:00")
+    assert windows.parse_event_xml(xml)["timestamp"] == "2022-04-04T13:07:04.036406Z"
+
+
+def test_sshd_source_ip_without_port() -> None:
+    """Older OpenSSH (Loghub corpus) logs invalid users without "port <n>"."""
+    invalid = sshd.parse_line(
+        "Dec 10 06:55:46 LabSZ sshd[24200]: Invalid user webmaster from 173.234.31.186"
+    )
+    assert (invalid["User"], invalid["SourceIp"]) == ("webmaster", "173.234.31.186")
+    bye = sshd.parse_line(
+        "Dec 10 07:02:47 LabSZ sshd[24203]: Received disconnect from 52.80.34.196: 11: Bye Bye"
+    )
+    assert bye["SourceIp"] == "52.80.34.196"
+    v6 = sshd.parse_line(
+        "Dec 10 07:03:00 host sshd[1]: Failed password for root from 2001:db8::7 port 22 ssh2"
+    )
+    assert v6["SourceIp"] == "2001:db8::7"
+
+
+def test_evtx_hex_values_lose_python_evtx_padding() -> None:
+    """python-evtx pads HexInt32 to 8 digits; Windows/Sentinel/Splunk do not."""
+    from tripline.parsers import windows
+
+    event = windows.normalise_evtx_values(
+        {
+            "GrantedAccess": "0x00001410",
+            "Keywords": "0x8020000000000000",
+            "Status": "0xc000006d",
+            "LogonId": "0x3e7",
+        }
+    )
+    assert event == {
+        "GrantedAccess": "0x1410",
+        "Keywords": "0x8020000000000000",
+        "Status": "0xc000006d",
+        "LogonId": "0x3e7",
+    }

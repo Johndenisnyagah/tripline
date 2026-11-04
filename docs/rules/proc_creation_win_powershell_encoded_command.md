@@ -29,6 +29,8 @@
     file stay silent.
   - `tp/encoded_command_variants.xml` (synthetic): `-EncodedCommand` and `/e`.
   - Results table: generated in a later step.
+- **Background corpora** (hits on unlabelled logs: not pass/fail, not a false-positive rate; numbers from step 9):
+  evtx-baseline Sysmon log (full, 1,165 process creations): 0. The baseline never starts PowerShell; most processes are .NET `mscorsvw.exe` compilations.
 - **SigmaHQ relation:** derived from `proc_creation_win_powershell_encode.yml` (frack113).
   - Adds `windash` and an `OriginalFileName` match.
   - Drops the Azure guest-configuration filter, which is environment-specific.

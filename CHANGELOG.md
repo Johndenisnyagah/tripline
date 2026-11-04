@@ -5,6 +5,14 @@ All notable changes to this project are recorded here.
 ## [Unreleased]
 
 ### Added
+- Background corpora (Loghub OpenSSH, flaws.cloud CloudTrail, Nextron evtx-baseline Security and
+  Sysmon): manifest with sha256, cached downloads and parsed events, `python -m tripline.corpora`,
+  CI `corpora` job; hit counts investigated in the doc notes.
+
+### Fixed
+- sshd parser: source IP when the line has no "port N" (older OpenSSH).
+- Windows parser: EVTX timestamps (python-evtx renders a space) and zero-padded hex values
+  (python-evtx), which made `GrantedAccess` never match on EVTX input.
 - Process rules 15-20 (encoded PowerShell, WMIC process call create, certutil download,
   ClickFix, LSASS access, shadow copy deletion) on the Sysmon parser function; Sysmon fixtures
   from Splunk attack_data; `Sysmon` table in the Kusto emulator. All 20 rules now tested.

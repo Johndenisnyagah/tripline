@@ -33,6 +33,12 @@
   - `tp/lsass_dumping_access.xml`: `0x1010` from an unknown binary, and full access from
     `rundll32` with `comsvcs.dll` in the call trace.
   - Results table: generated in a later step; it will mark this rule synthetic-only.
+- **Background corpora** (hits on unlabelled logs: not pass/fail, not a false-positive rate; numbers from step 9):
+  evtx-baseline Sysmon log (4,648 process-access events, 5 on LSASS): **1 false positive**.
+    - The hit is `C:\Windows\System32\snmp.exe` (the SNMP service) opening LSASS with `0x1410`. It's legitimate, and the rule doesn't filter it.
+    - `wininit` and `csrss` with full access are filtered as intended.
+    - Not tuned: adding `snmp.exe` to the filter changes the rule, and that needs John's OK. A deployment with SNMP should add it.
+    - The corpus also exposed a parser bug that had hidden every match. python-evtx renders `GrantedAccess` zero-padded (`0x00001410`), while Windows, Sentinel and Splunk show `0x1410`. The parser now strips the padding for EVTX input.
 - **SigmaHQ relation:** derived from `proc_access_win_lsass_susp_access_flag.yml` (Florian Roth
   et al.). SigmaHQ matches hundreds of mask endings, filters every process under
   `Program Files` and `System32`, and leaves `0x1010`/`0x1410` to a separate rule. tripline

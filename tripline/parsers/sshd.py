@@ -23,7 +23,10 @@ _HEADER = re.compile(
     r"^(?P<ts>[A-Z][a-z]{2} +\d{1,2} \d{2}:\d{2}:\d{2}) (?P<host>\S+) "
     r"(?P<proc>[\w.-]+)(?:\[(?P<pid>\d+)\])?: (?P<msg>.*)$"
 )
-_SOURCE_IP = re.compile(r" from (?P<ip>[0-9A-Fa-f.:]+) port \d+")
+# "from <ip> port <n>" in current OpenSSH; older versions log "Invalid user X from <ip>" with no
+# port (as in the Loghub OpenSSH corpus). Lazy match, so a trailing ":" ("from 1.2.3.4: 11:")
+# is not taken as part of the address.
+_SOURCE_IP = re.compile(r" from (?P<ip>[0-9A-Fa-f.:]+?)(?: port \d+|:? |$)")
 _USER = re.compile(
     r"^(?:(?:Failed|Accepted|Postponed|Partial) \S+ for (?:invalid user )?|Invalid user )"
     r"(?P<user>\S+) from "

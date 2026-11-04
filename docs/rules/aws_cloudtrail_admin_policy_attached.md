@@ -37,6 +37,8 @@
   - `tp/admin_attached_to_group.json` (synthetic, group variant): 1 match.
   - 2 benign files, listed above.
   - Results table: generated in a later step.
+- **Background corpora** (hits on unlabelled logs: not pass/fail, not a false-positive rate; numbers from step 9):
+  flaws.cloud file 00: 1. The account's root user attached AdministratorAccess to the IAM user `piper` while the owner was setting up the account. This is the documented false-positive class (deliberate admin grants).
 - **SigmaHQ relation:** original. No SigmaHQ rule targets AdministratorAccess attachment
   specifically.
 - **KQL:** generated, on `AWSCloudTrail`, using

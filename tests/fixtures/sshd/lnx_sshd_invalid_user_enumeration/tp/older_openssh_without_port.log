@@ -1,0 +1,5 @@
+Nov  3 20:00:05 legacy01 sshd[7001]: Invalid user oracle from 192.0.2.71
+Nov  3 20:00:06 legacy01 sshd[7001]: input_userauth_request: invalid user oracle [preauth]
+Nov  3 20:01:40 legacy01 sshd[7004]: Invalid user postgres from 192.0.2.71
+Nov  3 20:03:15 legacy01 sshd[7008]: Invalid user tomcat from 192.0.2.71
+Nov  3 20:03:16 legacy01 sshd[7008]: Received disconnect from 192.0.2.71: 11: Bye Bye [preauth]

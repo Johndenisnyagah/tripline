@@ -15,9 +15,9 @@ synthetic logs, converted to Sentinel KQL and Splunk SPL, KQL executed in the Ku
 - Ask John before changing rules, thresholds, datasets, README claims or anything in soc-triage.
 
 ## Current phase
-Step 8 (process rules): rules 15-20 on the Sysmon parser function. All 20 rules are tested in
-the SQLite harness and the Kusto emulator.
-Next: step 9 (background corpora: Loghub, flaws.cloud, evtx-baseline).
+Step 9 (background corpora): Loghub OpenSSH, flaws.cloud CloudTrail, evtx-baseline Security and
+Sysmon; hit counts per rule and corpus, investigated in the doc notes.
+Next: step 10 (results table, Navigator layer, report job).
 
 ## Decisions
 - 2026-11-04 — second backend is Splunk SPL; it converts all four sources and supports correlations — John
@@ -75,3 +75,9 @@ Next: step 9 (background corpora: Loghub, flaws.cloud, evtx-baseline).
 - 2026-11-04 — harness feeds Sysmon rules only the events of their category (EventID 1 or 10), matching the KQL/SPL conditions — Claude
 - 2026-11-04 — rules without a real true positive after step 8: 10 (S3 Block Public Access), 16 (WMIC process call create; real benign only), 17 (certutil download), 19 (LSASS access); no small non-ART capture exists in the §11 sources — Claude
 - 2026-11-04 — rule 18 (ClickFix) got a real TP after all: Splunk attack_data encoded_powershell/explorer_spawns (explorer -> padded, hidden, -enc PowerShell) — Claude
+- 2026-11-04 — corpora: Loghub OpenSSH_2k (pinned commit), flaws.cloud tar member 00, evtx-baseline v0.8.5 win2022 Security.evtx + full Sysmon log; all sha256-verified, cached, never committed (tests/corpora/manifest.yml) — Claude
+- 2026-11-04 — flaws subset is file 00 (chosen before running the rules: it holds the most rule-relevant events; files 04-15 hold none); a first-20k-records Sysmon subset was dropped because it held no event 1/10 — Claude
+- 2026-11-04 — parsed corpus events are cached (gz JSON lines keyed by corpus + parser source hash): python-evtx needs ~20 min for the 222 MB Sysmon log, then CI reuses the cache — Claude
+- 2026-11-04 — harness creates only the columns a rule references (real logs have hundreds of keys; SQLite caps tables at 2000 columns) — Claude
+- 2026-11-04 — corpus findings fixed in parsers (not rules): sshd source IP without "port N" (older OpenSSH, Loghub), EVTX SystemTime rendered with a space by python-evtx, EVTX hex values zero-padded by python-evtx (hid every GrantedAccess match); KQL sshd IP regex updated to match — Claude
+- 2026-11-04 — corpus hit counts are reported, not tuned: e.g. rule 19 hits snmp.exe (0x1410) on the benign baseline and rule 9 hits 35 routine root sign-ins on flaws; tuning needs John — Claude
