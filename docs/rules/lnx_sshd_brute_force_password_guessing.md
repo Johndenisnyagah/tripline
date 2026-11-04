@@ -23,8 +23,8 @@
   - A user's typos, as in `benign/boundary_four_failures_then_success.log` (4 failures, then
     success).
 - **Validation:** `tests/fixtures/sshd/lnx_sshd_brute_force_password_guessing/`
-  - `tp/soc-triage_auth.log`: soc-triage sample (hand-written scenario, so marked
-    synthetic). It has two bursts, and the test asserts that exactly `203.0.113.5` and
+  - `tp/soc-triage_auth.log`: soc-triage sample (counted as non-synthetic). It
+    has two bursts, and the test asserts that exactly `203.0.113.5` and
     `198.51.100.77` fire.
   - `tp/boundary_five_failures.log` (synthetic): exactly 5 failures in 9m57s. This is the
     lowest count that must fire.

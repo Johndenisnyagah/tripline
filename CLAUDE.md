@@ -36,5 +36,5 @@ ATT&CK v20 bundle, rules 1 and 5 with fixtures. Next: step 2 (conversion to KQL/
 - 2026-11-04 — harness columns are TEXT COLLATE NOCASE because Sigma matching is case-insensitive and SQLite `=` is not — Claude
 - 2026-11-04 — expectations may add `groups:` (exact set of group-by values that fire), because the sqlite backend emits one row per qualifying window and a row count alone can't show both IPs fired — Claude
 - 2026-11-04 — `sigma check` disables tlptag/tlpv1_tag/tlpv2_tag (no TLP tags) and sigmahq_correlation_filename_prefix (conflicts with the lnx_sshd_*/aws_cloudtrail_* naming rule) — Claude
-- 2026-11-04 — soc-triage sample_logs are labelled `synthetic: true`: they are a hand-written scenario (RFC 5737 IPs, scripted story), not captured telemetry. Open question for John, see PR #3 — Claude
+- 2026-11-04 — soc-triage sample_logs fixtures are labelled `synthetic: false` (non-synthetic TPs), although they are a hand-written scenario (RFC 5737 IPs) — John
 - 2026-11-04 — Dependabot also ignores pySigma-backend-splunk >=3 and pySigma-backend-sqlite >=2.1: both require pySigma >=2 (Dependabot PR #2 tried them) — Claude

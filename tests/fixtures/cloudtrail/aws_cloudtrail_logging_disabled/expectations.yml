@@ -3,7 +3,7 @@ tests:
   # One StopLogging attempt (denied with AccessDenied) among IAM and console-login events.
   - file: tp/soc-triage_cloudtrail.json
     origin: soc-triage
-    synthetic: true
+    synthetic: false
     expect: {matches: 1}
   # PutEventSelectors that drops write events, UpdateTrail to another bucket, DeleteTrail.
   - file: tp/trail_reconfigured_then_deleted.json

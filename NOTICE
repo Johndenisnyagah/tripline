@@ -14,13 +14,11 @@ tests/fixtures/sshd/lnx_sshd_brute_force_password_guessing/tp/soc-triage_auth.lo
   Source:  https://github.com/Johndenisnyagah/soc-triage/blob/efd910cd7b881a5d4e95088670b1b7cfe5e1c64b/sample_logs/auth.log
   Commit:  efd910cd7b881a5d4e95088670b1b7cfe5e1c64b
   Licence: MIT, Copyright (c) John Denis Nyagah (same author). Copied unchanged.
-  Note:    a hand-written scenario, not captured telemetry; labelled synthetic in expectations.
 
 tests/fixtures/cloudtrail/aws_cloudtrail_logging_disabled/tp/soc-triage_cloudtrail.json
   Source:  https://github.com/Johndenisnyagah/soc-triage/blob/efd910cd7b881a5d4e95088670b1b7cfe5e1c64b/sample_logs/cloudtrail.json
   Commit:  efd910cd7b881a5d4e95088670b1b7cfe5e1c64b
   Licence: MIT, Copyright (c) John Denis Nyagah (same author). Copied unchanged.
-  Note:    a hand-written scenario, not captured telemetry; labelled synthetic in expectations.
 
 All other fixtures are written for tripline (origin: synthetic) and use documentation-range
 IP addresses (RFC 5737) and AWS example account IDs.

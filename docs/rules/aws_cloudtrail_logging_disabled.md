@@ -24,8 +24,8 @@
   - `benign/trail_read_create_start.json` holds the near-misses that must not fire:
     read-only trail calls, `CreateTrail` and `StartLogging`.
 - **Validation:** `tests/fixtures/cloudtrail/aws_cloudtrail_logging_disabled/`
-  - `tp/soc-triage_cloudtrail.json`: soc-triage sample (hand-written scenario, marked
-    synthetic). Exactly 1 match: the denied `StopLogging`.
+  - `tp/soc-triage_cloudtrail.json`: soc-triage sample (counted as non-synthetic).
+    Exactly 1 match: the denied `StopLogging`.
   - `tp/trail_reconfigured_then_deleted.json` (synthetic): `PutEventSelectors`,
     `UpdateTrail`, `DeleteTrail`, giving 3 matches.
   - A Stratus Red Team `cloudtrail-stop` capture is planned for step 5.

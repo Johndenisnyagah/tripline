@@ -4,7 +4,7 @@ tests:
   # 7 failures for backup from 198.51.100.77.
   - file: tp/soc-triage_auth.log
     origin: soc-triage
-    synthetic: true
+    synthetic: false
     expect: {min_matches: 2, groups: ["203.0.113.5", "198.51.100.77"]}
   # Exactly 5 failures, first to last 9m57s apart: the lowest count that must fire.
   - file: tp/boundary_five_failures.log
