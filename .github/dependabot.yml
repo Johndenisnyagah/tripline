@@ -1,0 +1,24 @@
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      github-actions:
+        patterns: ["*"]
+
+  - package-ecosystem: pip
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      pip:
+        patterns: ["*"]
+    ignore:
+      # pySigma-backend-kusto 1.0.1 requires pysigma<2, and sigma-cli 4.x crashes next to
+      # pySigma 1.x. Lift these only once the kusto backend supports pySigma 2.
+      - dependency-name: pySigma
+        versions: [">=2"]
+      - dependency-name: sigma-cli
+        versions: [">=4"]

@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tripline"
+version = "0.0.1"
+description = "Sigma detection rules handled as code: tested against real and synthetic logs, converted to Sentinel KQL and Splunk SPL."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "John Denis Nyagah" }]
+requires-python = ">=3.12,<3.13"
+# Pinned to the pySigma 1.x line: pySigma-backend-kusto 1.0.1 requires pysigma<2,
+# and sigma-cli 4.x crashes next to pySigma 1.x (ModuleNotFoundError: sigma.policy).
+dependencies = [
+    "sigma-cli==3.1.0",
+    "pySigma==1.5.1",
+    "pySigma-backend-kusto==1.0.1",
+    "pySigma-backend-splunk==2.1.0",
+    "pySigma-backend-sqlite==2.0.0",
+    "pySigma-validators-sigmahq==0.21.0",
+    "python-evtx==0.8.1",
+    "pyyaml",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "ruff",
+    "yamllint",
+]
+
+[tool.setuptools.packages.find]
+include = ["tripline*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "kql: runs KQL against the Kusto emulator (CI test-kql job only)",
+]
+addopts = "-m 'not kql'"

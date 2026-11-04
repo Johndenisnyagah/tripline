@@ -1,0 +1,8 @@
+extends: default
+
+rules:
+  line-length:
+    max: 160
+  document-start: disable   # Sigma rules start with `title:`, not `---` (multi-doc correlation files use `---` as a separator)
+  truthy:
+    check-keys: false        # GitHub Actions uses `on:` as a key
