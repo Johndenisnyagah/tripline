@@ -67,6 +67,8 @@ rebuilds them, and CI fails if the committed files differ.
   'temporal_ordered' is not supported by backend"). Rules 2 and 4 therefore get **no generated
   SPL**. `tripline/convert.py` lists them in `SPL_UNSUPPORTED` with the reason, so no other rule
   can lose its SPL silently. This contradicts the plan's assumption that all 20 rules get SPL.
+  **Decision (John, 2026-11-04):** leave them without SPL rather than hand-write SPL that
+  could never be executed in CI. The results table marks them "SPL: n/a (backend unsupported)".
 
 ## Splunk field names
 

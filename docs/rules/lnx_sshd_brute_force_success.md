@@ -43,5 +43,5 @@
 - **SigmaHQ relation:** original. SigmaHQ has no sshd success-after-brute-force correlation.
 - **KQL:** hand-written (`kql_manual/`). The Kusto backend can't convert correlations, and
   `Syslog` has no source-IP column.
-- **SPL:** none generated. pySigma-backend-splunk 2.1.0 doesn't support `temporal_ordered`
+- **SPL:** none, by decision. pySigma-backend-splunk 2.1.0 doesn't support `temporal_ordered`
   correlations (see `docs/conversion-notes.md`).
