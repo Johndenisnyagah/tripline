@@ -23,14 +23,18 @@ import requests
 import yaml
 from sigma.pipelines.azuremonitor.tables import AZURE_MONITOR_TABLES
 
-from tripline.parsers import cloudtrail, sshd
+from tripline.parsers import cloudtrail, sshd, windows
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 KUSTO_URL = os.environ.get("TRIPLINE_KUSTO_URL", "http://localhost:8080")
 DATABASE = "NetDefaultDB"
 
 # Sentinel table per fixture source.
-SOURCE_TABLE = {"sshd": "Syslog", "cloudtrail": "AWSCloudTrail"}
+SOURCE_TABLE = {
+    "sshd": "Syslog",
+    "cloudtrail": "AWSCloudTrail",
+    "windows_security": "SecurityEvent",
+}
 
 _KUSTO_TYPES = {
     "string": "string",
@@ -189,12 +193,45 @@ def cloudtrail_row(record: dict) -> dict:
     }
 
 
+#: Windows System fields whose SecurityEvent column has a different name.
+_SECURITY_EVENT_RENAMES = {"Provider_Name": "EventSourceName", "EventRecordID": "EventRecordId"}
+
+
+def security_event_row(event: dict) -> dict:
+    """One parsed Windows Security event -> SecurityEvent columns (as the AMA connector fills them).
+
+    EventData fields whose name is also a SecurityEvent column (TargetUserName, IpAddress,
+    LogonType, ...) are copied; int columns get ints, and non-numeric values ("-") become null.
+    """
+    schema = table_schema("SecurityEvent")
+    row: dict = {
+        "TimeGenerated": event["timestamp"],
+        "SourceSystem": "OpsManager",
+        "Type": "SecurityEvent",
+    }
+    for key, value in event.items():
+        column = _SECURITY_EVENT_RENAMES.get(key, key)
+        if column not in schema or column in row or value is None:
+            continue
+        if schema[column] in ("int", "long"):
+            text = str(value).strip()
+            if not text.lstrip("-").isdigit():
+                continue  # e.g. "-" for an unset KeyLength: leave the int column empty
+            value = int(text)
+        row[column] = value
+    if event.get("TargetUserName") and event.get("TargetDomainName"):
+        row["TargetAccount"] = event["TargetDomainName"] + "\\" + event["TargetUserName"]
+    return row
+
+
 def fixture_rows(source: str, path: Path) -> list[dict]:
     if source == "sshd":
         return [syslog_row(e) for e in sshd.parse_file(path)]
     if source == "cloudtrail":
         # Raw records, not the flattened parser output: the connector keeps nested JSON.
         return [cloudtrail_row(r) for r in cloudtrail.load_records(path)]
+    if source == "windows_security":
+        return [security_event_row(e) for e in windows.parse_file(path)]
     raise ValueError(f"no Sentinel table mapping for source {source!r}")
 
 

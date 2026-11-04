@@ -75,3 +75,56 @@ def test_cloudtrail_booleans_become_text(tmp_path) -> None:
     (event,) = cloudtrail.parse_file(path)
     assert event["readOnly"] == "false"
     assert event["requestParameters.PublicAccessBlockConfiguration.BlockPublicAcls"] == "false"
+
+
+WIN_NS = "http://schemas.microsoft.com/win/2004/08/events/event"
+WIN_4625 = (
+    f"<Event xmlns='{WIN_NS}'><System><Provider Name='Microsoft-Windows-Security-Auditing'/>"
+    "<EventID>4625</EventID><TimeCreated SystemTime='2022-09-08T21:56:17.382220600Z'/>"
+    "<Channel>Security</Channel><Computer>dc01.example.local</Computer></System>"
+    "<EventData><Data Name='TargetUserName'>MONROE_YATES</Data>"
+    "<Data Name='IpAddress'>10.0.1.15</Data><Data Name='LogonType'>3</Data></EventData></Event>"
+)
+WIN_1102 = (
+    f"<Event xmlns='{WIN_NS}'><System><Provider Name='Microsoft-Windows-Eventlog'/>"
+    "<EventID>1102</EventID><TimeCreated SystemTime='2024-07-22T16:25:54.9Z'/>"
+    "<Channel>Security</Channel><Computer>dc01</Computer></System><UserData>"
+    "<LogFileCleared xmlns='http://manifests.microsoft.com/win/2004/08/windows/eventlog'>"
+    "<SubjectUserName>Administrator</SubjectUserName></LogFileCleared></UserData></Event>"
+)
+
+
+def test_windows_eventdata_fields() -> None:
+    from tripline.parsers import windows
+
+    event = windows.parse_event_xml(WIN_4625)
+    assert event["EventID"] == "4625"
+    assert event["Provider_Name"] == "Microsoft-Windows-Security-Auditing"
+    assert event["timestamp"] == "2022-09-08T21:56:17.382220Z"
+    assert (event["TargetUserName"], event["IpAddress"], event["LogonType"]) == (
+        "MONROE_YATES",
+        "10.0.1.15",
+        "3",
+    )
+
+
+def test_windows_userdata_fields() -> None:
+    from tripline.parsers import windows
+
+    event = windows.parse_event_xml(WIN_1102)
+    assert event["EventID"] == "1102"
+    assert event["Provider_Name"] == "Microsoft-Windows-Eventlog"
+    assert event["SubjectUserName"] == "Administrator"
+    assert event["timestamp"] == "2024-07-22T16:25:54.900000Z"
+
+
+def test_windows_file_shapes(tmp_path) -> None:
+    from tripline.parsers import windows
+
+    wrapped = tmp_path / "wrapped.xml"
+    wrapped.write_text(f'<?xml version="1.0"?>\n<Events>\n{WIN_4625}\n{WIN_1102}\n</Events>\n')
+    # Splunk XmlWinEventLog: concatenated events, one of them split across lines.
+    splunk = tmp_path / "windows-security.log"
+    splunk.write_text(WIN_4625 + "\n" + WIN_1102.replace("<UserData>", "\n<UserData>\n") + "\n")
+    for path in (wrapped, splunk):
+        assert [e["EventID"] for e in windows.parse_file(path)] == ["4625", "1102"]

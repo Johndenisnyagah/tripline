@@ -59,3 +59,24 @@ def test_syslog_row_uses_sentinel_columns() -> None:
     }
     row = kusto.syslog_row(event)
     assert set(row) <= set(kusto.table_schema("Syslog"))
+
+
+def test_security_event_row_uses_sentinel_columns() -> None:
+    event = {
+        "timestamp": "2022-09-08T21:56:17.382220Z",
+        "EventID": "4625",
+        "Provider_Name": "Microsoft-Windows-Security-Auditing",
+        "Computer": "dc01",
+        "TargetUserName": "MONROE_YATES",
+        "TargetDomainName": "ATTACKRANGE",
+        "IpAddress": "10.0.1.15",
+        "LogonType": "3",
+        "KeyLength": "-",
+        "NotASentinelColumn": "x",
+    }
+    row = kusto.security_event_row(event)
+    assert set(row) <= set(kusto.table_schema("SecurityEvent"))
+    assert row["EventID"] == 4625 and row["LogonType"] == 3
+    assert row["EventSourceName"] == "Microsoft-Windows-Security-Auditing"
+    assert row["TargetAccount"] == "ATTACKRANGE\\MONROE_YATES"
+    assert "KeyLength" not in row  # "-" in an int column is left empty

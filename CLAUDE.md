@@ -15,9 +15,9 @@ synthetic logs, converted to Sentinel KQL and Splunk SPL, KQL executed in the Ku
 - Ask John before changing rules, thresholds, datasets, README claims or anything in soc-triage.
 
 ## Current phase
-Step 6 (CloudTrail rules 7-11): console brute force, IAM console password, login without
-MFA or as root, Block Public Access weakened, EBS snapshot shared. All 11 Linux/AWS rules done.
-Next: step 7 (Windows parser + Security rules 12-14).
+Step 7 (Windows Security): Windows parser (XML, Splunk XML, EVTX), rules 12-14 (password
+spraying, local account created, Security log cleared), SecurityEvent in the emulator.
+Next: step 8 (process rules 15-20, Sysmon parser target).
 
 ## Decisions
 - 2026-11-04 — second backend is Splunk SPL; it converts all four sources and supports correlations — John
@@ -65,3 +65,8 @@ Next: step 7 (Windows parser + Security rules 12-14).
 - 2026-11-04 — CloudTrail parser renders JSON booleans as "true"/"false"; harness folds field names case-insensitively (real CloudTrail has maxResults and MaxResults in one file) — Claude
 - 2026-11-04 — the KQL nested-field rewrite accepts single and doubled quotes (contains-lists are double-quoted by the backend); a test rejects any quoted parse_json/tostring in generated KQL — Claude
 - 2026-11-04 — rule 10 has no real fixture (none in Stratus 2.37.2 or Invictus); it is synthetic-only and the results table will say so — Claude
+- 2026-11-04 — Windows Security KQL needs pipelines/kusto_windows.yml (query_table SecurityEvent, Provider_Name -> EventSourceName): azure_monitor alone fails for 4720/1102, contrary to the plan's "works out of the box" — Claude
+- 2026-11-04 — rule 12 base excludes 4625s with IpAddress "-", 127.0.0.1 or ::1 (no attributable source); threshold/window unchanged — Claude
+- 2026-11-04 — Splunk attack_data used: PurpleSharp remote spray (rule 12) and a real 1102 (rule 14), Apache-2.0, LFS objects fetched at commit c8af10d and copied unchanged; datasets made with Atomic Red Team (4720 samples) deliberately not used — Claude
+- 2026-11-04 — EVTX: parser reads .evtx through python-evtx, but no EVTX fixture is committed (no licence-compatible small EVTX among the §11 sources); EVTX gets exercised on Nextron evtx-baseline in step 9 — Claude
+- 2026-11-04 — soc-triage's windows_security.xml is a benign near-miss for rule 12 (4 distinct accounts from 203.0.113.200, threshold is 5) — Claude

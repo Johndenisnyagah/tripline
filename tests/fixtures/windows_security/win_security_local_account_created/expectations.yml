@@ -1,0 +1,12 @@
+rule_id: win_security_local_account_created
+tests:
+  # soc-triage sample: Administrator creates svc-update on WKS-FIN-07 (then adds it to Administrators).
+  - file: tp/soc-triage_windows_security.xml
+    origin: soc-triage
+    synthetic: false
+    expect: {matches: 1}
+  # Account enabled, password reset, changed, deleted; a computer account created on a DC (4741).
+  - file: benign/account_lifecycle_other_events.xml
+    origin: synthetic
+    synthetic: true
+    expect: {matches: 0}

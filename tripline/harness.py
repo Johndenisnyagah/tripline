@@ -25,7 +25,7 @@ from sigma.collection import SigmaCollection
 from sigma.correlations import SigmaCorrelationRule
 from sigma.rule import SigmaRule
 
-from tripline.parsers import cloudtrail, sshd
+from tripline.parsers import cloudtrail, sshd, windows
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 RULES_DIR = REPO_ROOT / "rules"
@@ -34,6 +34,7 @@ FIXTURES_DIR = REPO_ROOT / "tests" / "fixtures"
 PARSERS: dict[str, Callable[[Path], Iterator[dict]]] = {
     "sshd": sshd.parse_file,
     "cloudtrail": cloudtrail.parse_file,
+    "windows_security": windows.parse_file,
 }
 
 

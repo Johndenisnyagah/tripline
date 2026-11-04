@@ -1,0 +1,29 @@
+title: Windows Local User Account Created
+id: cfe14a8b-0f31-4481-956e-c10841963f3b
+related:
+    - id: 66b6be3d-55d0-4f47-9855-d69df21740ea
+      type: derived
+status: experimental
+description: |
+    Detects a user account being created on a Windows machine (4720). On workstations and
+    member servers that means a new local account, which attackers create for persistence
+    and which rarely happens in a domain-managed fleet.
+references:
+    - https://github.com/SigmaHQ/sigma/blob/c68bb91abb1146b8a6a65caf6819b1836d97f09d/rules/windows/builtin/security/win_security_user_creation.yml
+    - https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-10/security/threat-protection/auditing/event-4720
+author: John Denis Nyagah
+date: 2026-11-04
+tags:
+    - attack.persistence
+    - attack.t1136.001
+logsource:
+    product: windows
+    service: security
+detection:
+    selection:
+        EventID: 4720
+    condition: selection
+falsepositives:
+    - Domain controllers, where 4720 records every new domain account (scope the rule to non-DC hosts)
+    - Endpoint management or privileged-access tools that create local accounts
+level: medium

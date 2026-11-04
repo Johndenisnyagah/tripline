@@ -1,0 +1,29 @@
+title: Windows Security Event Log Cleared
+id: 8f098824-0659-43b9-9e4f-dc6360845f31
+related:
+    - id: d99b79d2-0a6f-4f46-ad8b-260b6e17f982
+      type: derived
+status: experimental
+description: |
+    Detects the Windows Security event log being cleared (1102 from the Eventlog service),
+    typically to remove evidence after an intrusion.
+references:
+    - https://github.com/SigmaHQ/sigma/blob/c68bb91abb1146b8a6a65caf6819b1836d97f09d/rules/windows/builtin/security/win_security_audit_log_cleared.yml
+    - https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-10/security/threat-protection/auditing/event-1102
+author: John Denis Nyagah
+date: 2026-11-04
+tags:
+    - attack.defense-impairment
+    - attack.t1685.005
+logsource:
+    product: windows
+    service: security
+detection:
+    selection:
+        EventID: 1102
+        Provider_Name: Microsoft-Windows-Eventlog
+    condition: selection
+falsepositives:
+    - Log collection agent rollouts that reset the local log
+    - Golden-image preparation that clears logs before capture
+level: high
