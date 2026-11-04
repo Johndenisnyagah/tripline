@@ -1,0 +1,10 @@
+# tripline: CloudTrail Sigma rules -> Splunk (Splunk Add-on for AWS, sourcetype aws:cloudtrail).
+# The add-on keeps CloudTrail's JSON field names (eventName, requestParameters.policyArn, ...),
+# so fields pass through unchanged; only the sourcetype is added.
+name: tripline splunk cloudtrail
+priority: 20
+transformations:
+  - id: splunk_cloudtrail_sourcetype
+    type: add_condition
+    conditions:
+      sourcetype: aws:cloudtrail

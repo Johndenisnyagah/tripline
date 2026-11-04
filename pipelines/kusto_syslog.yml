@@ -1,0 +1,17 @@
+# tripline: Linux sshd Sigma rules -> Microsoft Sentinel Syslog table.
+#
+# Combined with azure_monitor, which validates field names against the Syslog schema
+# and prepends `Syslog | where`. Rules match on SyslogMessage (field-based); keyword-only
+# detections would produce invalid KQL. SourceIp and User have no Syslog column: they
+# only appear in correlation group-by, and the hand-written KQL extracts them.
+name: tripline kusto syslog
+priority: 5
+transformations:
+  - id: syslog_query_table
+    type: set_state
+    key: query_table
+    val: Syslog
+  - id: syslog_sshd_process
+    type: add_condition
+    conditions:
+      ProcessName: sshd

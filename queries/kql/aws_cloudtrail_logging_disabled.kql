@@ -1,0 +1,2 @@
+AWSCloudTrail
+| where EventSource =~ "cloudtrail.amazonaws.com" and (EventName in~ ("StopLogging", "DeleteTrail", "UpdateTrail", "PutEventSelectors"))

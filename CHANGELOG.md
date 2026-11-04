@@ -5,6 +5,9 @@ All notable changes to this project are recorded here.
 ## [Unreleased]
 
 ### Added
+- Conversion: Kusto pipelines (Syslog, AWSCloudTrail), Splunk pipelines (sshd, CloudTrail),
+  `tripline.convert` with `--check` drift detection, generated `queries/`, `convert` CI job,
+  `docs/conversion-notes.md` including the process-creation KQL target spike.
 - Harness spike: sshd and CloudTrail parsers, SQLite test harness (correlations via
   pySigma-backend-sqlite), `expectations.yml` format, metadata checks with ATT&CK v20
   revoked-ID detection, `sigma check` config, `test-logic` CI job.
