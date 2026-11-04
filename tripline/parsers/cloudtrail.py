@@ -1,4 +1,7 @@
-"""Parse CloudTrail `{"Records": [...]}` JSON into flat events with dotted keys.
+"""Parse CloudTrail JSON into flat events with dotted keys.
+
+Accepts both native shapes: a CloudTrail log file (`{"Records": [...]}`) and a bare JSON
+array of records (how Stratus Red Team publishes its detonation logs).
 
 Nested objects become dotted keys (`requestParameters.name`,
 `responseElements.ConsoleLogin`), which is how Sigma rules for CloudTrail name
@@ -26,9 +29,13 @@ def flatten(obj: dict, prefix: str = "") -> dict:
     return flat
 
 
-def parse_file(path: Path) -> Iterator[dict]:
+def load_records(path: Path) -> list[dict]:
     data = json.loads(path.read_text(encoding="utf-8"))
-    for record in data["Records"]:
+    return data["Records"] if isinstance(data, dict) else data
+
+
+def parse_file(path: Path) -> Iterator[dict]:
+    for record in load_records(path):
         event = flatten(record)
         event["timestamp"] = record["eventTime"]
         yield event

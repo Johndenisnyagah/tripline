@@ -1,0 +1,72 @@
+{
+  "Records": [
+    {
+      "eventVersion": "1.11",
+      "userIdentity": {
+        "type": "IAMUser",
+        "principalId": "AIDAEXAMPLEID0000002",
+        "arn": "arn:aws:iam::111122223333:user/ops-admin",
+        "accountId": "111122223333",
+        "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+        "userName": "ops-admin"
+      },
+      "eventTime": "2026-11-03T10:00:00Z",
+      "eventSource": "signin.amazonaws.com",
+      "eventName": "ConsoleLogin",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "198.51.100.61",
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64; rv:131.0) Gecko/20100101 Firefox/131.0",
+      "requestParameters": null,
+      "responseElements": {
+        "ConsoleLogin": "Failure"
+      },
+      "requestID": "aacb24e6-5b22-59aa-b634-76621e0c94ec",
+      "eventID": "449eadc6-f11c-52b7-a739-b74af9f7efbb",
+      "readOnly": false,
+      "eventType": "AwsConsoleSignIn",
+      "managementEvent": true,
+      "recipientAccountId": "111122223333",
+      "eventCategory": "Management",
+      "additionalEventData": {
+        "LoginTo": "https://console.aws.amazon.com/console/home",
+        "MobileVersion": "No",
+        "MFAUsed": "No"
+      },
+      "errorMessage": "Failed authentication"
+    },
+    {
+      "eventVersion": "1.11",
+      "userIdentity": {
+        "type": "IAMUser",
+        "principalId": "AIDAEXAMPLEID0000002",
+        "arn": "arn:aws:iam::111122223333:user/ops-admin",
+        "accountId": "111122223333",
+        "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+        "userName": "ops-admin"
+      },
+      "eventTime": "2026-11-03T10:05:00Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "CreateAccessKey",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "198.51.100.62",
+      "userAgent": "aws-cli/2.17.0 Python/3.12.6 Linux/6.8.0 exe/x86_64.ubuntu.24",
+      "requestParameters": {
+        "userName": "svc-backup"
+      },
+      "responseElements": {
+        "accessKey": {
+          "accessKeyId": "AKIAI44QH8DHBEXAMPLE",
+          "status": "Active",
+          "userName": "svc-backup"
+        }
+      },
+      "requestID": "fcb00cd4-6472-5cc1-923e-3680fd050dd6",
+      "eventID": "b8c8e958-b351-5fda-b363-3d023d43feec",
+      "readOnly": false,
+      "eventType": "AwsApiCall",
+      "managementEvent": true,
+      "recipientAccountId": "111122223333",
+      "eventCategory": "Management"
+    }
+  ]
+}

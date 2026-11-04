@@ -58,6 +58,9 @@ SPL_UNSUPPORTED: dict[str, str] = {
     "lnx_sshd_brute_force_success": (
         "pySigma-backend-splunk 2.1.0 does not support temporal_ordered correlations"
     ),
+    "aws_cloudtrail_access_key_after_failed_console_login": (
+        "pySigma-backend-splunk 2.1.0 does not support temporal_ordered correlations"
+    ),
 }
 
 

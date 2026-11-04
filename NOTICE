@@ -19,9 +19,40 @@ tests/fixtures/sshd/lnx_sshd_invalid_user_enumeration/tp/soc-triage_auth.log
            (three identical copies, one per sshd rule).
 
 tests/fixtures/cloudtrail/aws_cloudtrail_logging_disabled/tp/soc-triage_cloudtrail.json
+tests/fixtures/cloudtrail/aws_cloudtrail_access_key_after_failed_console_login/tp/soc-triage_cloudtrail.json
+tests/fixtures/cloudtrail/aws_cloudtrail_admin_policy_attached/tp/soc-triage_cloudtrail.json
   Source:  https://github.com/Johndenisnyagah/soc-triage/blob/efd910cd7b881a5d4e95088670b1b7cfe5e1c64b/sample_logs/cloudtrail.json
   Commit:  efd910cd7b881a5d4e95088670b1b7cfe5e1c64b
-  Licence: MIT, Copyright (c) John Denis Nyagah (same author). Copied unchanged.
+  Licence: MIT, Copyright (c) John Denis Nyagah (same author). Copied unchanged
+           (three identical copies, one per CloudTrail rule).
+
+-- Stratus Red Team (detonation logs) --
+Stratus Red Team, Copyright 2021-Present Datadog, Inc. This product includes software
+developed at Datadog (https://www.datadoghq.com/). Licensed under the Apache License 2.0:
+https://github.com/DataDog/stratus-red-team/blob/036d2cab6ad8b331ada271fc8e738dafa19e359e/LICENSE
+Version: v2.37.2 (commit 036d2cab6ad8b331ada271fc8e738dafa19e359e). All files copied unchanged
+from docs/detonation-logs/ at that commit; tripline only renamed them.
+
+tests/fixtures/cloudtrail/aws_cloudtrail_logging_disabled/tp/stratus-2.37.2_cloudtrail-stop.json
+  Source:  docs/detonation-logs/aws.defense-evasion.cloudtrail-stop.json
+tests/fixtures/cloudtrail/aws_cloudtrail_logging_disabled/tp/stratus-2.37.2_cloudtrail-delete.json
+  Source:  docs/detonation-logs/aws.defense-evasion.cloudtrail-delete.json
+tests/fixtures/cloudtrail/aws_cloudtrail_logging_disabled/tp/stratus-2.37.2_cloudtrail-event-selectors.json
+  Source:  docs/detonation-logs/aws.defense-evasion.cloudtrail-event-selectors.json
+tests/fixtures/cloudtrail/aws_cloudtrail_admin_policy_attached/tp/stratus-2.37.2_iam-create-admin-user.json
+tests/fixtures/cloudtrail/aws_cloudtrail_access_key_after_failed_console_login/benign/stratus-2.37.2_iam-create-admin-user.json
+  Source:  docs/detonation-logs/aws.persistence.iam-create-admin-user.json (two identical copies)
+
+-- Invictus Incident Response aws_dataset --
+Copyright (c) 2023 Invictus Incident Response. MIT License:
+https://github.com/invictus-ir/aws_dataset/blob/4667aa9c26330bc3317ed8bd526f4b83cff13602/LICENSE
+Commit: 4667aa9c26330bc3317ed8bd526f4b83cff13602. Files copied unchanged; tripline shortened
+the file names.
+
+tests/fixtures/cloudtrail/aws_cloudtrail_admin_policy_attached/tp/invictus_20230710T1230Z_ZtUNbBkwAu98FPZb.json
+  Source:  CloudTrail/218007301253_CloudTrail_us-east-1_20230710T1230Z_ZtUNbBkwAu98FPZb.json
+tests/fixtures/cloudtrail/aws_cloudtrail_admin_policy_attached/benign/invictus_20230710T1210Z_RBxlxVrF890sGHGg.json
+  Source:  CloudTrail/218007301253_CloudTrail_us-east-1_20230710T1210Z_RBxlxVrF890sGHGg.json
 
 All other fixtures are written for tripline (origin: synthetic) and use documentation-range
 IP addresses (RFC 5737) and AWS example account IDs.

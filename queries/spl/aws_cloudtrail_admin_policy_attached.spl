@@ -1,0 +1,1 @@
+sourcetype="aws:cloudtrail" eventSource="iam.amazonaws.com" eventName IN ("AttachUserPolicy", "AttachRolePolicy", "AttachGroupPolicy") requestParameters.policyArn="*/AdministratorAccess"

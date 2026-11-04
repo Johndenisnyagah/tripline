@@ -1,0 +1,72 @@
+{
+  "Records": [
+    {
+      "eventVersion": "1.11",
+      "userIdentity": {
+        "type": "IAMUser",
+        "principalId": "AIDAEXAMPLEID0000002",
+        "arn": "arn:aws:iam::111122223333:user/ops-admin",
+        "accountId": "111122223333",
+        "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+        "userName": "ops-admin"
+      },
+      "eventTime": "2026-11-03T11:00:00Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "CreateAccessKey",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "198.51.100.63",
+      "userAgent": "aws-cli/2.17.0 Python/3.12.6 Linux/6.8.0 exe/x86_64.ubuntu.24",
+      "requestParameters": {
+        "userName": "svc-backup"
+      },
+      "responseElements": {
+        "accessKey": {
+          "accessKeyId": "AKIAI44QH8DHBEXAMPLE",
+          "status": "Active",
+          "userName": "svc-backup"
+        }
+      },
+      "requestID": "1ae3af8d-f181-5831-9adb-036f48012810",
+      "eventID": "089e31e4-73a7-5429-bd2b-db6d05378ba0",
+      "readOnly": false,
+      "eventType": "AwsApiCall",
+      "managementEvent": true,
+      "recipientAccountId": "111122223333",
+      "eventCategory": "Management"
+    },
+    {
+      "eventVersion": "1.11",
+      "userIdentity": {
+        "type": "IAMUser",
+        "principalId": "AIDAEXAMPLEID0000002",
+        "arn": "arn:aws:iam::111122223333:user/ops-admin",
+        "accountId": "111122223333",
+        "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+        "userName": "ops-admin"
+      },
+      "eventTime": "2026-11-03T11:05:00Z",
+      "eventSource": "signin.amazonaws.com",
+      "eventName": "ConsoleLogin",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "198.51.100.63",
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64; rv:131.0) Gecko/20100101 Firefox/131.0",
+      "requestParameters": null,
+      "responseElements": {
+        "ConsoleLogin": "Failure"
+      },
+      "requestID": "137b905b-a61c-50a7-83f1-a3d255b060b4",
+      "eventID": "f5bf1eb0-8a64-5731-b359-44add862c60d",
+      "readOnly": false,
+      "eventType": "AwsConsoleSignIn",
+      "managementEvent": true,
+      "recipientAccountId": "111122223333",
+      "eventCategory": "Management",
+      "additionalEventData": {
+        "LoginTo": "https://console.aws.amazon.com/console/home",
+        "MobileVersion": "No",
+        "MFAUsed": "No"
+      },
+      "errorMessage": "Failed authentication"
+    }
+  ]
+}

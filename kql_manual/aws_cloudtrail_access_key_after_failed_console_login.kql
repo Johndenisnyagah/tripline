@@ -1,0 +1,32 @@
+// Rule:    AWS Access Key Created After Failed Console Login
+// Sigma:   rules/aws/cloudtrail/aws_cloudtrail_access_key_after_failed_console_login.yml
+//          correlation id 46052a12-053e-446f-be62-5052b7fd1bbe: temporal_ordered
+//          [failed ConsoleLogin, CreateAccessKey] per sourceIPAddress within 1h
+// Author:  John Denis Nyagah
+// Why hand-written: pySigma-backend-kusto 1.0.1 cannot convert Sigma correlation rules.
+// Semantics: a CreateAccessKey from the same source IP at or after a failed console sign-in,
+// and no more than 1 hour after it. ResponseElements is a string column in AWSCloudTrail, so the
+// ConsoleLogin outcome is read with parse_json().
+// Output:  one row per source IP.
+let window = 1h;
+let failed_logins = AWSCloudTrail
+    | where EventSource =~ "signin.amazonaws.com" and EventName =~ "ConsoleLogin"
+    | where tostring(parse_json(ResponseElements).ConsoleLogin) =~ "Failure"
+    | project FailedLoginTime = TimeGenerated, SourceIpAddress, FailedLoginUser = UserIdentityUserName;
+let access_keys = AWSCloudTrail
+    | where EventSource =~ "iam.amazonaws.com" and EventName =~ "CreateAccessKey"
+    | project
+        KeyTime = TimeGenerated,
+        SourceIpAddress,
+        CreatedBy = UserIdentityArn,
+        KeyForUser = tostring(parse_json(RequestParameters).userName);
+failed_logins
+| join kind=inner access_keys on SourceIpAddress
+| where KeyTime between (FailedLoginTime .. (FailedLoginTime + window))
+| summarize
+    FirstFailedLogin = min(FailedLoginTime),
+    FirstKeyCreated = min(KeyTime),
+    FailedLogins = dcount(FailedLoginTime),
+    KeysForUsers = make_set(KeyForUser),
+    CreatedBy = make_set(CreatedBy)
+    by SourceIpAddress
