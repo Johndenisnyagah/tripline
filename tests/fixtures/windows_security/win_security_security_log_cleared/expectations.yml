@@ -1,0 +1,17 @@
+rule_id: win_security_security_log_cleared
+tests:
+  # soc-triage sample: Administrator clears the Security log at 13:12:11.
+  - file: tp/soc-triage_windows_security.xml
+    origin: soc-triage
+    synthetic: false
+    expect: {matches: 1}
+  # Splunk attack_data (Attack Range): one real 1102 on a domain controller.
+  - file: tp/splunk-attack-data_windows_event_log_cleared.log
+    origin: splunk-attack-data
+    synthetic: false
+    expect: {matches: 1}
+  # Event logging service shutdown (1100) and an audit policy change (4719).
+  - file: benign/other_logging_events.xml
+    origin: synthetic
+    synthetic: true
+    expect: {matches: 0}

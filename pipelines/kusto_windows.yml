@@ -1,0 +1,18 @@
+# tripline: Windows Security Sigma rules -> Microsoft Sentinel SecurityEvent table.
+#
+# Used together with azure_monitor, which maps fields and validates them against the
+# SecurityEvent schema. azure_monitor picks SecurityEvent by itself only for some EventIDs
+# (4625 works, 4720 and 1102 fail with "Unable to determine table name"), so the table is set
+# explicitly for every `service: security` rule.
+name: tripline kusto windows security
+priority: 5
+transformations:
+  - id: windows_security_query_table
+    type: set_state
+    key: query_table
+    val: SecurityEvent
+  # The event provider is EventSourceName in SecurityEvent; azure_monitor has no mapping for it.
+  - id: windows_security_provider_field
+    type: field_name_mapping
+    mapping:
+      Provider_Name: EventSourceName

@@ -86,3 +86,24 @@ def test_synthetic_flag_matches_origin() -> None:
 
     wrong = [c.test_id for c in all_cases() if c.synthetic != (c.origin == "synthetic")]
     assert not wrong, f"synthetic flag disagrees with origin: {wrong}"
+
+
+#: sha256 of third-party files whose bytes git must not normalise (see .gitattributes, NOTICE).
+PINNED_SHA256 = {
+    "tests/fixtures/windows_security/win_security_password_spraying/tp/"
+    "splunk-attack-data_purplesharp_remote_spray_xml.log": (
+        "92ab741ca691f9b7308cc684864bee0b0bff1bb1e01440c4ab874a3afa3f4307"
+    ),
+    "tests/fixtures/windows_security/win_security_security_log_cleared/tp/"
+    "splunk-attack-data_windows_event_log_cleared.log": (
+        "fd483a9c03b1cf5b10b4cc8b1500abd782da334647e93db61edee7f7040dce87"
+    ),
+}
+
+
+@pytest.mark.parametrize("relpath", PINNED_SHA256)
+def test_copied_file_is_byte_identical_to_upstream(relpath: str) -> None:
+    import hashlib
+
+    data = (Path(__file__).parent.parent / relpath).read_bytes()
+    assert hashlib.sha256(data).hexdigest() == PINNED_SHA256[relpath]

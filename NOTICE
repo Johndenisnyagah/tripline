@@ -27,6 +27,14 @@ tests/fixtures/cloudtrail/aws_cloudtrail_console_brute_force/tp/soc-triage_cloud
   Licence: MIT, Copyright (c) John Denis Nyagah (same author). Copied unchanged
            (identical copies, one per CloudTrail rule that uses it).
 
+tests/fixtures/windows_security/win_security_password_spraying/benign/soc-triage_windows_security.xml
+tests/fixtures/windows_security/win_security_local_account_created/tp/soc-triage_windows_security.xml
+tests/fixtures/windows_security/win_security_security_log_cleared/tp/soc-triage_windows_security.xml
+  Source:  https://github.com/Johndenisnyagah/soc-triage/blob/efd910cd7b881a5d4e95088670b1b7cfe5e1c64b/sample_logs/windows_security.xml
+  Commit:  efd910cd7b881a5d4e95088670b1b7cfe5e1c64b
+  Licence: MIT, Copyright (c) John Denis Nyagah (same author). Copied unchanged
+           (identical copies, one per Windows Security rule that uses it).
+
 -- Stratus Red Team (detonation logs) --
 Stratus Red Team, Copyright 2021-Present Datadog, Inc. This product includes software
 developed at Datadog (https://www.datadoghq.com/). Licensed under the Apache License 2.0:
@@ -79,6 +87,21 @@ tests/fixtures/cloudtrail/aws_cloudtrail_ebs_snapshot_shared_externally/benign/i
 All other fixtures are written for tripline (origin: synthetic) and use documentation-range
 IP addresses (RFC 5737) and AWS example account IDs.
 
+-- Splunk attack_data --
+Splunk attack_data, https://github.com/splunk/attack_data. Licensed under the Apache License 2.0:
+https://github.com/splunk/attack_data/blob/c8af10d015d392fca97f9eb65181e9f06bc18e40/LICENSE
+(no NOTICE file upstream). Commit: c8af10d015d392fca97f9eb65181e9f06bc18e40. The logs are Git LFS
+objects; they were fetched from media.githubusercontent.com at that commit and copied unchanged
+(tripline does not use Git LFS). Datasets generated in Splunk's Attack Range; files from
+Atomic Red Team runs were deliberately not used.
+
+tests/fixtures/windows_security/win_security_password_spraying/tp/splunk-attack-data_purplesharp_remote_spray_xml.log
+  Source:  datasets/attack_techniques/T1110.003/purplesharp_remote_spray_xml/windows-security.log
+           (PurpleSharp remote password spraying, author Mauricio Velazco; sha256 92ab741c...3f4307)
+tests/fixtures/windows_security/win_security_security_log_cleared/tp/splunk-attack-data_windows_event_log_cleared.log
+  Source:  datasets/attack_techniques/T1070.001/windows_event_log_cleared/windows-security.log
+           (sha256 fd483a9c...0dce87)
+
 == Rules derived from SigmaHQ (DRL 1.1) ==
 
 rules/aws/cloudtrail/aws_cloudtrail_logging_disabled.yml
@@ -115,6 +138,20 @@ rules/aws/cloudtrail/aws_cloudtrail_ebs_snapshot_shared_externally.yml
   Source:       https://github.com/SigmaHQ/sigma/blob/c68bb91abb1146b8a6a65caf6819b1836d97f09d/rules/cloud/aws/cloudtrail/aws_snapshot_backup_exfiltration.yml
   Licence:      Detection Rule License 1.1
   Changes:      requires a createVolumePermission add, so removals stay silent; see docs/rules/aws_cloudtrail_ebs_snapshot_shared_externally.md
+
+rules/windows/security/win_security_local_account_created.yml
+  Derived from: "Local User Creation" (id 66b6be3d-55d0-4f47-9855-d69df21740ea)
+  Author:       Patrick Bareiss
+  Source:       https://github.com/SigmaHQ/sigma/blob/c68bb91abb1146b8a6a65caf6819b1836d97f09d/rules/windows/builtin/security/win_security_user_creation.yml
+  Licence:      Detection Rule License 1.1
+  Changes:      same selection; level medium; see docs/rules/win_security_local_account_created.md
+
+rules/windows/security/win_security_security_log_cleared.yml
+  Derived from: "Security Eventlog Cleared" (id d99b79d2-0a6f-4f46-ad8b-260b6e17f982)
+  Author:       Florian Roth (Nextron Systems)
+  Source:       https://github.com/SigmaHQ/sigma/blob/c68bb91abb1146b8a6a65caf6819b1836d97f09d/rules/windows/builtin/security/win_security_audit_log_cleared.yml
+  Licence:      Detection Rule License 1.1
+  Changes:      drops the legacy event 517 selection; see docs/rules/win_security_security_log_cleared.md
 
 == Downloaded in CI only, not copied ==
 

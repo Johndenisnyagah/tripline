@@ -1,0 +1,34 @@
+rule_id: win_security_password_spraying
+tests:
+  # Splunk attack_data, PurpleSharp remote spray: 50 failed network logons (type 3) from
+  # 10.0.1.15 against 50 distinct accounts in 50 seconds, among 232 events.
+  - file: tp/splunk-attack-data_purplesharp_remote_spray_xml.log
+    origin: splunk-attack-data
+    synthetic: false
+    expect: {min_matches: 1, groups: ["10.0.1.15"]}
+  # Exactly 5 distinct accounts from one address in 4 minutes.
+  - file: tp/boundary_five_accounts.xml
+    origin: synthetic
+    synthetic: true
+    expect: {min_matches: 1, groups: ["192.0.2.130"]}
+  # soc-triage sample: 203.0.113.200 fails against Administrator (8x), admin, backup, scanner:
+  # 4 distinct accounts, one below the threshold.
+  - file: benign/soc-triage_windows_security.xml
+    origin: soc-triage
+    synthetic: false
+    expect: {matches: 0}
+  # Brute force, not spraying: 8 failures for one account.
+  - file: benign/one_account_many_failures.xml
+    origin: synthetic
+    synthetic: true
+    expect: {matches: 0}
+  # 5 accounts, each from a different address.
+  - file: benign/accounts_from_many_sources.xml
+    origin: synthetic
+    synthetic: true
+    expect: {matches: 0}
+  # 6 accounts failing interactively on the host itself (IpAddress "-"): no source to group by.
+  - file: benign/local_failures_no_source_address.xml
+    origin: synthetic
+    synthetic: true
+    expect: {matches: 0}

@@ -11,7 +11,7 @@ rebuilds them, and CI fails if the committed files differ.
 |---|---|---|---|
 | Linux sshd | `Syslog` | `pipelines/kusto_syslog.yml` + `azure_monitor` | `pipelines/splunk_sshd.yml` |
 | AWS CloudTrail | `AWSCloudTrail` | `pipelines/kusto_cloudtrail.yml` only | `pipelines/splunk_cloudtrail.yml` |
-| Windows Security | `SecurityEvent` | `azure_monitor` (step 7) | `splunk_windows` (step 7) |
+| Windows Security | `SecurityEvent` | `pipelines/kusto_windows.yml` + `azure_monitor` | `splunk_windows` |
 | Process creation / access | `Sysmon` (parser function) | `pipelines/kusto_windows.yml` (step 8) | `splunk_windows` (step 8) |
 
 ## CloudTrail → `AWSCloudTrail`
@@ -57,6 +57,22 @@ rebuilds them, and CI fails if the committed files differ.
   KQL with this backend.
 - `Syslog` has no source-IP or user column. The parser extracts `SourceIp` and `User` for the
   correlation `group-by`; the hand-written KQL extracts them from `SyslogMessage`.
+
+## Windows Security → `SecurityEvent`
+
+- **`azure_monitor` doesn't always pick the table.** It chose `SecurityEvent` by itself for
+  4625, but failed for 4720 and 1102 with "Unable to determine table name from rule". The plan
+  expected it to work out of the box. `pipelines/kusto_windows.yml` now sets `query_table:
+  SecurityEvent` for every `service: security` rule.
+- **`Provider_Name` has no `azure_monitor` mapping** and was rejected as an invalid field. In
+  `SecurityEvent` the provider is the `EventSourceName` column, so `kusto_windows.yml` maps it.
+- **Splunk:** `splunk_windows` turns `EventID` into `EventCode` and adds
+  `source="WinEventLog:Security"`.
+  - It leaves `Provider_Name` unmapped. The Splunk Add-on for Windows calls it `SourceName`, so
+    rule 14's SPL needs that field renamed in a real Splunk.
+  - Data indexed as `XmlWinEventLog:Security` (as in Splunk attack_data) needs the source
+    adjusted.
+  - Untested, since there's no Splunk in CI.
 
 ## Correlation rules
 

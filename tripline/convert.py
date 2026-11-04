@@ -29,16 +29,22 @@ QUERIES_DIR = REPO_ROOT / "queries"
 
 
 def _yaml_pipeline(name: str) -> ProcessingPipeline:
-    return ProcessingPipeline.from_yaml((PIPELINES_DIR / name).read_text(encoding="utf-8"))
+    """A tripline YAML pipeline from pipelines/, or a built-in pySigma pipeline by its id."""
+    path = PIPELINES_DIR / name
+    if path.suffix == ".yml":
+        return ProcessingPipeline.from_yaml(path.read_text(encoding="utf-8"))
+    from sigma.plugins import InstalledSigmaPlugins
+
+    return InstalledSigmaPlugins.autodiscover().pipelines[name]()
 
 
 @dataclass(frozen=True)
 class Target:
     """Which pipelines convert a rule from one log source, per backend."""
 
-    kql: tuple[str, ...]  # YAML pipelines in pipelines/
+    kql: tuple[str, ...]  # YAML files in pipelines/ or built-in pySigma pipeline ids
     kql_azure_monitor: bool  # also apply pySigma's azure_monitor pipeline
-    spl: tuple[str, ...]
+    spl: tuple[str, ...]  # same as kql
 
 
 TARGETS: dict[tuple[str | None, str | None, str | None], Target] = {
@@ -48,6 +54,10 @@ TARGETS: dict[tuple[str | None, str | None, str | None], Target] = {
     ),
     ("aws", "cloudtrail", None): Target(
         kql=("kusto_cloudtrail.yml",), kql_azure_monitor=False, spl=("splunk_cloudtrail.yml",)
+    ),
+    # kusto_windows.yml sets SecurityEvent; splunk_windows adds the WinEventLog source.
+    ("windows", "security", None): Target(
+        kql=("kusto_windows.yml",), kql_azure_monitor=True, spl=("splunk_windows",)
     ),
 }
 

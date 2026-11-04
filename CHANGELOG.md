@@ -5,6 +5,9 @@ All notable changes to this project are recorded here.
 ## [Unreleased]
 
 ### Added
+- Windows parser (XML with or without `<Events>` wrapper, Splunk XmlWinEventLog, EVTX via
+  python-evtx) and Windows Security rules 12-14 (password spraying, local account created,
+  Security log cleared); Splunk attack_data fixtures; `SecurityEvent` in the Kusto emulator.
 - CloudTrail rules 7-11: console brute force (event_count), IAM console password created,
   console login without MFA or as root, S3 Block Public Access weakened, EBS snapshot shared;
   Stratus/Invictus fixtures, hand-written KQL for rule 7, NOTICE-completeness test.
