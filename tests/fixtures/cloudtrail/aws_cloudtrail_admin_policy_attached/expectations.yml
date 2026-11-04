@@ -1,0 +1,32 @@
+rule_id: aws_cloudtrail_admin_policy_attached
+tests:
+  # AttachUserPolicy AdministratorAccess at 04:56; the IAMFullAccess attach at 04:50 must not count.
+  - file: tp/soc-triage_cloudtrail.json
+    origin: soc-triage
+    synthetic: false
+    expect: {matches: 1}
+  # Stratus aws.persistence.iam-create-admin-user detonation: one AttachUserPolicy.
+  - file: tp/stratus-2.37.2_iam-create-admin-user.json
+    origin: stratus-red-team-2.37.2
+    synthetic: false
+    expect: {matches: 1}
+  # Invictus dataset, 68 real records: one AttachRolePolicy and one AttachUserPolicy with AdministratorAccess.
+  - file: tp/invictus_20230710T1230Z_ZtUNbBkwAu98FPZb.json
+    origin: invictus
+    synthetic: false
+    expect: {matches: 2}
+  # The group variant.
+  - file: tp/admin_attached_to_group.json
+    origin: synthetic
+    synthetic: true
+    expect: {matches: 1}
+  # Invictus dataset: AttachRolePolicy with a custom (non-admin) policy among other real events.
+  - file: benign/invictus_20230710T1210Z_RBxlxVrF890sGHGg.json
+    origin: invictus
+    synthetic: false
+    expect: {matches: 0}
+  # ReadOnlyAccess, AdministratorAccess-Amplify (endswith must not match), Detach, GetPolicy, List.
+  - file: benign/near_miss_policies.json
+    origin: synthetic
+    synthetic: true
+    expect: {matches: 0}

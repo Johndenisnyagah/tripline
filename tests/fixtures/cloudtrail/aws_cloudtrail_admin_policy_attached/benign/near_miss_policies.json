@@ -1,0 +1,147 @@
+{
+  "Records": [
+    {
+      "eventVersion": "1.11",
+      "userIdentity": {
+        "type": "IAMUser",
+        "principalId": "AIDAEXAMPLEID0000002",
+        "arn": "arn:aws:iam::111122223333:user/ops-admin",
+        "accountId": "111122223333",
+        "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+        "userName": "ops-admin"
+      },
+      "eventTime": "2026-11-03T14:00:00Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "AttachUserPolicy",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "192.0.2.90",
+      "userAgent": "aws-cli/2.17.0 Python/3.12.6 Linux/6.8.0 exe/x86_64.ubuntu.24",
+      "requestParameters": {
+        "userName": "ops-temp",
+        "policyArn": "arn:aws:iam::aws:policy/ReadOnlyAccess"
+      },
+      "responseElements": null,
+      "requestID": "ad0e9f12-f64a-5375-95f4-f39ef4328075",
+      "eventID": "40972c5b-ffd6-51ff-849c-a5923eeba14c",
+      "readOnly": false,
+      "eventType": "AwsApiCall",
+      "managementEvent": true,
+      "recipientAccountId": "111122223333",
+      "eventCategory": "Management"
+    },
+    {
+      "eventVersion": "1.11",
+      "userIdentity": {
+        "type": "IAMUser",
+        "principalId": "AIDAEXAMPLEID0000002",
+        "arn": "arn:aws:iam::111122223333:user/ops-admin",
+        "accountId": "111122223333",
+        "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+        "userName": "ops-admin"
+      },
+      "eventTime": "2026-11-03T14:00:30Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "AttachRolePolicy",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "192.0.2.90",
+      "userAgent": "aws-cli/2.17.0 Python/3.12.6 Linux/6.8.0 exe/x86_64.ubuntu.24",
+      "requestParameters": {
+        "roleName": "amplify-deploy",
+        "policyArn": "arn:aws:iam::aws:policy/AdministratorAccess-Amplify"
+      },
+      "responseElements": null,
+      "requestID": "e5d953af-022e-5166-aa98-56857bf12e57",
+      "eventID": "311c77c9-a9cd-551e-9665-e75cbc4cc396",
+      "readOnly": false,
+      "eventType": "AwsApiCall",
+      "managementEvent": true,
+      "recipientAccountId": "111122223333",
+      "eventCategory": "Management"
+    },
+    {
+      "eventVersion": "1.11",
+      "userIdentity": {
+        "type": "IAMUser",
+        "principalId": "AIDAEXAMPLEID0000002",
+        "arn": "arn:aws:iam::111122223333:user/ops-admin",
+        "accountId": "111122223333",
+        "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+        "userName": "ops-admin"
+      },
+      "eventTime": "2026-11-03T14:01:00Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "DetachUserPolicy",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "192.0.2.90",
+      "userAgent": "aws-cli/2.17.0 Python/3.12.6 Linux/6.8.0 exe/x86_64.ubuntu.24",
+      "requestParameters": {
+        "userName": "ops-temp",
+        "policyArn": "arn:aws:iam::aws:policy/AdministratorAccess"
+      },
+      "responseElements": null,
+      "requestID": "8a06fd85-45f4-5f59-9431-ad6320a30f87",
+      "eventID": "be0d0b56-9bfd-549b-96ba-7c9c4e4322dc",
+      "readOnly": false,
+      "eventType": "AwsApiCall",
+      "managementEvent": true,
+      "recipientAccountId": "111122223333",
+      "eventCategory": "Management"
+    },
+    {
+      "eventVersion": "1.11",
+      "userIdentity": {
+        "type": "IAMUser",
+        "principalId": "AIDAEXAMPLEID0000002",
+        "arn": "arn:aws:iam::111122223333:user/ops-admin",
+        "accountId": "111122223333",
+        "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+        "userName": "ops-admin"
+      },
+      "eventTime": "2026-11-03T14:01:30Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "GetPolicy",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "192.0.2.90",
+      "userAgent": "aws-cli/2.17.0 Python/3.12.6 Linux/6.8.0 exe/x86_64.ubuntu.24",
+      "requestParameters": {
+        "policyArn": "arn:aws:iam::aws:policy/AdministratorAccess"
+      },
+      "responseElements": null,
+      "requestID": "fa5e1411-0156-505f-8bf3-74583579d5fd",
+      "eventID": "c2bd75ad-f8fc-5b89-92f1-e1b6e0556852",
+      "readOnly": false,
+      "eventType": "AwsApiCall",
+      "managementEvent": true,
+      "recipientAccountId": "111122223333",
+      "eventCategory": "Management"
+    },
+    {
+      "eventVersion": "1.11",
+      "userIdentity": {
+        "type": "IAMUser",
+        "principalId": "AIDAEXAMPLEID0000002",
+        "arn": "arn:aws:iam::111122223333:user/ops-admin",
+        "accountId": "111122223333",
+        "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+        "userName": "ops-admin"
+      },
+      "eventTime": "2026-11-03T14:02:00Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "ListAttachedUserPolicies",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "192.0.2.90",
+      "userAgent": "aws-cli/2.17.0 Python/3.12.6 Linux/6.8.0 exe/x86_64.ubuntu.24",
+      "requestParameters": {
+        "userName": "ops-temp"
+      },
+      "responseElements": null,
+      "requestID": "8e046774-e3e9-5daa-b6b6-d290de1a5ed9",
+      "eventID": "417cc659-caaf-59f8-a853-fbec730bfecd",
+      "readOnly": false,
+      "eventType": "AwsApiCall",
+      "managementEvent": true,
+      "recipientAccountId": "111122223333",
+      "eventCategory": "Management"
+    }
+  ]
+}

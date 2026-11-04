@@ -1,0 +1,71 @@
+{
+  "Records": [
+    {
+      "eventVersion": "1.11",
+      "userIdentity": {
+        "type": "IAMUser",
+        "principalId": "AIDAEXAMPLEID0000002",
+        "arn": "arn:aws:iam::111122223333:user/ops-admin",
+        "accountId": "111122223333",
+        "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+        "userName": "ops-admin"
+      },
+      "eventTime": "2026-11-03T12:00:00Z",
+      "eventSource": "signin.amazonaws.com",
+      "eventName": "ConsoleLogin",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "198.51.100.64",
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64; rv:131.0) Gecko/20100101 Firefox/131.0",
+      "requestParameters": null,
+      "responseElements": {
+        "ConsoleLogin": "Success"
+      },
+      "requestID": "4493f0e1-bd61-5932-b60d-db21e8f0d501",
+      "eventID": "07b4688a-848f-5536-b496-665a2d6d7756",
+      "readOnly": false,
+      "eventType": "AwsConsoleSignIn",
+      "managementEvent": true,
+      "recipientAccountId": "111122223333",
+      "eventCategory": "Management",
+      "additionalEventData": {
+        "LoginTo": "https://console.aws.amazon.com/console/home",
+        "MobileVersion": "No",
+        "MFAUsed": "No"
+      }
+    },
+    {
+      "eventVersion": "1.11",
+      "userIdentity": {
+        "type": "IAMUser",
+        "principalId": "AIDAEXAMPLEID0000002",
+        "arn": "arn:aws:iam::111122223333:user/ops-admin",
+        "accountId": "111122223333",
+        "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+        "userName": "ops-admin"
+      },
+      "eventTime": "2026-11-03T12:04:00Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "CreateAccessKey",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "198.51.100.64",
+      "userAgent": "aws-cli/2.17.0 Python/3.12.6 Linux/6.8.0 exe/x86_64.ubuntu.24",
+      "requestParameters": {
+        "userName": "svc-backup"
+      },
+      "responseElements": {
+        "accessKey": {
+          "accessKeyId": "AKIAI44QH8DHBEXAMPLE",
+          "status": "Active",
+          "userName": "svc-backup"
+        }
+      },
+      "requestID": "c478fe37-425b-5c03-ab4b-cced692ceb07",
+      "eventID": "eeabbc6f-200c-58f5-880f-1286711aaa5c",
+      "readOnly": false,
+      "eventType": "AwsApiCall",
+      "managementEvent": true,
+      "recipientAccountId": "111122223333",
+      "eventCategory": "Management"
+    }
+  ]
+}

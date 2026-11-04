@@ -1,0 +1,37 @@
+rule_id: aws_cloudtrail_access_key_after_failed_console_login
+tests:
+  # 6 failed console logins from 203.0.113.5 (04:45-04:47), CreateAccessKey for deploy at 04:52.
+  - file: tp/soc-triage_cloudtrail.json
+    origin: soc-triage
+    synthetic: false
+    expect: {min_matches: 1, groups: ["203.0.113.5"]}
+  # One failed login, key created 59 minutes later: just inside the 1 h window.
+  - file: tp/boundary_key_59min_after_failed_login.json
+    origin: synthetic
+    synthetic: true
+    expect: {min_matches: 1, groups: ["192.0.2.80"]}
+  # Real detonation: CreateUser + AttachUserPolicy + CreateAccessKey with no failed login.
+  - file: benign/stratus-2.37.2_iam-create-admin-user.json
+    origin: stratus-red-team-2.37.2
+    synthetic: false
+    expect: {matches: 0}
+  # Key 61 minutes after the failed login: just outside the window.
+  - file: benign/key_61min_after_failed_login.json
+    origin: synthetic
+    synthetic: true
+    expect: {matches: 0}
+  # Failed login from one IP, key from another.
+  - file: benign/key_from_other_source.json
+    origin: synthetic
+    synthetic: true
+    expect: {matches: 0}
+  # Wrong order: key first, failed login afterwards.
+  - file: benign/key_before_failed_login.json
+    origin: synthetic
+    synthetic: true
+    expect: {matches: 0}
+  # Successful (not failed) console login, then a key.
+  - file: benign/key_after_successful_login.json
+    origin: synthetic
+    synthetic: true
+    expect: {matches: 0}

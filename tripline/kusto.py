@@ -20,9 +20,10 @@ import time
 from pathlib import Path
 
 import requests
+import yaml
 from sigma.pipelines.azuremonitor.tables import AZURE_MONITOR_TABLES
 
-from tripline.parsers import sshd
+from tripline.parsers import cloudtrail, sshd
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 KUSTO_URL = os.environ.get("TRIPLINE_KUSTO_URL", "http://localhost:8080")
@@ -193,9 +194,23 @@ def fixture_rows(source: str, path: Path) -> list[dict]:
         return [syslog_row(e) for e in sshd.parse_file(path)]
     if source == "cloudtrail":
         # Raw records, not the flattened parser output: the connector keeps nested JSON.
-        records = json.loads(path.read_text(encoding="utf-8"))["Records"]
-        return [cloudtrail_row(r) for r in records]
+        return [cloudtrail_row(r) for r in cloudtrail.load_records(path)]
     raise ValueError(f"no Sentinel table mapping for source {source!r}")
+
+
+def sentinel_column(source: str, sigma_field: str) -> str:
+    """The Sentinel column a Sigma field lands in (for reading group-by values from KQL output).
+
+    CloudTrail uses the field mapping in pipelines/kusto_cloudtrail.yml; sshd group-by fields
+    (SourceIp, User) keep their names because the hand-written KQL extracts them under those.
+    """
+    if source != "cloudtrail":
+        return sigma_field
+    pipeline = yaml.safe_load((REPO_ROOT / "pipelines" / "kusto_cloudtrail.yml").read_text("utf-8"))
+    for item in pipeline["transformations"]:
+        if item.get("type") == "field_name_mapping":
+            return item["mapping"].get(sigma_field, sigma_field)
+    return sigma_field
 
 
 # --- which KQL runs for a rule -----------------------------------------------

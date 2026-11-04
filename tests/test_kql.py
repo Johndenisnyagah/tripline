@@ -36,7 +36,7 @@ def test_kql_on_fixture(case: Case) -> None:
     kusto.ingest(kusto.SOURCE_TABLE[case.source], kusto.fixture_rows(case.source, case.path))
     rows = kusto.query(kql)
 
-    fields = group_by_fields(case.rule_id)
-    groups = {"|".join(str(row[f]) for f in fields) for row in rows} if fields else set()
+    columns = [kusto.sentinel_column(case.source, f) for f in group_by_fields(case.rule_id)]
+    groups = {"|".join(str(row[c]) for c in columns) for row in rows} if columns else set()
     failure = case.check_counts(len(rows), groups)
     assert failure is None, f"{case.test_id} ({kind} KQL): {failure}\nrows: {rows[:5]}"

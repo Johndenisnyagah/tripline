@@ -1,0 +1,31 @@
+title: AWS AdministratorAccess Policy Attached
+id: 3c600437-4caa-4d02-aee1-69f4c3418d35
+status: experimental
+description: |
+    Detects the AdministratorAccess managed policy being attached to an IAM user, role or
+    group, which grants full control of the AWS account. Fires on denied attempts too.
+references:
+    - https://github.com/Johndenisnyagah/soc-triage/blob/efd910cd7b881a5d4e95088670b1b7cfe5e1c64b/backend/app/detection/library.py#L203-L233
+    - https://docs.aws.amazon.com/aws-managed-policy/latest/reference/AdministratorAccess.html
+author: John Denis Nyagah
+date: 2026-11-04
+tags:
+    - attack.persistence
+    - attack.privilege-escalation
+    - attack.t1098.003
+logsource:
+    product: aws
+    service: cloudtrail
+detection:
+    selection:
+        eventSource: iam.amazonaws.com
+        eventName:
+            - AttachUserPolicy
+            - AttachRolePolicy
+            - AttachGroupPolicy
+        requestParameters.policyArn|endswith: '/AdministratorAccess'
+    condition: selection
+falsepositives:
+    - Break-glass or bootstrap administrators created on purpose, often by infrastructure-as-code
+    - Account vending pipelines that grant AdministratorAccess to a new account's admin role
+level: high

@@ -1,0 +1,74 @@
+title: AWS Console Login Failure
+id: 9ef87584-1411-41ef-8a54-ddc402cfaaa4
+name: aws_cloudtrail_akfcl_console_login_failure
+status: experimental
+description: |
+    Detects a failed AWS console sign-in (ConsoleLogin with responseElements.ConsoleLogin
+    Failure). Base rule for the access-key correlation in this file.
+references:
+    - https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference-aws-console-sign-in-events.html
+author: John Denis Nyagah
+date: 2026-11-04
+logsource:
+    product: aws
+    service: cloudtrail
+detection:
+    selection:
+        eventSource: signin.amazonaws.com
+        eventName: ConsoleLogin
+        responseElements.ConsoleLogin: Failure
+    condition: selection
+falsepositives:
+    - Users mistyping their console password
+level: informational
+---
+title: AWS IAM Access Key Created
+id: 7c6872a7-8a1d-465a-badf-3dc4c9a46177
+name: aws_cloudtrail_akfcl_create_access_key
+status: experimental
+description: |
+    Detects creation of an IAM user access key (CreateAccessKey). Base rule for the
+    access-key correlation in this file; routine on its own.
+references:
+    - https://docs.aws.amazon.com/IAM/latest/APIReference/API_CreateAccessKey.html
+author: John Denis Nyagah
+date: 2026-11-04
+logsource:
+    product: aws
+    service: cloudtrail
+detection:
+    selection:
+        eventSource: iam.amazonaws.com
+        eventName: CreateAccessKey
+    condition: selection
+falsepositives:
+    - Routine key rotation and new service users
+level: informational
+---
+title: AWS Access Key Created After Failed Console Login
+id: 46052a12-053e-446f-be62-5052b7fd1bbe
+status: experimental
+description: |
+    Detects an IAM access key being created from a source IP that failed to sign in to the
+    AWS console within the preceding hour: long-lived credentials minted right after a
+    credential-guessing attempt.
+references:
+    - https://github.com/Johndenisnyagah/soc-triage/blob/efd910cd7b881a5d4e95088670b1b7cfe5e1c64b/backend/app/detection/library.py#L141-L168
+author: John Denis Nyagah
+date: 2026-11-04
+tags:
+    - attack.persistence
+    - attack.privilege-escalation
+    - attack.t1098.001
+correlation:
+    type: temporal_ordered
+    rules:
+        - aws_cloudtrail_akfcl_console_login_failure
+        - aws_cloudtrail_akfcl_create_access_key
+    group-by:
+        - sourceIPAddress
+    timespan: 1h
+falsepositives:
+    - An administrator who mistypes their console password and then rotates an access key from the same office or VPN address
+    - Shared NAT or VPN egress addresses where one user fails to log in and another creates a key
+level: high

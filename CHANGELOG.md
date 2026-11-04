@@ -5,6 +5,9 @@ All notable changes to this project are recorded here.
 ## [Unreleased]
 
 ### Added
+- CloudTrail rules `aws_cloudtrail_access_key_after_failed_console_login` (temporal_ordered) and
+  `aws_cloudtrail_admin_policy_attached`; Stratus Red Team 2.37.2 and Invictus `aws_dataset`
+  fixtures (real CloudTrail) for rules 4, 5 and 6; hand-written KQL for rule 4.
 - sshd rules `lnx_sshd_brute_force_success` (chained correlation) and
   `lnx_sshd_invalid_user_enumeration` (value_count), with soc-triage and synthetic fixtures,
   hand-written KQL and doc notes.

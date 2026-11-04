@@ -1,0 +1,33 @@
+{
+  "Records": [
+    {
+      "eventVersion": "1.11",
+      "userIdentity": {
+        "type": "IAMUser",
+        "principalId": "AIDAEXAMPLEID0000002",
+        "arn": "arn:aws:iam::111122223333:user/ops-admin",
+        "accountId": "111122223333",
+        "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+        "userName": "ops-admin"
+      },
+      "eventTime": "2026-11-03T13:00:00Z",
+      "eventSource": "iam.amazonaws.com",
+      "eventName": "AttachGroupPolicy",
+      "awsRegion": "us-east-1",
+      "sourceIPAddress": "192.0.2.90",
+      "userAgent": "aws-cli/2.17.0 Python/3.12.6 Linux/6.8.0 exe/x86_64.ubuntu.24",
+      "requestParameters": {
+        "groupName": "contractors",
+        "policyArn": "arn:aws:iam::aws:policy/AdministratorAccess"
+      },
+      "responseElements": null,
+      "requestID": "39dacf0d-6f44-5b7d-9ebb-c86ebe091fb8",
+      "eventID": "dbf8e1c0-66b7-547c-843f-9b9881f9dc0d",
+      "readOnly": false,
+      "eventType": "AwsApiCall",
+      "managementEvent": true,
+      "recipientAccountId": "111122223333",
+      "eventCategory": "Management"
+    }
+  ]
+}

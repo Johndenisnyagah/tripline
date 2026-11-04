@@ -1,0 +1,2 @@
+AWSCloudTrail
+| where EventSource =~ "iam.amazonaws.com" and (EventName in~ ("AttachUserPolicy", "AttachRolePolicy", "AttachGroupPolicy")) and tostring(parse_json(RequestParameters).policyArn) endswith "/AdministratorAccess"

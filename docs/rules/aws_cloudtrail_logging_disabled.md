@@ -28,7 +28,11 @@
     Exactly 1 match: the denied `StopLogging`.
   - `tp/trail_reconfigured_then_deleted.json` (synthetic): `PutEventSelectors`,
     `UpdateTrail`, `DeleteTrail`, giving 3 matches.
-  - A Stratus Red Team `cloudtrail-stop` capture is planned for step 5.
+  - Stratus Red Team 2.37.2 detonation logs (real, non-synthetic), 1 match each:
+    `tp/stratus-2.37.2_cloudtrail-stop.json` (`StopLogging`),
+    `tp/stratus-2.37.2_cloudtrail-delete.json` (`DeleteTrail`) and
+    `tp/stratus-2.37.2_cloudtrail-event-selectors.json` (`PutEventSelectors`). The last one is
+    the case SigmaHQ's original rule misses.
   - Results table: generated in a later step.
 - **SigmaHQ relation:** derived from `aws_cloudtrail_disable_logging.yml` ("AWS CloudTrail
   Important Change", vitaliy0x1). Differences:

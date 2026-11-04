@@ -15,9 +15,9 @@ synthetic logs, converted to Sentinel KQL and Splunk SPL, KQL executed in the Ku
 - Ask John before changing rules, thresholds, datasets, README claims or anything in soc-triage.
 
 ## Current phase
-Step 4 (sshd rules): rules 2 (success after brute force) and 3 (username enumeration),
-hand-written KQL and doc notes for rules 1-3.
-Next: step 5 (CloudTrail rules 4 and 6).
+Step 5 (CloudTrail mirror rules): rules 4 (access key after failed console login) and 6
+(AdministratorAccess attached), Stratus Red Team and Invictus fixtures, rule 4 hand-written KQL.
+Next: step 6 (CloudTrail rules 7-11).
 
 ## Decisions
 - 2026-11-04 — second backend is Splunk SPL; it converts all four sources and supports correlations — John
@@ -55,3 +55,7 @@ Next: step 5 (CloudTrail rules 4 and 6).
 - 2026-11-04 — rules using temporal_ordered (2 and 4) have no SPL: pySigma-backend-splunk 2.1.0 cannot convert them, and no hand-written SPL is added (it could not be executed in CI). Results table shows "SPL: n/a (backend unsupported)"; listed in convert.SPL_UNSUPPORTED — John
 - 2026-11-04 — rule 3 matches `SyslogMessage|contains: 'Invalid user '` (not startswith) because Splunk's _raw includes the syslog prefix; distinct usernames are case-insensitive (NOCASE in SQLite, tolower in KQL) — Claude
 - 2026-11-04 — metadata checker allows intermediate named correlations; every named document must be used and every reference must resolve to an earlier document — Claude
+- 2026-11-04 — Stratus Red Team detonation logs pinned to v2.37.2 (commit 036d2ca; v2.38.0 was released the same day), copied unchanged from docs/detonation-logs/; they are bare JSON arrays, so the CloudTrail readers accept both `{"Records": [...]}` and `[...]` — Claude
+- 2026-11-04 — Invictus aws_dataset (MIT, commit 4667aa9) files copied whole and unchanged (not extracted), including one real benign near-miss (non-admin AttachRolePolicy) — Claude
+- 2026-11-04 — rule 6 matches only the AdministratorAccess managed policy (spec); soc-triage also counts IAMFullAccess/PowerUserAccess and PutUserPolicy — a known parity difference for step 12 — Claude
+- 2026-11-04 — test_kql reads correlation group-by values from KQL output via the CloudTrail pipeline's field mapping (sourceIPAddress -> SourceIpAddress), so hand-written KQL uses real Sentinel column names — Claude

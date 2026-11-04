@@ -5,6 +5,19 @@ tests:
     origin: soc-triage
     synthetic: false
     expect: {matches: 1}
+  # Stratus Red Team 2.37.2 detonation logs, one event each.
+  - file: tp/stratus-2.37.2_cloudtrail-stop.json
+    origin: stratus-red-team-2.37.2
+    synthetic: false
+    expect: {matches: 1}
+  - file: tp/stratus-2.37.2_cloudtrail-delete.json
+    origin: stratus-red-team-2.37.2
+    synthetic: false
+    expect: {matches: 1}
+  - file: tp/stratus-2.37.2_cloudtrail-event-selectors.json
+    origin: stratus-red-team-2.37.2
+    synthetic: false
+    expect: {matches: 1}
   # PutEventSelectors that drops write events, UpdateTrail to another bucket, DeleteTrail.
   - file: tp/trail_reconfigured_then_deleted.json
     origin: synthetic
