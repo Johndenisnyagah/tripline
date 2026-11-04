@@ -1,0 +1,38 @@
+title: AWS S3 Bucket Block Public Access Weakened
+id: 597a7f90-aff7-45e6-a0e0-81ffaa3e9757
+related:
+    - id: ab18a523-e093-4ac6-8303-8c47431f4fca
+      type: derived
+status: experimental
+description: |
+    Detects an S3 bucket's Block Public Access protection being turned off: either removed
+    entirely (DeleteBucketPublicAccessBlock) or replaced by a configuration that sets any of
+    its four flags to false. This usually comes right before a bucket is made public.
+references:
+    - https://github.com/SigmaHQ/sigma/blob/c68bb91abb1146b8a6a65caf6819b1836d97f09d/rules/cloud/aws/cloudtrail/aws_cloudtrail_bucket_block_public_access_weakened.yml
+    - https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-control-block-public-access.html
+author: John Denis Nyagah
+date: 2026-11-04
+tags:
+    - attack.defense-impairment
+    - attack.t1686.001
+logsource:
+    product: aws
+    service: cloudtrail
+detection:
+    selection_source:
+        eventSource: s3.amazonaws.com
+    selection_delete:
+        eventName: DeleteBucketPublicAccessBlock
+    selection_put:
+        eventName: PutBucketPublicAccessBlock
+    selection_flag_off:
+        - requestParameters.PublicAccessBlockConfiguration.BlockPublicAcls: 'false'
+        - requestParameters.PublicAccessBlockConfiguration.IgnorePublicAcls: 'false'
+        - requestParameters.PublicAccessBlockConfiguration.BlockPublicPolicy: 'false'
+        - requestParameters.PublicAccessBlockConfiguration.RestrictPublicBuckets: 'false'
+    condition: selection_source and (selection_delete or (selection_put and selection_flag_off))
+falsepositives:
+    - Buckets that are meant to be public (static websites, public datasets) being configured
+    - Infrastructure-as-code applying a deliberately relaxed configuration
+level: high

@@ -1,0 +1,38 @@
+title: AWS Console Login Without MFA Or As Root
+id: 50c08d40-5123-494a-9356-ab9ecb0b3161
+related:
+    - id: 77caf516-34e5-4df9-b4db-20744fea0a60
+      type: derived
+status: experimental
+description: |
+    Detects a successful AWS console sign-in that used no MFA, or any successful console
+    sign-in as the root user. Either way a single stolen password was enough to get in, or
+    the most powerful identity in the account was used interactively.
+references:
+    - https://github.com/SigmaHQ/sigma/blob/c68bb91abb1146b8a6a65caf6819b1836d97f09d/rules/cloud/aws/cloudtrail/aws_cloudtrail_console_login_success_without_mfa.yml
+    - https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference-aws-console-sign-in-events.html
+author: John Denis Nyagah
+date: 2026-11-04
+tags:
+    - attack.initial-access
+    - attack.persistence
+    - attack.privilege-escalation
+    - attack.stealth
+    - attack.t1078.004
+logsource:
+    product: aws
+    service: cloudtrail
+detection:
+    selection_login:
+        eventSource: signin.amazonaws.com
+        eventName: ConsoleLogin
+        responseElements.ConsoleLogin: Success
+    selection_no_mfa:
+        additionalEventData.MFAUsed: 'No'
+    selection_root:
+        userIdentity.type: Root
+    condition: selection_login and (selection_no_mfa or selection_root)
+falsepositives:
+    - Federated (SAML or IAM Identity Center) console sessions, which log MFAUsed No because MFA happened at the identity provider
+    - Planned root sign-ins for the few tasks that require root (billing settings, account closure)
+level: medium

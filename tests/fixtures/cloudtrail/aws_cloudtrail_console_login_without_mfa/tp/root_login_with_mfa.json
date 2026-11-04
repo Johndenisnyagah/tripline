@@ -1,0 +1,35 @@
+{
+  "Records": [
+    {
+      "eventVersion": "1.11",
+      "userIdentity": {
+        "type": "Root",
+        "principalId": "111122223333",
+        "arn": "arn:aws:iam::111122223333:root",
+        "accountId": "111122223333"
+      },
+      "eventTime": "2026-11-03T14:00:00Z",
+      "eventSource": "signin.amazonaws.com",
+      "eventName": "ConsoleLogin",
+      "awsRegion": "eu-central-1",
+      "sourceIPAddress": "192.0.2.120",
+      "userAgent": "Mozilla/5.0 (X11; Linux x86_64; rv:131.0) Gecko/20100101 Firefox/131.0",
+      "requestParameters": null,
+      "responseElements": {
+        "ConsoleLogin": "Success"
+      },
+      "requestID": "fc1d7bf3-4a5c-57ba-bb1d-8488ccd2047c",
+      "eventID": "21cef6c8-264d-5407-89c0-b81403cd641d",
+      "readOnly": false,
+      "eventType": "AwsConsoleSignIn",
+      "managementEvent": true,
+      "recipientAccountId": "111122223333",
+      "eventCategory": "Management",
+      "additionalEventData": {
+        "LoginTo": "https://console.aws.amazon.com/console/home",
+        "MobileVersion": "No",
+        "MFAUsed": "Yes"
+      }
+    }
+  ]
+}

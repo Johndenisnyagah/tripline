@@ -1,0 +1,1 @@
+sourcetype="aws:cloudtrail" eventSource="ec2.amazonaws.com" eventName="ModifySnapshotAttribute" requestParameters.attributeType="CREATE_VOLUME_PERMISSION" requestParameters.createVolumePermission.add.items IN ("*userId*", "*group*")

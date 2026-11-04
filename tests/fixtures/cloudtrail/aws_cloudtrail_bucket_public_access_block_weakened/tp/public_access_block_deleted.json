@@ -1,0 +1,33 @@
+{
+  "Records": [
+    {
+      "eventVersion": "1.11",
+      "userIdentity": {
+        "type": "IAMUser",
+        "principalId": "AIDAEXAMPLEID0000003",
+        "arn": "arn:aws:iam::111122223333:user/ops-admin",
+        "accountId": "111122223333",
+        "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+        "userName": "ops-admin"
+      },
+      "eventTime": "2026-11-03T16:05:00Z",
+      "eventSource": "s3.amazonaws.com",
+      "eventName": "DeleteBucketPublicAccessBlock",
+      "awsRegion": "eu-central-1",
+      "sourceIPAddress": "192.0.2.100",
+      "userAgent": "aws-cli/2.17.0 Python/3.12.6 Linux/6.8.0 exe/x86_64.ubuntu.24",
+      "requestParameters": {
+        "bucketName": "hr-archive-111122223333",
+        "Host": "hr-archive-111122223333.s3.eu-central-1.amazonaws.com"
+      },
+      "responseElements": null,
+      "requestID": "4a7f7756-1a50-5d8c-96b1-08613d846e32",
+      "eventID": "0854a198-34c0-54fd-a1f2-e1209f1329f1",
+      "readOnly": false,
+      "eventType": "AwsApiCall",
+      "managementEvent": true,
+      "recipientAccountId": "111122223333",
+      "eventCategory": "Management"
+    }
+  ]
+}

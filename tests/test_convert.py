@@ -89,3 +89,11 @@ def test_sshd_spl_never_anchors_on_raw() -> None:
         if path.suffix == ".spl" and 'sourcetype="linux_secure"' in query:
             for part in query.split('_raw="')[1:]:
                 assert part.startswith("*"), f"{path}: _raw match not prefixed with *: {part[:40]}"
+
+
+def test_no_kql_compares_a_quoted_field_expression() -> None:
+    """A quoted 'parse_json(...)' is a string constant, so the comparison can never match."""
+    for path, query in generate().items():
+        if path.suffix == ".kql":
+            assert "'parse_json(" not in query, f"{path}: quoted parse_json field"
+            assert "'tostring(" not in query, f"{path}: quoted tostring field"

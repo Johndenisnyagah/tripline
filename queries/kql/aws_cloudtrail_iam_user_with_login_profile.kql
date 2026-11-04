@@ -1,0 +1,2 @@
+AWSCloudTrail
+| where EventSource =~ "iam.amazonaws.com" and EventName =~ "CreateLoginProfile"

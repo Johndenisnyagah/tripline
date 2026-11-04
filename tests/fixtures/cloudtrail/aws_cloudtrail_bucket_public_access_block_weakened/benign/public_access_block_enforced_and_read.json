@@ -1,0 +1,70 @@
+{
+  "Records": [
+    {
+      "eventVersion": "1.11",
+      "userIdentity": {
+        "type": "IAMUser",
+        "principalId": "AIDAEXAMPLEID0000003",
+        "arn": "arn:aws:iam::111122223333:user/ops-admin",
+        "accountId": "111122223333",
+        "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+        "userName": "ops-admin"
+      },
+      "eventTime": "2026-11-03T17:00:00Z",
+      "eventSource": "s3.amazonaws.com",
+      "eventName": "PutBucketPublicAccessBlock",
+      "awsRegion": "eu-central-1",
+      "sourceIPAddress": "192.0.2.100",
+      "userAgent": "aws-cli/2.17.0 Python/3.12.6 Linux/6.8.0 exe/x86_64.ubuntu.24",
+      "requestParameters": {
+        "bucketName": "new-logs-111122223333",
+        "Host": "new-logs-111122223333.s3.eu-central-1.amazonaws.com",
+        "publicAccessBlock": "",
+        "PublicAccessBlockConfiguration": {
+          "xmlns": "http://s3.amazonaws.com/doc/2006-03-01/",
+          "BlockPublicAcls": true,
+          "IgnorePublicAcls": true,
+          "BlockPublicPolicy": true,
+          "RestrictPublicBuckets": true
+        }
+      },
+      "responseElements": null,
+      "requestID": "26556daa-d2ea-582b-a1e8-049e7ec60bcd",
+      "eventID": "dd2b1a4f-d3f5-5036-ba02-68627790e685",
+      "readOnly": false,
+      "eventType": "AwsApiCall",
+      "managementEvent": true,
+      "recipientAccountId": "111122223333",
+      "eventCategory": "Management"
+    },
+    {
+      "eventVersion": "1.11",
+      "userIdentity": {
+        "type": "IAMUser",
+        "principalId": "AIDAEXAMPLEID0000003",
+        "arn": "arn:aws:iam::111122223333:user/ops-admin",
+        "accountId": "111122223333",
+        "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+        "userName": "ops-admin"
+      },
+      "eventTime": "2026-11-03T17:00:05Z",
+      "eventSource": "s3.amazonaws.com",
+      "eventName": "GetBucketPublicAccessBlock",
+      "awsRegion": "eu-central-1",
+      "sourceIPAddress": "192.0.2.100",
+      "userAgent": "aws-cli/2.17.0 Python/3.12.6 Linux/6.8.0 exe/x86_64.ubuntu.24",
+      "requestParameters": {
+        "bucketName": "new-logs-111122223333",
+        "Host": "new-logs-111122223333.s3.eu-central-1.amazonaws.com"
+      },
+      "responseElements": null,
+      "requestID": "232d438c-5bc8-5487-8e11-8f1d252ffb6d",
+      "eventID": "9c179539-fa0a-554a-b21b-3aeea6d4027e",
+      "readOnly": true,
+      "eventType": "AwsApiCall",
+      "managementEvent": true,
+      "recipientAccountId": "111122223333",
+      "eventCategory": "Management"
+    }
+  ]
+}

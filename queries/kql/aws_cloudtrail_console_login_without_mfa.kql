@@ -1,0 +1,2 @@
+AWSCloudTrail
+| where (EventSource =~ "signin.amazonaws.com" and EventName =~ "ConsoleLogin" and tostring(parse_json(ResponseElements).ConsoleLogin) =~ "Success") and (tostring(parse_json(AdditionalEventData).MFAUsed) =~ "No" or UserIdentityType =~ "Root")

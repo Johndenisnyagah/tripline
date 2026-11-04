@@ -21,10 +21,11 @@ tests/fixtures/sshd/lnx_sshd_invalid_user_enumeration/tp/soc-triage_auth.log
 tests/fixtures/cloudtrail/aws_cloudtrail_logging_disabled/tp/soc-triage_cloudtrail.json
 tests/fixtures/cloudtrail/aws_cloudtrail_access_key_after_failed_console_login/tp/soc-triage_cloudtrail.json
 tests/fixtures/cloudtrail/aws_cloudtrail_admin_policy_attached/tp/soc-triage_cloudtrail.json
+tests/fixtures/cloudtrail/aws_cloudtrail_console_brute_force/tp/soc-triage_cloudtrail.json
   Source:  https://github.com/Johndenisnyagah/soc-triage/blob/efd910cd7b881a5d4e95088670b1b7cfe5e1c64b/sample_logs/cloudtrail.json
   Commit:  efd910cd7b881a5d4e95088670b1b7cfe5e1c64b
   Licence: MIT, Copyright (c) John Denis Nyagah (same author). Copied unchanged
-           (three identical copies, one per CloudTrail rule).
+           (identical copies, one per CloudTrail rule that uses it).
 
 -- Stratus Red Team (detonation logs) --
 Stratus Red Team, Copyright 2021-Present Datadog, Inc. This product includes software
@@ -42,6 +43,16 @@ tests/fixtures/cloudtrail/aws_cloudtrail_logging_disabled/tp/stratus-2.37.2_clou
 tests/fixtures/cloudtrail/aws_cloudtrail_admin_policy_attached/tp/stratus-2.37.2_iam-create-admin-user.json
 tests/fixtures/cloudtrail/aws_cloudtrail_access_key_after_failed_console_login/benign/stratus-2.37.2_iam-create-admin-user.json
   Source:  docs/detonation-logs/aws.persistence.iam-create-admin-user.json (two identical copies)
+tests/fixtures/cloudtrail/aws_cloudtrail_iam_user_with_login_profile/tp/stratus-2.37.2_iam-create-user-login-profile.json
+  Source:  docs/detonation-logs/aws.persistence.iam-create-user-login-profile.json
+tests/fixtures/cloudtrail/aws_cloudtrail_iam_user_with_login_profile/benign/stratus-2.37.2_iam-update-user-login-profile.json
+  Source:  docs/detonation-logs/aws.privilege-escalation.iam-update-user-login-profile.json
+tests/fixtures/cloudtrail/aws_cloudtrail_console_login_without_mfa/tp/stratus-2.37.2_console-login-without-mfa.json
+  Source:  docs/detonation-logs/aws.initial-access.console-login-without-mfa.json
+tests/fixtures/cloudtrail/aws_cloudtrail_ebs_snapshot_shared_externally/tp/stratus-2.37.2_ec2-share-ebs-snapshot.json
+  Source:  docs/detonation-logs/aws.exfiltration.ec2-share-ebs-snapshot.json
+tests/fixtures/cloudtrail/aws_cloudtrail_ebs_snapshot_shared_externally/benign/stratus-2.37.2_ec2-share-ami.json
+  Source:  docs/detonation-logs/aws.exfiltration.ec2-share-ami.json
 
 -- Invictus Incident Response aws_dataset --
 Copyright (c) 2023 Invictus Incident Response. MIT License:
@@ -50,9 +61,20 @@ Commit: 4667aa9c26330bc3317ed8bd526f4b83cff13602. Files copied unchanged; tripli
 the file names.
 
 tests/fixtures/cloudtrail/aws_cloudtrail_admin_policy_attached/tp/invictus_20230710T1230Z_ZtUNbBkwAu98FPZb.json
-  Source:  CloudTrail/218007301253_CloudTrail_us-east-1_20230710T1230Z_ZtUNbBkwAu98FPZb.json
+tests/fixtures/cloudtrail/aws_cloudtrail_iam_user_with_login_profile/tp/invictus_20230710T1230Z_ZtUNbBkwAu98FPZb.json
+  Source:  CloudTrail/218007301253_CloudTrail_us-east-1_20230710T1230Z_ZtUNbBkwAu98FPZb.json (two identical copies)
 tests/fixtures/cloudtrail/aws_cloudtrail_admin_policy_attached/benign/invictus_20230710T1210Z_RBxlxVrF890sGHGg.json
   Source:  CloudTrail/218007301253_CloudTrail_us-east-1_20230710T1210Z_RBxlxVrF890sGHGg.json
+tests/fixtures/cloudtrail/aws_cloudtrail_iam_user_with_login_profile/tp/invictus_20230710T1230Z_04rtp9DpvIpSZzMr.json
+  Source:  CloudTrail/218007301253_CloudTrail_us-east-1_20230710T1230Z_04rtp9DpvIpSZzMr.json
+tests/fixtures/cloudtrail/aws_cloudtrail_console_login_without_mfa/tp/invictus_20230710T1225Z_4iD2boYSOwmb6sWd.json
+  Source:  CloudTrail/218007301253_CloudTrail_us-east-1_20230710T1225Z_4iD2boYSOwmb6sWd.json
+tests/fixtures/cloudtrail/aws_cloudtrail_console_login_without_mfa/benign/invictus_20230710T1230Z_AvIajGd5rkz6vTy4.json
+  Source:  CloudTrail/218007301253_CloudTrail_us-east-1_20230710T1230Z_AvIajGd5rkz6vTy4.json
+tests/fixtures/cloudtrail/aws_cloudtrail_ebs_snapshot_shared_externally/tp/invictus_20230710T1220Z_ovtmbuX3ENJ119uH.json
+  Source:  CloudTrail/218007301253_CloudTrail_us-east-1_20230710T1220Z_ovtmbuX3ENJ119uH.json
+tests/fixtures/cloudtrail/aws_cloudtrail_ebs_snapshot_shared_externally/benign/invictus_20230710T1215Z_YMDRJwtmC82bUwAo.json
+  Source:  CloudTrail/218007301253_CloudTrail_us-east-1_20230710T1215Z_YMDRJwtmC82bUwAo.json
 
 All other fixtures are written for tripline (origin: synthetic) and use documentation-range
 IP addresses (RFC 5737) and AWS example account IDs.
@@ -65,6 +87,34 @@ rules/aws/cloudtrail/aws_cloudtrail_logging_disabled.yml
   Source:       https://github.com/SigmaHQ/sigma/blob/c68bb91abb1146b8a6a65caf6819b1836d97f09d/rules/cloud/aws/cloudtrail/aws_cloudtrail_disable_logging.yml
   Licence:      Detection Rule License 1.1
   Changes:      adds PutEventSelectors; level high; see docs/rules/aws_cloudtrail_logging_disabled.md
+
+rules/aws/cloudtrail/aws_cloudtrail_console_brute_force.yml
+  Derived from: "AWS ConsoleLogin Failed Authentication" (id 6393e346-1977-46ef-8987-ad414a145fad)
+  Author:       Ivan Saakov, Nasreddine Bencherchali
+  Source:       https://github.com/SigmaHQ/sigma/blob/c68bb91abb1146b8a6a65caf6819b1836d97f09d/rules/cloud/aws/cloudtrail/aws_cloudtrail_console_login_failed_authentication.yml
+  Licence:      Detection Rule License 1.1
+  Changes:      counts failures per source IP (>= 5 in 10m) instead of alerting on each one; see docs/rules/aws_cloudtrail_console_brute_force.md
+
+rules/aws/cloudtrail/aws_cloudtrail_console_login_without_mfa.yml
+  Derived from: "AWS Successful Console Login Without MFA" (id 77caf516-34e5-4df9-b4db-20744fea0a60)
+  Author:       Thuya@Hacktilizer, Ivan Saakov
+  Source:       https://github.com/SigmaHQ/sigma/blob/c68bb91abb1146b8a6a65caf6819b1836d97f09d/rules/cloud/aws/cloudtrail/aws_cloudtrail_console_login_success_without_mfa.yml
+  Licence:      Detection Rule License 1.1
+  Changes:      adds a root-user branch and an eventSource condition; see docs/rules/aws_cloudtrail_console_login_without_mfa.md
+
+rules/aws/cloudtrail/aws_cloudtrail_bucket_public_access_block_weakened.yml
+  Derived from: "AWS Bucket Block Public Access Weakened" (id ab18a523-e093-4ac6-8303-8c47431f4fca)
+  Author:       Shoban Chiddarth
+  Source:       https://github.com/SigmaHQ/sigma/blob/c68bb91abb1146b8a6a65caf6819b1836d97f09d/rules/cloud/aws/cloudtrail/aws_cloudtrail_bucket_block_public_access_weakened.yml
+  Licence:      Detection Rule License 1.1
+  Changes:      adds DeleteBucketPublicAccessBlock; fires on denied attempts too; see docs/rules/aws_cloudtrail_bucket_public_access_block_weakened.md
+
+rules/aws/cloudtrail/aws_cloudtrail_ebs_snapshot_shared_externally.yml
+  Derived from: "AWS Snapshot Backup Exfiltration" (id abae8fec-57bd-4f87-aff6-6e3db989843d)
+  Author:       Darin Smith
+  Source:       https://github.com/SigmaHQ/sigma/blob/c68bb91abb1146b8a6a65caf6819b1836d97f09d/rules/cloud/aws/cloudtrail/aws_snapshot_backup_exfiltration.yml
+  Licence:      Detection Rule License 1.1
+  Changes:      requires a createVolumePermission add, so removals stay silent; see docs/rules/aws_cloudtrail_ebs_snapshot_shared_externally.md
 
 == Downloaded in CI only, not copied ==
 

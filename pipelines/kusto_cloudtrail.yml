@@ -54,9 +54,11 @@ transformations:
       additionalEventData.: parse_json(AdditionalEventData).
       serviceEventDetails.: parse_json(ServiceEventDetails).
 postprocessing:
+  # The backend quotes the name once ('x') in most places and twice (''x'') inside a
+  # `contains` list, so both are unquoted here. tests/test_convert.py guards this.
   - id: cloudtrail_nested_field_expressions
     type: replace
-    pattern: '''parse_json\((\w+)\)\.([\w.]+)'''
+    pattern: '''{1,2}parse_json\((\w+)\)\.([\w.]+)''{1,2}'
     replacement: 'tostring(parse_json(\1).\2)'
   - id: cloudtrail_prepend_table
     type: simple_template

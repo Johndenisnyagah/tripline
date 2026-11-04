@@ -15,9 +15,9 @@ synthetic logs, converted to Sentinel KQL and Splunk SPL, KQL executed in the Ku
 - Ask John before changing rules, thresholds, datasets, README claims or anything in soc-triage.
 
 ## Current phase
-Step 5 (CloudTrail mirror rules): rules 4 (access key after failed console login) and 6
-(AdministratorAccess attached), Stratus Red Team and Invictus fixtures, rule 4 hand-written KQL.
-Next: step 6 (CloudTrail rules 7-11).
+Step 6 (CloudTrail rules 7-11): console brute force, IAM console password, login without
+MFA or as root, Block Public Access weakened, EBS snapshot shared. All 11 Linux/AWS rules done.
+Next: step 7 (Windows parser + Security rules 12-14).
 
 ## Decisions
 - 2026-11-04 — second backend is Splunk SPL; it converts all four sources and supports correlations — John
@@ -59,3 +59,9 @@ Next: step 6 (CloudTrail rules 7-11).
 - 2026-11-04 — Invictus aws_dataset (MIT, commit 4667aa9) files copied whole and unchanged (not extracted), including one real benign near-miss (non-admin AttachRolePolicy) — Claude
 - 2026-11-04 — rule 6 matches only the AdministratorAccess managed policy (spec); soc-triage also counts IAMFullAccess/PowerUserAccess and PutUserPolicy — a known parity difference for step 12 — Claude
 - 2026-11-04 — test_kql reads correlation group-by values from KQL output via the CloudTrail pipeline's field mapping (sourceIPAddress -> SourceIpAddress), so hand-written KQL uses real Sentinel column names — Claude
+- 2026-11-04 — rule 10 tagged T1686.001 (defense-impairment) instead of the plan's T1530: weakening Block Public Access removes an access control rather than reading data; matches SigmaHQ — John
+- 2026-11-04 — rule 8 is a single-event rule on CreateLoginProfile (the plan left this open): it covers existing users too, and a CreateUser->CreateLoginProfile sequence would lose SPL — Claude
+- 2026-11-04 — rule 9 keeps the plan's logic (success and (MFAUsed No or Root)); federated console sessions logging MFAUsed No are documented as the main false positive, not filtered — Claude
+- 2026-11-04 — CloudTrail parser renders JSON booleans as "true"/"false"; harness folds field names case-insensitively (real CloudTrail has maxResults and MaxResults in one file) — Claude
+- 2026-11-04 — the KQL nested-field rewrite accepts single and doubled quotes (contains-lists are double-quoted by the backend); a test rejects any quoted parse_json/tostring in generated KQL — Claude
+- 2026-11-04 — rule 10 has no real fixture (none in Stratus 2.37.2 or Invictus); it is synthetic-only and the results table will say so — Claude

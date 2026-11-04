@@ -1,0 +1,27 @@
+rule_id: aws_cloudtrail_iam_user_with_login_profile
+tests:
+  # Stratus aws.persistence.iam-create-user-login-profile: CreateLoginProfile (+ cleanup DeleteLoginProfile).
+  - file: tp/stratus-2.37.2_iam-create-user-login-profile.json
+    origin: stratus-red-team-2.37.2
+    synthetic: false
+    expect: {matches: 1}
+  # Invictus dataset: a recorded Stratus run, one CreateLoginProfile among 17 records.
+  - file: tp/invictus_20230710T1230Z_04rtp9DpvIpSZzMr.json
+    origin: invictus
+    synthetic: false
+    expect: {matches: 1}
+  # Invictus dataset, 68 records: one CreateLoginProfile for a freshly created user.
+  - file: tp/invictus_20230710T1230Z_ZtUNbBkwAu98FPZb.json
+    origin: invictus
+    synthetic: false
+    expect: {matches: 1}
+  # Stratus aws.privilege-escalation.iam-update-user-login-profile: UpdateLoginProfile, not Create.
+  - file: benign/stratus-2.37.2_iam-update-user-login-profile.json
+    origin: stratus-red-team-2.37.2
+    synthetic: false
+    expect: {matches: 0}
+  # CreateUser, GetLoginProfile, DeleteLoginProfile, UpdateLoginProfile.
+  - file: benign/login_profile_other_calls.json
+    origin: synthetic
+    synthetic: true
+    expect: {matches: 0}

@@ -1,0 +1,27 @@
+rule_id: aws_cloudtrail_console_brute_force
+tests:
+  # 6 failed console sign-ins from 203.0.113.5 between 04:45:30 and 04:47:10.
+  - file: tp/soc-triage_cloudtrail.json
+    origin: soc-triage
+    synthetic: false
+    expect: {min_matches: 1, groups: ["203.0.113.5"]}
+  # Exactly 5 failures, two minutes apart (8 minutes first to last).
+  - file: tp/boundary_five_failures_in_nine_minutes.json
+    origin: synthetic
+    synthetic: true
+    expect: {min_matches: 1, groups: ["192.0.2.110"]}
+  # One below the threshold: 4 typos, then a successful sign-in.
+  - file: benign/four_failures_then_success.json
+    origin: synthetic
+    synthetic: true
+    expect: {matches: 0}
+  # 5 failures 3 minutes apart: never 5 inside one 10-minute window.
+  - file: benign/slow_failures_outside_window.json
+    origin: synthetic
+    synthetic: true
+    expect: {matches: 0}
+  # 6 failures, each from a different source IP.
+  - file: benign/failures_from_many_sources.json
+    origin: synthetic
+    synthetic: true
+    expect: {matches: 0}

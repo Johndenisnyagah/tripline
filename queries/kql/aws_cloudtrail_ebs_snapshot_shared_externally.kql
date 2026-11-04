@@ -1,0 +1,2 @@
+AWSCloudTrail
+| where EventSource =~ "ec2.amazonaws.com" and EventName =~ "ModifySnapshotAttribute" and tostring(parse_json(RequestParameters).attributeType) =~ "CREATE_VOLUME_PERMISSION" and (tostring(parse_json(RequestParameters).createVolumePermission.add.items) contains "userId" or tostring(parse_json(RequestParameters).createVolumePermission.add.items) contains "group")

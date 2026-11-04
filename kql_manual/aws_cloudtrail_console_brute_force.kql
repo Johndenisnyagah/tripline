@@ -1,0 +1,30 @@
+// Rule:    AWS Console Brute Force From One Source
+// Sigma:   rules/aws/cloudtrail/aws_cloudtrail_console_brute_force.yml
+//          correlation id 3d7fb57e-f684-41b6-95de-4967a0907133 (event_count >= 5 per sourceIPAddress in 10m)
+// Author:  John Denis Nyagah
+// Why hand-written: pySigma-backend-kusto 1.0.1 cannot convert Sigma correlation rules.
+// Window:  sliding, like the Sigma rule: every failed sign-in is the end of a 10-minute window,
+// and the failures from the same IP inside it are counted. ResponseElements is a string column
+// in AWSCloudTrail, so the ConsoleLogin outcome is read with parse_json().
+// Output:  one row per source IP that reached the threshold.
+let window = 10m;
+let threshold = 5;
+let failures = AWSCloudTrail
+    | where EventSource =~ "signin.amazonaws.com" and EventName =~ "ConsoleLogin"
+    | where tostring(parse_json(ResponseElements).ConsoleLogin) =~ "Failure"
+    | project TimeGenerated, SourceIpAddress, UserIdentityUserName;
+failures
+| join kind=inner (failures | project WindowEnd = TimeGenerated, SourceIpAddress) on SourceIpAddress
+| where TimeGenerated between ((WindowEnd - window) .. WindowEnd)
+| summarize
+    FailuresInWindow = count(),
+    WindowStart = min(TimeGenerated),
+    Users = make_set(UserIdentityUserName)
+    by SourceIpAddress, WindowEnd
+| where FailuresInWindow >= threshold
+| summarize
+    FirstSeen = min(WindowStart),
+    LastSeen = max(WindowEnd),
+    MaxFailuresInWindow = max(FailuresInWindow),
+    TargetedUsers = make_set(Users)
+    by SourceIpAddress

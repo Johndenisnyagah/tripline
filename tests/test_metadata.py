@@ -65,3 +65,24 @@ def test_checker_rejects_dangling_correlation_reference(tmp_path: Path) -> None:
     problems = check_rule_file(path)
     assert any("'lnx_sshd_typo' before it is defined" in p for p in problems), problems
     assert any("not used by any correlation" in p for p in problems), problems
+
+
+def test_every_copied_fixture_is_in_notice() -> None:
+    """Spec §11: every copied dataset file has a NOTICE entry (path, source, version, licence)."""
+    from tripline.harness import FIXTURES_DIR, all_cases
+
+    notice = (Path(__file__).parent.parent / "NOTICE").read_text(encoding="utf-8")
+    missing = [
+        case.path.relative_to(FIXTURES_DIR.parent.parent).as_posix()
+        for case in all_cases()
+        if case.origin != "synthetic"
+        and case.path.relative_to(FIXTURES_DIR.parent.parent).as_posix() not in notice
+    ]
+    assert not missing, "copied fixtures missing from NOTICE:\n" + "\n".join(missing)
+
+
+def test_synthetic_flag_matches_origin() -> None:
+    from tripline.harness import all_cases
+
+    wrong = [c.test_id for c in all_cases() if c.synthetic != (c.origin == "synthetic")]
+    assert not wrong, f"synthetic flag disagrees with origin: {wrong}"

@@ -1,0 +1,2 @@
+AWSCloudTrail
+| where EventSource =~ "s3.amazonaws.com" and (EventName =~ "DeleteBucketPublicAccessBlock" or (EventName =~ "PutBucketPublicAccessBlock" and (tostring(parse_json(RequestParameters).PublicAccessBlockConfiguration.BlockPublicAcls) =~ "false" or tostring(parse_json(RequestParameters).PublicAccessBlockConfiguration.IgnorePublicAcls) =~ "false" or tostring(parse_json(RequestParameters).PublicAccessBlockConfiguration.BlockPublicPolicy) =~ "false" or tostring(parse_json(RequestParameters).PublicAccessBlockConfiguration.RestrictPublicBuckets) =~ "false")))

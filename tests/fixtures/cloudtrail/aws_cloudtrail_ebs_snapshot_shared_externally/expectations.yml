@@ -1,0 +1,32 @@
+rule_id: aws_cloudtrail_ebs_snapshot_shared_externally
+tests:
+  # Stratus aws.exfiltration.ec2-share-ebs-snapshot: createVolumePermission add for another account.
+  - file: tp/stratus-2.37.2_ec2-share-ebs-snapshot.json
+    origin: stratus-red-team-2.37.2
+    synthetic: false
+    expect: {matches: 1}
+  # Invictus dataset: the same technique in a recorded Stratus run.
+  - file: tp/invictus_20230710T1220Z_ovtmbuX3ENJ119uH.json
+    origin: invictus
+    synthetic: false
+    expect: {matches: 1}
+  # Made public: add {"group": "all"}.
+  - file: tp/snapshot_made_public.json
+    origin: synthetic
+    synthetic: true
+    expect: {matches: 1}
+  # Invictus dataset: the cleanup (createVolumePermission remove) plus AMI share/unshare events.
+  - file: benign/invictus_20230710T1215Z_YMDRJwtmC82bUwAo.json
+    origin: invictus
+    synthetic: false
+    expect: {matches: 0}
+  # Stratus aws.exfiltration.ec2-share-ami: ModifyImageAttribute (an AMI, not a snapshot).
+  - file: benign/stratus-2.37.2_ec2-share-ami.json
+    origin: stratus-red-team-2.37.2
+    synthetic: false
+    expect: {matches: 0}
+  # Permission removed, then read back.
+  - file: benign/snapshot_permission_removed_and_read.json
+    origin: synthetic
+    synthetic: true
+    expect: {matches: 0}

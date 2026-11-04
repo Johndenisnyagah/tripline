@@ -62,3 +62,16 @@ def test_cloudtrail_flattens_nested_fields(tmp_path) -> None:
     assert event["responseElements.ConsoleLogin"] == "Failure"
     assert event["additionalEventData.MFAUsed"] == "No"
     assert json.loads(event["resources"]) == [{"ARN": "arn:aws:iam::111122223333:user/x"}]
+
+
+def test_cloudtrail_booleans_become_text(tmp_path) -> None:
+    path = tmp_path / "ct.json"
+    record = {
+        "eventTime": "2026-11-03T10:00:00Z",
+        "readOnly": False,
+        "requestParameters": {"PublicAccessBlockConfiguration": {"BlockPublicAcls": False}},
+    }
+    path.write_text(json.dumps([record]), encoding="utf-8")  # bare array, as Stratus ships
+    (event,) = cloudtrail.parse_file(path)
+    assert event["readOnly"] == "false"
+    assert event["requestParameters.PublicAccessBlockConfiguration.BlockPublicAcls"] == "false"

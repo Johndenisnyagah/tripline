@@ -1,0 +1,35 @@
+title: AWS EBS Snapshot Shared With Another Account
+id: 0280cf13-0d0c-47a1-94ca-85bfddcb2d4c
+related:
+    - id: abae8fec-57bd-4f87-aff6-6e3db989843d
+      type: derived
+status: experimental
+description: |
+    Detects an EBS snapshot's create-volume permission being granted to another AWS account
+    or to everyone. The recipient can then build a volume from the snapshot and read the disk
+    in their own account, outside the victim's logging.
+references:
+    - https://github.com/SigmaHQ/sigma/blob/c68bb91abb1146b8a6a65caf6819b1836d97f09d/rules/cloud/aws/cloudtrail/aws_snapshot_backup_exfiltration.yml
+    - https://github.com/DataDog/stratus-red-team/blob/036d2cab6ad8b331ada271fc8e738dafa19e359e/docs/attack-techniques/AWS/aws.exfiltration.ec2-share-ebs-snapshot.md
+author: John Denis Nyagah
+date: 2026-11-04
+tags:
+    - attack.exfiltration
+    - attack.t1537
+logsource:
+    product: aws
+    service: cloudtrail
+detection:
+    selection:
+        eventSource: ec2.amazonaws.com
+        eventName: ModifySnapshotAttribute
+        requestParameters.attributeType: CREATE_VOLUME_PERMISSION
+        # The add list holds {"userId": "<account>"} or {"group": "all"} entries (JSON text here).
+        requestParameters.createVolumePermission.add.items|contains:
+            - 'userId'
+            - 'group'
+    condition: selection
+falsepositives:
+    - Sharing snapshots with your own organisation's backup or disaster-recovery account
+    - Migrations between accounts
+level: high
