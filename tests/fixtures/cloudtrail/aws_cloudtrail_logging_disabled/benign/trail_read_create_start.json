@@ -1,0 +1,183 @@
+{
+  "Records": [
+    {
+      "eventVersion": "1.11",
+      "userIdentity": {
+        "type": "IAMUser",
+        "principalId": "AIDAEXAMPLEID0000001",
+        "arn": "arn:aws:iam::111122223333:user/ops-admin",
+        "accountId": "111122223333",
+        "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+        "userName": "ops-admin"
+      },
+      "eventTime": "2026-11-03T08:00:10Z",
+      "eventSource": "cloudtrail.amazonaws.com",
+      "eventName": "DescribeTrails",
+      "awsRegion": "eu-central-1",
+      "sourceIPAddress": "198.51.100.10",
+      "userAgent": "aws-cli/2.17.0 Python/3.12.6 Linux/6.8.0 exe/x86_64.ubuntu.24",
+      "requestParameters": {
+        "trailNameList": [],
+        "includeShadowTrails": true
+      },
+      "responseElements": null,
+      "requestID": "7abc780c-7bc2-52ac-8e3e-f0e33bc81026",
+      "eventID": "b37a3de6-4e74-5ae5-bdcf-fa4d8c85265f",
+      "readOnly": true,
+      "eventType": "AwsApiCall",
+      "managementEvent": true,
+      "recipientAccountId": "111122223333",
+      "eventCategory": "Management"
+    },
+    {
+      "eventVersion": "1.11",
+      "userIdentity": {
+        "type": "IAMUser",
+        "principalId": "AIDAEXAMPLEID0000001",
+        "arn": "arn:aws:iam::111122223333:user/ops-admin",
+        "accountId": "111122223333",
+        "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+        "userName": "ops-admin"
+      },
+      "eventTime": "2026-11-03T08:00:12Z",
+      "eventSource": "cloudtrail.amazonaws.com",
+      "eventName": "GetTrailStatus",
+      "awsRegion": "eu-central-1",
+      "sourceIPAddress": "198.51.100.10",
+      "userAgent": "aws-cli/2.17.0 Python/3.12.6 Linux/6.8.0 exe/x86_64.ubuntu.24",
+      "requestParameters": {
+        "name": "arn:aws:cloudtrail:eu-central-1:111122223333:trail/org-trail"
+      },
+      "responseElements": null,
+      "requestID": "712484f3-30d1-5408-bdb8-1090c3e04469",
+      "eventID": "04f3a58e-3a6b-5f6f-8d60-06dcb736f916",
+      "readOnly": true,
+      "eventType": "AwsApiCall",
+      "managementEvent": true,
+      "recipientAccountId": "111122223333",
+      "eventCategory": "Management"
+    },
+    {
+      "eventVersion": "1.11",
+      "userIdentity": {
+        "type": "IAMUser",
+        "principalId": "AIDAEXAMPLEID0000001",
+        "arn": "arn:aws:iam::111122223333:user/ops-admin",
+        "accountId": "111122223333",
+        "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+        "userName": "ops-admin"
+      },
+      "eventTime": "2026-11-03T08:00:13Z",
+      "eventSource": "cloudtrail.amazonaws.com",
+      "eventName": "GetEventSelectors",
+      "awsRegion": "eu-central-1",
+      "sourceIPAddress": "198.51.100.10",
+      "userAgent": "aws-cli/2.17.0 Python/3.12.6 Linux/6.8.0 exe/x86_64.ubuntu.24",
+      "requestParameters": {
+        "trailName": "arn:aws:cloudtrail:eu-central-1:111122223333:trail/org-trail"
+      },
+      "responseElements": null,
+      "requestID": "830e9ec7-41aa-5637-9a5b-ac5aaf424d75",
+      "eventID": "de91edff-1708-585a-bd89-b273cf198375",
+      "readOnly": true,
+      "eventType": "AwsApiCall",
+      "managementEvent": true,
+      "recipientAccountId": "111122223333",
+      "eventCategory": "Management"
+    },
+    {
+      "eventVersion": "1.11",
+      "userIdentity": {
+        "type": "IAMUser",
+        "principalId": "AIDAEXAMPLEID0000001",
+        "arn": "arn:aws:iam::111122223333:user/ops-admin",
+        "accountId": "111122223333",
+        "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+        "userName": "ops-admin"
+      },
+      "eventTime": "2026-11-03T08:05:40Z",
+      "eventSource": "cloudtrail.amazonaws.com",
+      "eventName": "CreateTrail",
+      "awsRegion": "eu-central-1",
+      "sourceIPAddress": "198.51.100.10",
+      "userAgent": "aws-cli/2.17.0 Python/3.12.6 Linux/6.8.0 exe/x86_64.ubuntu.24",
+      "requestParameters": {
+        "name": "audit-trail",
+        "s3BucketName": "audit-logs-111122223333",
+        "isMultiRegionTrail": true
+      },
+      "responseElements": {
+        "name": "audit-trail",
+        "trailARN": "arn:aws:cloudtrail:eu-central-1:111122223333:trail/audit-trail"
+      },
+      "requestID": "e0a9ab84-64d6-525e-8b82-5a43a9388bfb",
+      "eventID": "b73fbda0-64ad-56eb-9d08-6abc33b59cc4",
+      "readOnly": false,
+      "eventType": "AwsApiCall",
+      "managementEvent": true,
+      "recipientAccountId": "111122223333",
+      "eventCategory": "Management"
+    },
+    {
+      "eventVersion": "1.11",
+      "userIdentity": {
+        "type": "IAMUser",
+        "principalId": "AIDAEXAMPLEID0000001",
+        "arn": "arn:aws:iam::111122223333:user/ops-admin",
+        "accountId": "111122223333",
+        "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+        "userName": "ops-admin"
+      },
+      "eventTime": "2026-11-03T08:05:41Z",
+      "eventSource": "cloudtrail.amazonaws.com",
+      "eventName": "StartLogging",
+      "awsRegion": "eu-central-1",
+      "sourceIPAddress": "198.51.100.10",
+      "userAgent": "aws-cli/2.17.0 Python/3.12.6 Linux/6.8.0 exe/x86_64.ubuntu.24",
+      "requestParameters": {
+        "name": "audit-trail"
+      },
+      "responseElements": null,
+      "requestID": "652cad9e-0d15-5746-b469-657edf04482f",
+      "eventID": "e301a376-9b0d-541f-bb5c-bb186600a6e6",
+      "readOnly": false,
+      "eventType": "AwsApiCall",
+      "managementEvent": true,
+      "recipientAccountId": "111122223333",
+      "eventCategory": "Management"
+    },
+    {
+      "eventVersion": "1.11",
+      "userIdentity": {
+        "type": "IAMUser",
+        "principalId": "AIDAEXAMPLEID0000001",
+        "arn": "arn:aws:iam::111122223333:user/ops-admin",
+        "accountId": "111122223333",
+        "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+        "userName": "ops-admin"
+      },
+      "eventTime": "2026-11-03T08:06:02Z",
+      "eventSource": "cloudtrail.amazonaws.com",
+      "eventName": "LookupEvents",
+      "awsRegion": "eu-central-1",
+      "sourceIPAddress": "198.51.100.10",
+      "userAgent": "aws-cli/2.17.0 Python/3.12.6 Linux/6.8.0 exe/x86_64.ubuntu.24",
+      "requestParameters": {
+        "lookupAttributes": [
+          {
+            "attributeKey": "EventName",
+            "attributeValue": "StopLogging"
+          }
+        ]
+      },
+      "responseElements": null,
+      "requestID": "753c610b-2dd2-5ce2-b0fb-bddad24379c8",
+      "eventID": "c38c448c-9c9a-5466-9d6a-d8dd93357846",
+      "readOnly": true,
+      "eventType": "AwsApiCall",
+      "managementEvent": true,
+      "recipientAccountId": "111122223333",
+      "eventCategory": "Management"
+    }
+  ]
+}

@@ -1,0 +1,104 @@
+{
+  "Records": [
+    {
+      "eventVersion": "1.11",
+      "userIdentity": {
+        "type": "IAMUser",
+        "principalId": "AIDAEXAMPLEID0000001",
+        "arn": "arn:aws:iam::111122223333:user/ops-admin",
+        "accountId": "111122223333",
+        "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+        "userName": "ops-admin"
+      },
+      "eventTime": "2026-11-03T21:40:05Z",
+      "eventSource": "cloudtrail.amazonaws.com",
+      "eventName": "PutEventSelectors",
+      "awsRegion": "eu-central-1",
+      "sourceIPAddress": "192.0.2.80",
+      "userAgent": "aws-cli/2.17.0 Python/3.12.6 Linux/6.8.0 exe/x86_64.ubuntu.24",
+      "requestParameters": {
+        "trailName": "org-trail",
+        "eventSelectors": [
+          {
+            "readWriteType": "ReadOnly",
+            "includeManagementEvents": false,
+            "dataResources": [],
+            "excludeManagementEventSources": []
+          }
+        ]
+      },
+      "responseElements": {
+        "trailARN": "arn:aws:cloudtrail:eu-central-1:111122223333:trail/org-trail"
+      },
+      "requestID": "9d105fee-e1c0-589e-ae4a-38c7b5493a66",
+      "eventID": "f1366c80-a740-57c7-961b-15db98fdb840",
+      "readOnly": false,
+      "eventType": "AwsApiCall",
+      "managementEvent": true,
+      "recipientAccountId": "111122223333",
+      "eventCategory": "Management"
+    },
+    {
+      "eventVersion": "1.11",
+      "userIdentity": {
+        "type": "IAMUser",
+        "principalId": "AIDAEXAMPLEID0000001",
+        "arn": "arn:aws:iam::111122223333:user/ops-admin",
+        "accountId": "111122223333",
+        "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+        "userName": "ops-admin"
+      },
+      "eventTime": "2026-11-03T21:41:30Z",
+      "eventSource": "cloudtrail.amazonaws.com",
+      "eventName": "UpdateTrail",
+      "awsRegion": "eu-central-1",
+      "sourceIPAddress": "192.0.2.80",
+      "userAgent": "aws-cli/2.17.0 Python/3.12.6 Linux/6.8.0 exe/x86_64.ubuntu.24",
+      "requestParameters": {
+        "name": "org-trail",
+        "s3BucketName": "tmp-bucket-111122223333",
+        "isMultiRegionTrail": false
+      },
+      "responseElements": {
+        "name": "org-trail",
+        "s3BucketName": "tmp-bucket-111122223333",
+        "trailARN": "arn:aws:cloudtrail:eu-central-1:111122223333:trail/org-trail"
+      },
+      "requestID": "22e5c55e-1c46-5c2c-ab1b-e31ecbb72a24",
+      "eventID": "c1af4e82-6809-5475-91f1-f49a6c38e8e6",
+      "readOnly": false,
+      "eventType": "AwsApiCall",
+      "managementEvent": true,
+      "recipientAccountId": "111122223333",
+      "eventCategory": "Management"
+    },
+    {
+      "eventVersion": "1.11",
+      "userIdentity": {
+        "type": "IAMUser",
+        "principalId": "AIDAEXAMPLEID0000001",
+        "arn": "arn:aws:iam::111122223333:user/ops-admin",
+        "accountId": "111122223333",
+        "accessKeyId": "AKIAIOSFODNN7EXAMPLE",
+        "userName": "ops-admin"
+      },
+      "eventTime": "2026-11-03T21:43:12Z",
+      "eventSource": "cloudtrail.amazonaws.com",
+      "eventName": "DeleteTrail",
+      "awsRegion": "eu-central-1",
+      "sourceIPAddress": "192.0.2.80",
+      "userAgent": "aws-cli/2.17.0 Python/3.12.6 Linux/6.8.0 exe/x86_64.ubuntu.24",
+      "requestParameters": {
+        "name": "org-trail"
+      },
+      "responseElements": null,
+      "requestID": "90d7e53b-ad94-5f65-9bb5-2853c0f89357",
+      "eventID": "3cf77c98-68cb-5ac9-81c6-b47577c8f1a4",
+      "readOnly": false,
+      "eventType": "AwsApiCall",
+      "managementEvent": true,
+      "recipientAccountId": "111122223333",
+      "eventCategory": "Management"
+    }
+  ]
+}

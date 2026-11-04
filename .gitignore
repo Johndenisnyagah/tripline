@@ -9,3 +9,6 @@ dist/
 
 # Background corpora are downloaded in CI, never committed (see tests/corpora/manifest.yml)
 tests/corpora/cache/
+
+# ATT&CK STIX bundle and index (tripline/attack.py)
+.cache/

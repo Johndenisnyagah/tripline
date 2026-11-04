@@ -1,0 +1,28 @@
+rule_id: lnx_sshd_brute_force_password_guessing
+tests:
+  # Two bursts: 8 failures for root from 203.0.113.5 (plus invalid-user failures) and
+  # 7 failures for backup from 198.51.100.77.
+  - file: tp/soc-triage_auth.log
+    origin: soc-triage
+    synthetic: true
+    expect: {min_matches: 2, groups: ["203.0.113.5", "198.51.100.77"]}
+  # Exactly 5 failures, first to last 9m57s apart: the lowest count that must fire.
+  - file: tp/boundary_five_failures.log
+    origin: synthetic
+    synthetic: true
+    expect: {min_matches: 1, groups: ["192.0.2.50"]}
+  # 4 failures then success: one below the threshold (admin typo).
+  - file: benign/boundary_four_failures_then_success.log
+    origin: synthetic
+    synthetic: true
+    expect: {matches: 0}
+  # 5 failures 3 minutes apart: never 5 inside one 10-minute window.
+  - file: benign/slow_failures_outside_window.log
+    origin: synthetic
+    synthetic: true
+    expect: {matches: 0}
+  # 6 failures from 6 different IPs; plus a non-sshd line with the same text.
+  - file: benign/failures_from_many_sources.log
+    origin: synthetic
+    synthetic: true
+    expect: {matches: 0}

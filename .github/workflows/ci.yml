@@ -33,12 +33,42 @@ jobs:
           ruff format --check .
 
       - name: yamllint
-        run: yamllint --strict rules/ pipelines/ .github/
+        run: yamllint --strict rules/ pipelines/ .github/ tests/fixtures/ tests/sigma_check.yml
 
       - name: Sigma backends available
         run: |
           sigma list targets | tee targets.txt
           for t in kusto splunk sqlite; do grep -qE "^\| $t " targets.txt || { echo "missing target $t"; exit 1; }; done
 
-      - name: Pytest
-        run: pytest
+      - name: sigma check
+        run: sigma check --fail-on-error --fail-on-issues -c tests/sigma_check.yml rules/
+
+      # The ATT&CK v20.0 STIX bundle is pinned by commit and sha256 in tripline/attack.py.
+      - name: Cache ATT&CK bundle
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
+        with:
+          path: .cache/attack
+          key: attack-${{ hashFiles('tripline/attack.py') }}
+
+      - name: Metadata and environment tests
+        run: pytest tests/test_metadata.py tests/test_environment.py
+
+  test-logic:
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0  # v7.1.0
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Install
+        run: pip install -e ".[dev]"
+
+      - name: Rule logic and parser tests
+        run: pytest tests/test_rules.py tests/test_parsers.py

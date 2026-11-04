@@ -1,0 +1,6 @@
+Nov  3 09:02:11 bastion01 sshd[2200]: Failed password for alice from 198.51.100.40 port 61000 ssh2
+Nov  3 09:02:19 bastion01 sshd[2201]: Failed password for alice from 198.51.100.40 port 61004 ssh2
+Nov  3 09:02:30 bastion01 sshd[2202]: Failed password for alice from 198.51.100.40 port 61010 ssh2
+Nov  3 09:02:44 bastion01 sshd[2203]: Failed password for alice from 198.51.100.40 port 61015 ssh2
+Nov  3 09:03:02 bastion01 sshd[2204]: Accepted password for alice from 198.51.100.40 port 61021 ssh2
+Nov  3 09:03:02 bastion01 sshd[2204]: pam_unix(sshd:session): session opened for user alice by (uid=0)
