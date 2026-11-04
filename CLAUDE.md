@@ -15,9 +15,9 @@ synthetic logs, converted to Sentinel KQL and Splunk SPL, KQL executed in the Ku
 - Ask John before changing rules, thresholds, datasets, README claims or anything in soc-triage.
 
 ## Current phase
-Step 2 (conversion): Kusto pipelines for Syslog and AWSCloudTrail, Splunk pipelines,
-tripline/convert.py with drift check, committed queries/. Waiting on John: KQL target for
-process rules (docs/conversion-notes.md). Next: step 3 (Kusto emulator).
+Step 3 (KQL execution): Kusto emulator CI job, Sentinel table schemas, fixture ingestion,
+tests/test_kql.py, hand-written KQL for rule 1.
+Next: step 4 (sshd rules 2-3).
 
 ## Decisions
 - 2026-11-04 — second backend is Splunk SPL; it converts all four sources and supports correlations — John
@@ -45,3 +45,9 @@ process rules (docs/conversion-notes.md). Next: step 3 (Kusto emulator).
 - 2026-11-04 — SPL gets small tripline pipelines: sshd fields mapped to linux_secure names (_raw, src, user, process) + sourcetype; CloudTrail fields pass through + sourcetype aws:cloudtrail — Claude
 - 2026-11-04 — generated SPL correlations use tumbling `bin _time span=10m`, unlike Sigma's sliding window; left as generated and documented in docs/conversion-notes.md — Claude
 - 2026-11-04 — queries/ files hold the bare query (no header) so step 3 can run them as-is — Claude
+- 2026-11-04 — KQL target for process_creation/process_access rules is option (c): a tripline pipeline to Microsoft's Sysmon parser function (`Sysmon | where EventID == 1/10 …`); README must say the parser has to be deployed — John
+- 2026-11-04 — Kusto emulator used in GitHub CI after reading its licence (aka.ms/adx.emulator.license): it forbids production use, benchmark disclosure, redistribution and "commercial, non-profit, or revenue-generating activities", and grants use "on your devices … for internal business purposes"; nothing addresses CI. Reading: a personal portfolio's automated tests are within scope. Fallback if that changes: syntax-only check with Microsoft.Azure.Kusto.Language — John
+- 2026-11-04 — emulator image pinned to kustainer-linux:2026.10.20.1451-2641-19d68ab-weeklyproduction (a weeklyproduction build >2 weeks old) — Claude
+- 2026-11-04 — hand-written correlation KQL uses a self-join so the window slides like Sigma's, instead of bin(TimeGenerated, 10m) (tumbling) — Claude
+- 2026-11-04 — emulator tables are created from the full Sentinel schemas (pySigma-backend-kusto's copy, matches Microsoft's reference); fixtures are mapped to columns by tripline/kusto.py independently of the conversion pipelines — Claude
+- 2026-11-04 — CI caches ~/.cache/pysigma with the ATT&CK bundle and retries `sigma check` once: pySigma tag validators download MITRE ATT&CK/D3FEND at runtime (30 s timeout) and a cold download timed out once — Claude

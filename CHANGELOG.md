@@ -5,6 +5,8 @@ All notable changes to this project are recorded here.
 ## [Unreleased]
 
 ### Added
+- KQL execution: `test-kql` CI job runs generated and hand-written KQL in the Kusto
+  emulator against the rule fixtures; hand-written KQL for `lnx_sshd_brute_force_password_guessing`.
 - Conversion: Kusto pipelines (Syslog, AWSCloudTrail), Splunk pipelines (sshd, CloudTrail),
   `tripline.convert` with `--check` drift detection, generated `queries/`, `convert` CI job,
   `docs/conversion-notes.md` including the process-creation KQL target spike.

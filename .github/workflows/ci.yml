@@ -40,15 +40,25 @@ jobs:
           sigma list targets | tee targets.txt
           for t in kusto splunk sqlite; do grep -qE "^\| $t " targets.txt || { echo "missing target $t"; exit 1; }; done
 
-      - name: sigma check
-        run: sigma check --fail-on-error --fail-on-issues -c tests/sigma_check.yml rules/
-
-      # The ATT&CK v20.0 STIX bundle is pinned by commit and sha256 in tripline/attack.py.
-      - name: Cache ATT&CK bundle
+      # tripline's ATT&CK v20.0 bundle (pinned by commit + sha256 in tripline/attack.py) and
+      # pySigma's own MITRE ATT&CK / D3FEND downloads, which its tag validators fetch at runtime
+      # with a 30 s timeout and which once timed out on a cold runner.
+      - name: Cache MITRE data
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
         with:
-          path: .cache/attack
-          key: attack-${{ hashFiles('tripline/attack.py') }}
+          path: |
+            .cache/attack
+            ~/.cache/pysigma
+          key: mitre-${{ hashFiles('tripline/attack.py', 'pyproject.toml') }}
+
+      - name: sigma check
+        run: |
+          # One retry: the first run on a cold cache downloads MITRE data over the network.
+          for attempt in 1 2; do
+            sigma check --fail-on-error --fail-on-issues -c tests/sigma_check.yml rules/ && exit 0
+            echo "sigma check attempt $attempt failed"
+          done
+          exit 1
 
       - name: Metadata and environment tests
         run: pytest tests/test_metadata.py tests/test_environment.py
@@ -83,6 +93,35 @@ jobs:
             queries/kql/
             queries/spl/
 
+  test-kql:
+    needs: convert
+    runs-on: ubuntu-latest
+    services:
+      # Azure Data Explorer emulator. Used under its licence terms (https://aka.ms/adx.emulator.license)
+      # for automated testing only; see the Decisions log in CLAUDE.md.
+      kusto:
+        image: mcr.microsoft.com/azuredataexplorer/kustainer-linux:2026.10.20.1451-2641-19d68ab-weeklyproduction
+        env:
+          ACCEPT_EULA: "Y"
+        ports:
+          - 8080:8080
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0  # v7.1.0
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Install
+        run: pip install -e ".[dev]"
+
+      - name: KQL in the Kusto emulator
+        run: pytest -m kql tests/test_kql.py -v
+
   test-logic:
     needs: lint
     runs-on: ubuntu-latest
@@ -101,4 +140,4 @@ jobs:
         run: pip install -e ".[dev]"
 
       - name: Rule logic and parser tests
-        run: pytest tests/test_rules.py tests/test_parsers.py
+        run: pytest tests/test_rules.py tests/test_parsers.py tests/test_kql_sources.py
