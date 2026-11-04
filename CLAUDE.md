@@ -15,8 +15,9 @@ synthetic logs, converted to Sentinel KQL and Splunk SPL, KQL executed in the Ku
 - Ask John before changing rules, thresholds, datasets, README claims or anything in soc-triage.
 
 ## Current phase
-Step 1 (harness spike): sshd + CloudTrail parsers, SQLite harness, metadata checks with the
-ATT&CK v20 bundle, rules 1 and 5 with fixtures. Next: step 2 (conversion to KQL/SPL).
+Step 2 (conversion): Kusto pipelines for Syslog and AWSCloudTrail, Splunk pipelines,
+tripline/convert.py with drift check, committed queries/. Waiting on John: KQL target for
+process rules (docs/conversion-notes.md). Next: step 3 (Kusto emulator).
 
 ## Decisions
 - 2026-11-04 — second backend is Splunk SPL; it converts all four sources and supports correlations — John
@@ -38,3 +39,9 @@ ATT&CK v20 bundle, rules 1 and 5 with fixtures. Next: step 2 (conversion to KQL/
 - 2026-11-04 — `sigma check` disables tlptag/tlpv1_tag/tlpv2_tag (no TLP tags) and sigmahq_correlation_filename_prefix (conflicts with the lnx_sshd_*/aws_cloudtrail_* naming rule) — Claude
 - 2026-11-04 — soc-triage sample_logs fixtures are labelled `synthetic: false` (non-synthetic TPs), although they are a hand-written scenario (RFC 5737 IPs) — John
 - 2026-11-04 — Dependabot also ignores pySigma-backend-splunk >=3 and pySigma-backend-sqlite >=2.1: both require pySigma >=2 (Dependabot PR #2 tried them) — Claude
+- 2026-11-04 — AWSCloudTrail RequestParameters/ResponseElements/AdditionalEventData are `string` (not dynamic as the spec assumed); nested Sigma fields become tostring(parse_json(<Column>).<path>) — Claude
+- 2026-11-04 — CloudTrail KQL uses only pipelines/kusto_cloudtrail.yml, not azure_monitor, because azure_monitor rejects computed field expressions; a replace postprocessing step unquotes them and a template prepends the table — Claude
+- 2026-11-04 — sshd KQL = kusto_syslog.yml (table Syslog + ProcessName =~ "sshd") + azure_monitor — Claude
+- 2026-11-04 — SPL gets small tripline pipelines: sshd fields mapped to linux_secure names (_raw, src, user, process) + sourcetype; CloudTrail fields pass through + sourcetype aws:cloudtrail — Claude
+- 2026-11-04 — generated SPL correlations use tumbling `bin _time span=10m`, unlike Sigma's sliding window; left as generated and documented in docs/conversion-notes.md — Claude
+- 2026-11-04 — queries/ files hold the bare query (no header) so step 3 can run them as-is — Claude

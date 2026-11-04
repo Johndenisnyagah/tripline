@@ -1,0 +1,98 @@
+# Conversion notes
+
+What broke when converting tripline's Sigma rules to KQL (Microsoft Sentinel) and SPL (Splunk),
+and how each problem was handled. Versions: pySigma 1.5.1, pySigma-backend-kusto 1.0.1,
+pySigma-backend-splunk 2.1.0. The generated queries are in `queries/`; `python -m tripline.convert`
+rebuilds them, and CI fails if the committed files differ.
+
+## Pipelines per log source
+
+| Log source | KQL table | KQL pipelines | SPL pipelines |
+|---|---|---|---|
+| Linux sshd | `Syslog` | `pipelines/kusto_syslog.yml` + `azure_monitor` | `pipelines/splunk_sshd.yml` |
+| AWS CloudTrail | `AWSCloudTrail` | `pipelines/kusto_cloudtrail.yml` only | `pipelines/splunk_cloudtrail.yml` |
+| Windows Security | `SecurityEvent` | `azure_monitor` (step 7) | `splunk_windows` (step 7) |
+| Process creation / access | decision pending, see below | — | `splunk_windows` (step 8) |
+
+## CloudTrail → `AWSCloudTrail`
+
+- **Nested fields are strings, not dynamic.** The spec assumed `RequestParameters` was a
+  `dynamic` column. Microsoft's table reference (checked 2026-11-04) and the schema bundled with
+  the backend both type `RequestParameters`, `ResponseElements`, `AdditionalEventData` and
+  `ServiceEventDetails` as `string`. So `requestParameters.policyArn` has to become
+  `tostring(parse_json(RequestParameters).policyArn)`.
+- **`azure_monitor` rejects that mapping.** It checks every field against the literal
+  `AWSCloudTrail` columns and fails with "Invalid SigmaDetectionItem field name". So CloudTrail
+  rules use only tripline's pipeline, which sets the table itself.
+- **The backend quotes expression field names.** Without `azure_monitor`, a mapped name like
+  `parse_json(RequestParameters).policyArn` comes out as the string literal
+  `'parse_json(RequestParameters).policyArn'`, which compares a constant and never matches. A
+  `replace` postprocessing step rewrites it to `tostring(parse_json(...).x)`. A
+  `simple_template` step prepends `AWSCloudTrail | where`. `tests/test_convert.py` pins the
+  exact output, including inside a `not(...)`.
+- **Flat fields** map to Sentinel's columns: `eventName` → `EventName`, `sourceIPAddress` →
+  `SourceIpAddress`, `userIdentity.type` → `UserIdentityType`, and so on (full list in
+  `kusto_cloudtrail.yml`). Note the Sentinel spelling `UserIdentityPrincipalid` (lower-case *i*
+  in "id").
+
+## sshd → `Syslog`
+
+- `kusto_syslog.yml` sets the table to `Syslog` and adds `ProcessName =~ "sshd"`.
+  `azure_monitor` then validates fields and prepends the table.
+- Rules match on `SyslogMessage|contains`. Keyword-only detections (no field) produce invalid
+  KQL with this backend.
+- `Syslog` has no source-IP or user column. The parser extracts `SourceIp` and `User` for the
+  correlation `group-by`; the hand-written KQL extracts them from `SyslogMessage`.
+
+## Correlation rules
+
+- The Kusto backend raises "Backend does not support correlation rules". Rules 1, 2, 3, 4, 7
+  and 12 therefore get no generated KQL. Their KQL is hand-written in `kql_manual/` (from step
+  3), and `convert.py` skips the KQL target for any file whose last document is a correlation.
+- The Splunk backend converts correlations, but **with tumbling windows**:
+  `bin _time span=10m | stats count by _time src | search event_count >= 5`. Sigma's
+  `timespan` and the SQLite harness use **sliding** windows. A burst that straddles a bin edge
+  (3 failures at 09:58–09:59 and 3 at 10:00–10:01) fires in the harness but not in this SPL.
+  It's left as generated and documented here; changing the SPL by hand would defeat the drift
+  check.
+
+## Splunk field names
+
+- **sshd.** tripline's sshd fields follow Sentinel's `Syslog` table, which Splunk doesn't have.
+  `splunk_sshd.yml` maps them to the Splunk Add-on for Unix and Linux (`linux_secure`):
+  `SyslogMessage` → `_raw`, `SourceIp` → `src`, `User` → `user`, `ProcessName` → `process`. It
+  also adds `sourcetype="linux_secure" process="sshd"`.
+- **CloudTrail.** The Splunk Add-on for AWS keeps CloudTrail's JSON names
+  (`requestParameters.policyArn`), so fields pass through. `splunk_cloudtrail.yml` only adds
+  `sourcetype="aws:cloudtrail"`.
+
+## `windash`
+
+`CommandLine|windash|contains: ' -enc '` expands to five dash variants (`-`, `/`, en dash, em
+dash, horizontal bar) in both KQL and SPL. That is correct, but it makes the rule 15 query long.
+
+## Open: KQL target for process creation and process access (spike, 2026-11-04)
+
+Two test rules were converted with each option: encoded PowerShell (`process_creation`, using
+`Image`, `OriginalFileName`, `ParentImage`, `CommandLine|windash`) and LSASS access
+(`process_access`, using `TargetImage`, `GrantedAccess`).
+
+| Option | process_creation | process_access (rule 19) | Fidelity |
+|---|---|---|---|
+| (a) `azure_monitor` → `SecurityEvent` 4688 | converts only if `OriginalFileName` is removed; adds **no `EventID == 4688` filter** | fails: no table | loses OriginalFileName and hashes; command line needs an audit policy |
+| (b) `microsoft_xdr` → `DeviceProcessEvents` | converts cleanly | fails: no table (MDE has only `DeviceEvents` `OpenProcessApiCall`, without GrantedAccess) | good for process creation; needs MDE |
+| (b2) `sentinel_asim` → `imProcessCreate` | fails: invalid field mapping in the pipeline | fails: no table | not usable with this backend version |
+| (c) custom pipeline → Microsoft's Sysmon parser function | converts cleanly, `EventID == 1` added | converts cleanly, `EventID == 10` added | all Sysmon fields kept |
+
+Option (c) relies on Microsoft's KQL parser in Azure-Sentinel
+(`Parsers/Sysmon/Sysmon-AllVersions_Parser.txt` at `800b0bd`). It reads Sysmon from the `Event`
+table and exposes Sysmon's own field names, which are also Sigma's names. Deployed as a saved
+function named `Sysmon`, the generated KQL starts with `Sysmon | where EventID == 1 and …`. In
+the emulator, `Sysmon` would be a plain table with the parser's columns.
+
+**Recommendation: (c).** It is the only option that covers rule 19, keeps the Sysmon fields
+the rules use, and matches the test data, which is Sysmon from Splunk attack_data.
+Trade-off: the README must say that the process rules need the Sysmon parser function
+deployed in Sentinel; they don't run against a default workspace.
+
+Waiting for John's decision; nothing for process rules is committed yet.

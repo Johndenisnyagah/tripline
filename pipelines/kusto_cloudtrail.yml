@@ -1,0 +1,63 @@
+# tripline: CloudTrail Sigma fields -> Microsoft Sentinel AWSCloudTrail table.
+#
+# Used on its own, WITHOUT azure_monitor: azure_monitor rejects any field that is not a
+# literal AWSCloudTrail column, and nested CloudTrail fields need a parse_json() expression
+# because RequestParameters, ResponseElements and AdditionalEventData are `string` columns
+# (checked against the Microsoft table reference, 2026-11-04). See docs/conversion-notes.md.
+name: tripline kusto cloudtrail
+priority: 20
+transformations:
+  - id: cloudtrail_query_table
+    type: set_state
+    key: query_table
+    val: AWSCloudTrail
+  - id: cloudtrail_flat_fields
+    type: field_name_mapping
+    mapping:
+      eventName: EventName
+      eventSource: EventSource
+      eventType: EventTypeName
+      eventVersion: EventVersion
+      eventID: AwsEventId
+      requestID: AwsRequestId
+      awsRegion: AWSRegion
+      sourceIPAddress: SourceIpAddress
+      userAgent: UserAgent
+      errorCode: ErrorCode
+      errorMessage: ErrorMessage
+      readOnly: ReadOnly
+      managementEvent: ManagementEvent
+      recipientAccountId: RecipientAccountId
+      sharedEventID: SharedEventId
+      vpcEndpointId: VpcEndpointId
+      userIdentity.type: UserIdentityType
+      userIdentity.arn: UserIdentityArn
+      userIdentity.accountId: UserIdentityAccountId
+      userIdentity.principalId: UserIdentityPrincipalid
+      userIdentity.accessKeyId: UserIdentityAccessKeyId
+      userIdentity.userName: UserIdentityUserName
+      userIdentity.invokedBy: UserIdentityInvokedBy
+      userIdentity.sessionContext.sessionIssuer.type: SessionIssuerType
+      userIdentity.sessionContext.sessionIssuer.arn: SessionIssuerArn
+      userIdentity.sessionContext.sessionIssuer.userName: SessionIssuerUserName
+      userIdentity.sessionContext.sessionIssuer.accountId: SessionIssuerAccountId
+      userIdentity.sessionContext.sessionIssuer.principalId: SessionIssuerPrincipalId
+      userIdentity.sessionContext.attributes.mfaAuthenticated: SessionMfaAuthenticated
+      userIdentity.sessionContext.attributes.creationDate: SessionCreationDate
+  # Nested JSON kept as string columns. The backend quotes these names as string literals;
+  # the postprocessing step below turns them into real expressions.
+  - id: cloudtrail_nested_fields
+    type: field_name_prefix_mapping
+    mapping:
+      requestParameters.: parse_json(RequestParameters).
+      responseElements.: parse_json(ResponseElements).
+      additionalEventData.: parse_json(AdditionalEventData).
+      serviceEventDetails.: parse_json(ServiceEventDetails).
+postprocessing:
+  - id: cloudtrail_nested_field_expressions
+    type: replace
+    pattern: '''parse_json\((\w+)\)\.([\w.]+)'''
+    replacement: 'tostring(parse_json(\1).\2)'
+  - id: cloudtrail_prepend_table
+    type: simple_template
+    template: "AWSCloudTrail\n| where {query}"

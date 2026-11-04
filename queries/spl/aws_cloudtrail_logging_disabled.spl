@@ -1,0 +1,1 @@
+sourcetype="aws:cloudtrail" eventSource="cloudtrail.amazonaws.com" eventName IN ("StopLogging", "DeleteTrail", "UpdateTrail", "PutEventSelectors")
