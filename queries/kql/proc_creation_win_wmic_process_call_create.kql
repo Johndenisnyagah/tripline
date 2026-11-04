@@ -1,0 +1,2 @@
+Sysmon
+| where EventID == 1 and ((Image endswith "\\wmic.exe" or OriginalFileName =~ "wmic.exe") and (CommandLine contains "process" and CommandLine contains "call" and CommandLine contains "create"))

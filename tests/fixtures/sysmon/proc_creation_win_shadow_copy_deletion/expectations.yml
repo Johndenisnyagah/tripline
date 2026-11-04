@@ -1,0 +1,17 @@
+rule_id: proc_creation_win_shadow_copy_deletion
+tests:
+  # Splunk attack_data (shadowcopy_del, DarkSide-style): PowerShell runs "WMIC.exe shadowcopy delete".
+  - file: tp/splunk-attack-data_shadowcopy_del.log
+    origin: splunk-attack-data
+    synthetic: false
+    expect: {matches: 1}
+  # vssadmin delete shadows /all /quiet and wbadmin delete catalog -quiet.
+  - file: tp/vssadmin_and_wbadmin_deletion.xml
+    origin: synthetic
+    synthetic: true
+    expect: {matches: 2}
+  # Listing and creating shadow copies, listing backups: same tools, nothing deleted.
+  - file: benign/shadow_copy_admin_tasks.xml
+    origin: synthetic
+    synthetic: true
+    expect: {matches: 0}

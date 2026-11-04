@@ -5,6 +5,9 @@ All notable changes to this project are recorded here.
 ## [Unreleased]
 
 ### Added
+- Process rules 15-20 (encoded PowerShell, WMIC process call create, certutil download,
+  ClickFix, LSASS access, shadow copy deletion) on the Sysmon parser function; Sysmon fixtures
+  from Splunk attack_data; `Sysmon` table in the Kusto emulator. All 20 rules now tested.
 - Windows parser (XML with or without `<Events>` wrapper, Splunk XmlWinEventLog, EVTX via
   python-evtx) and Windows Security rules 12-14 (password spraying, local account created,
   Security log cleared); Splunk attack_data fixtures; `SecurityEvent` in the Kusto emulator.

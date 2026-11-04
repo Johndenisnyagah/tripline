@@ -1,0 +1,28 @@
+# tripline: process_creation / process_access Sigma rules -> Splunk Sysmon data.
+#
+# splunk_windows (pySigma-backend-splunk 2.1.0) adds no source or EventCode for these
+# categories, so the generated SPL would search every event in the index. This pipeline
+# restricts it to the Sysmon channel (Splunk Add-on for Sysmon, XML rendering) and the right
+# event: 1 for process creation, 10 for process access. Field names (Image, CommandLine,
+# TargetImage, GrantedAccess, ...) already match the add-on and pass through.
+name: tripline splunk sysmon
+priority: 20
+transformations:
+  - id: splunk_sysmon_process_creation
+    type: add_condition
+    conditions:
+      source: 'XmlWinEventLog:Microsoft-Windows-Sysmon/Operational'
+      EventCode: 1
+    rule_conditions:
+      - type: logsource
+        category: process_creation
+        product: windows
+  - id: splunk_sysmon_process_access
+    type: add_condition
+    conditions:
+      source: 'XmlWinEventLog:Microsoft-Windows-Sysmon/Operational'
+      EventCode: 10
+    rule_conditions:
+      - type: logsource
+        category: process_access
+        product: windows

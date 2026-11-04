@@ -1,0 +1,2 @@
+Sysmon
+| where EventID == 1 and (((Image endswith "\\vssadmin.exe" or OriginalFileName =~ "VSSADMIN.EXE") and (CommandLine contains "delete" and CommandLine contains "shadows")) or ((Image endswith "\\wmic.exe" or OriginalFileName =~ "wmic.exe") and (CommandLine contains "shadowcopy" and CommandLine contains "delete")) or ((Image endswith "\\wbadmin.exe" or OriginalFileName =~ "WBADMIN.EXE") and (CommandLine contains "delete" and CommandLine contains "catalog")))

@@ -1,0 +1,35 @@
+# tripline: Windows process_creation / process_access Sigma rules -> Sysmon in Microsoft Sentinel.
+#
+# Target (decided by John, 2026-11-04): Microsoft's Sysmon KQL parser, deployed as a saved
+# function named `Sysmon` (Azure-Sentinel Parsers/Sysmon/Sysmon-AllVersions_Parser.txt). It
+# reads Sysmon from the Event table and exposes Sysmon's own field names (Image, CommandLine,
+# ParentImage, OriginalFileName, TargetImage, GrantedAccess, ...), which are also Sigma's, so
+# fields pass through unmapped. Used without azure_monitor: `Sysmon` is a function, not a table
+# in its schema. See docs/conversion-notes.md.
+name: tripline kusto sysmon
+priority: 20
+transformations:
+  - id: sysmon_query_table
+    type: set_state
+    key: query_table
+    val: Sysmon
+  - id: sysmon_process_creation_event
+    type: add_condition
+    conditions:
+      EventID: 1
+    rule_conditions:
+      - type: logsource
+        category: process_creation
+        product: windows
+  - id: sysmon_process_access_event
+    type: add_condition
+    conditions:
+      EventID: 10
+    rule_conditions:
+      - type: logsource
+        category: process_access
+        product: windows
+postprocessing:
+  - id: sysmon_prepend_function
+    type: simple_template
+    template: "Sysmon\n| where {query}"

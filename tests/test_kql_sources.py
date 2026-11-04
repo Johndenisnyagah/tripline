@@ -80,3 +80,21 @@ def test_security_event_row_uses_sentinel_columns() -> None:
     assert row["EventSourceName"] == "Microsoft-Windows-Security-Auditing"
     assert row["TargetAccount"] == "ATTACKRANGE\\MONROE_YATES"
     assert "KeyLength" not in row  # "-" in an int column is left empty
+
+
+def test_sysmon_row_uses_parser_columns() -> None:
+    event = {
+        "timestamp": "2025-03-24T15:11:49.227455Z",
+        "EventID": "1",
+        "Provider_Name": "Microsoft-Windows-Sysmon",
+        "Channel": "Microsoft-Windows-Sysmon/Operational",
+        "Computer": "wks01",
+        "Image": r"C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe",
+        "CommandLine": "powershell.exe -enc SQBFAFgA",
+        "ParentImage": r"C:\Windows\explorer.exe",
+        "NotAParserColumn": "x",
+    }
+    row = kusto.sysmon_row(event)
+    assert set(row) <= set(kusto.table_schema("Sysmon"))
+    assert row["EventID"] == 1 and row["Source"] == "Microsoft-Windows-Sysmon"
+    assert row["ParentImage"].endswith("explorer.exe")

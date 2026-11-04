@@ -98,6 +98,22 @@ PINNED_SHA256 = {
     "splunk-attack-data_windows_event_log_cleared.log": (
         "fd483a9c03b1cf5b10b4cc8b1500abd782da334647e93db61edee7f7040dce87"
     ),
+    "tests/fixtures/sysmon/proc_creation_win_powershell_encoded_command/tp/"
+    "splunk-attack-data_encoded_powershell_explorer_spawns.log": (
+        "9200692ad74037b5234fe6f7da733d3e416b0ea8bb7f6d8ebb5bd16fc39b8b22"
+    ),
+    "tests/fixtures/sysmon/proc_creation_win_clickfix_paste_and_run/tp/"
+    "splunk-attack-data_encoded_powershell_explorer_spawns.log": (
+        "9200692ad74037b5234fe6f7da733d3e416b0ea8bb7f6d8ebb5bd16fc39b8b22"
+    ),
+    "tests/fixtures/sysmon/proc_creation_win_wmic_process_call_create/benign/"
+    "splunk-attack-data_wmic_classes.log": (
+        "4d4894fe9a4d6bc11315788d0cd4f83e5865a7fbb7be9c2441eedd451fe4f8e5"
+    ),
+    "tests/fixtures/sysmon/proc_creation_win_shadow_copy_deletion/tp/"
+    "splunk-attack-data_shadowcopy_del.log": (
+        "b943f1ca687118745fae96c11af10a07f8d91f7b34d6c24757579ee55ad539b7"
+    ),
 }
 
 

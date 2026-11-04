@@ -1,0 +1,20 @@
+rule_id: proc_creation_win_clickfix_paste_and_run
+tests:
+  # Splunk attack_data (encoded_powershell, explorer_spawns): two explorer -> powershell launches
+  # with whitespace padding and a hidden window (ClickFix style); the bare powershell.exe and the
+  # Startup .cmd in the same file have no lure and must not count.
+  - file: tp/splunk-attack-data_encoded_powershell_explorer_spawns.log
+    origin: splunk-attack-data
+    synthetic: false
+    expect: {matches: 2}
+  # mshta with a URL, and cmd ending in a "# I am not a robot" comment, both from explorer.
+  - file: tp/run_dialog_lures.xml
+    origin: synthetic
+    synthetic: true
+    expect: {matches: 2}
+  # Plain PowerShell/cmd opened from explorer, notepad with "https" in a file name, and a hidden
+  # PowerShell window started by cmd (not explorer).
+  - file: benign/explorer_and_hidden_window_near_misses.xml
+    origin: synthetic
+    synthetic: true
+    expect: {matches: 0}

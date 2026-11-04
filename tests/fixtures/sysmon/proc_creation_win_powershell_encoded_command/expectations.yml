@@ -1,0 +1,19 @@
+rule_id: proc_creation_win_powershell_encoded_command
+tests:
+  # Splunk attack_data (encoded_powershell, explorer_spawns): two explorer -> powershell launches
+  # with 321 spaces of padding then "-WindowStyle hidden -ep bypas -enc <base64>"; the same file
+  # also holds a bare powershell.exe and a Startup .cmd, which must not count.
+  - file: tp/splunk-attack-data_encoded_powershell_explorer_spawns.log
+    origin: splunk-attack-data
+    synthetic: false
+    expect: {matches: 2}
+  # -EncodedCommand from Outlook; pwsh with the slash form /e.
+  - file: tp/encoded_command_variants.xml
+    origin: synthetic
+    synthetic: true
+    expect: {matches: 2}
+  # -File, -Command with a cmdlet's -Encoding parameter, and "-enc" typed in a cmd echo.
+  - file: benign/powershell_without_encoded_command.xml
+    origin: synthetic
+    synthetic: true
+    expect: {matches: 0}

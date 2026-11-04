@@ -1,0 +1,44 @@
+title: PowerShell Started With An Encoded Command
+id: e7543395-0d2f-45e2-9de6-8a1c73ef072d
+related:
+    - id: fb843269-508c-4b76-8b8d-88679db22ce7
+      type: derived
+status: experimental
+description: |
+    Detects powershell.exe or pwsh.exe started with -EncodedCommand (or one of its prefixes
+    -e, -en, -enc, -ec), which runs a Base64 script that is invisible in the command line.
+references:
+    - https://github.com/SigmaHQ/sigma/blob/c68bb91abb1146b8a6a65caf6819b1836d97f09d/rules/windows/process_creation/proc_creation_win_powershell_encode.yml
+    - https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_powershell_exe
+author: John Denis Nyagah
+date: 2026-11-04
+tags:
+    - attack.execution
+    - attack.t1059.001
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection_img:
+        - Image|endswith:
+              - '\powershell.exe'
+              - '\pwsh.exe'
+        - OriginalFileName:
+              - 'PowerShell.EXE'
+              - 'pwsh.dll'
+    selection_cli:
+        # windash also matches /enc and Unicode dashes; ' -enco' covers -encodedcommand.
+        CommandLine|windash|contains:
+            - ' -e '
+            - ' -en '
+            - ' -enc '
+            - ' -enco'
+            - ' -ec '
+    filter_encoding_parameter:
+        # ' -enco' would also hit cmdlets' -Encoding parameter.
+        CommandLine|contains: ' -Encoding '
+    condition: all of selection_* and not filter_encoding_parameter
+falsepositives:
+    - Management agents and installers that pass scripts encoded (SCCM, some RMM tools)
+    - Admin scripts that encode commands to avoid quoting problems
+level: medium

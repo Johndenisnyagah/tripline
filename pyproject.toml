@@ -48,3 +48,5 @@ markers = [
     "kql: runs KQL against the Kusto emulator (CI test-kql job only)",
 ]
 addopts = "-m 'not kql'"
+# A mistyped "\\" in a Windows path silently becomes an escape sequence; fail instead.
+filterwarnings = ["error::SyntaxWarning"]
