@@ -40,15 +40,25 @@ jobs:
           sigma list targets | tee targets.txt
           for t in kusto splunk sqlite; do grep -qE "^\| $t " targets.txt || { echo "missing target $t"; exit 1; }; done
 
-      - name: sigma check
-        run: sigma check --fail-on-error --fail-on-issues -c tests/sigma_check.yml rules/
-
-      # The ATT&CK v20.0 STIX bundle is pinned by commit and sha256 in tripline/attack.py.
-      - name: Cache ATT&CK bundle
+      # tripline's ATT&CK v20.0 bundle (pinned by commit + sha256 in tripline/attack.py) and
+      # pySigma's own MITRE ATT&CK / D3FEND downloads, which its tag validators fetch at runtime
+      # with a 30 s timeout and which once timed out on a cold runner.
+      - name: Cache MITRE data
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9  # v6.1.0
         with:
-          path: .cache/attack
-          key: attack-${{ hashFiles('tripline/attack.py') }}
+          path: |
+            .cache/attack
+            ~/.cache/pysigma
+          key: mitre-${{ hashFiles('tripline/attack.py', 'pyproject.toml') }}
+
+      - name: sigma check
+        run: |
+          # One retry: the first run on a cold cache downloads MITRE data over the network.
+          for attempt in 1 2; do
+            sigma check --fail-on-error --fail-on-issues -c tests/sigma_check.yml rules/ && exit 0
+            echo "sigma check attempt $attempt failed"
+          done
+          exit 1
 
       - name: Metadata and environment tests
         run: pytest tests/test_metadata.py tests/test_environment.py

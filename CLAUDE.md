@@ -50,3 +50,4 @@ Next: step 4 (sshd rules 2-3).
 - 2026-11-04 — emulator image pinned to kustainer-linux:2026.10.20.1451-2641-19d68ab-weeklyproduction (a weeklyproduction build >2 weeks old) — Claude
 - 2026-11-04 — hand-written correlation KQL uses a self-join so the window slides like Sigma's, instead of bin(TimeGenerated, 10m) (tumbling) — Claude
 - 2026-11-04 — emulator tables are created from the full Sentinel schemas (pySigma-backend-kusto's copy, matches Microsoft's reference); fixtures are mapped to columns by tripline/kusto.py independently of the conversion pipelines — Claude
+- 2026-11-04 — CI caches ~/.cache/pysigma with the ATT&CK bundle and retries `sigma check` once: pySigma tag validators download MITRE ATT&CK/D3FEND at runtime (30 s timeout) and a cold download timed out once — Claude
