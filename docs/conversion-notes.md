@@ -12,7 +12,7 @@ rebuilds them, and CI fails if the committed files differ.
 | Linux sshd | `Syslog` | `pipelines/kusto_syslog.yml` + `azure_monitor` | `pipelines/splunk_sshd.yml` |
 | AWS CloudTrail | `AWSCloudTrail` | `pipelines/kusto_cloudtrail.yml` only | `pipelines/splunk_cloudtrail.yml` |
 | Windows Security | `SecurityEvent` | `azure_monitor` (step 7) | `splunk_windows` (step 7) |
-| Process creation / access | decision pending, see below | — | `splunk_windows` (step 8) |
+| Process creation / access | `Sysmon` (parser function) | `pipelines/kusto_windows.yml` (step 8) | `splunk_windows` (step 8) |
 
 ## CloudTrail → `AWSCloudTrail`
 
@@ -71,7 +71,7 @@ rebuilds them, and CI fails if the committed files differ.
 `CommandLine|windash|contains: ' -enc '` expands to five dash variants (`-`, `/`, en dash, em
 dash, horizontal bar) in both KQL and SPL. That is correct, but it makes the rule 15 query long.
 
-## Open: KQL target for process creation and process access (spike, 2026-11-04)
+## KQL target for process creation and process access (decided 2026-11-04)
 
 Two test rules were converted with each option: encoded PowerShell (`process_creation`, using
 `Image`, `OriginalFileName`, `ParentImage`, `CommandLine|windash`) and LSASS access
@@ -95,4 +95,5 @@ the rules use, and matches the test data, which is Sysmon from Splunk attack_dat
 Trade-off: the README must say that the process rules need the Sysmon parser function
 deployed in Sentinel; they don't run against a default workspace.
 
-Waiting for John's decision; nothing for process rules is committed yet.
+**Decision (John, 2026-11-04): (c), Microsoft's Sysmon parser function.** The pipeline
+(`pipelines/kusto_windows.yml`) arrives with the process rules in step 8.

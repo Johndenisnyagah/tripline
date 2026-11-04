@@ -45,3 +45,4 @@ process rules (docs/conversion-notes.md). Next: step 3 (Kusto emulator).
 - 2026-11-04 — SPL gets small tripline pipelines: sshd fields mapped to linux_secure names (_raw, src, user, process) + sourcetype; CloudTrail fields pass through + sourcetype aws:cloudtrail — Claude
 - 2026-11-04 — generated SPL correlations use tumbling `bin _time span=10m`, unlike Sigma's sliding window; left as generated and documented in docs/conversion-notes.md — Claude
 - 2026-11-04 — queries/ files hold the bare query (no header) so step 3 can run them as-is — Claude
+- 2026-11-04 — KQL target for process_creation/process_access rules is option (c): a tripline pipeline to Microsoft's Sysmon parser function (`Sysmon | where EventID == 1/10 …`); README must say the parser has to be deployed — John
