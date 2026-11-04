@@ -1,2 +1,4 @@
 * text=auto eol=lf
 *.evtx binary
+# Third-party logs with mixed line endings: keep their bytes exactly as published.
+tests/fixtures/**/splunk-attack-data_* -text
