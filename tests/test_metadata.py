@@ -123,3 +123,27 @@ def test_copied_file_is_byte_identical_to_upstream(relpath: str) -> None:
 
     data = (Path(__file__).parent.parent / relpath).read_bytes()
     assert hashlib.sha256(data).hexdigest() == PINNED_SHA256[relpath]
+
+
+#: Sections every doc note has (spec §8: shortened Palantir ADS format).
+DOC_NOTE_SECTIONS = (
+    "**Goal:**",
+    "**ATT&CK (v20):**",
+    "**How it works:**",
+    "**Blind spots:**",
+    "**False positives:**",
+    "**Validation:**",
+    "**Background corpora**",
+    "**SigmaHQ relation:**",
+    "**KQL:**",
+)
+
+
+@pytest.mark.parametrize("path", RULES, ids=[p.stem for p in RULES])
+def test_doc_note_is_complete(path: Path) -> None:
+    note = (Path(__file__).parent.parent / "docs" / "rules" / f"{path.stem}.md").read_text(
+        encoding="utf-8"
+    )
+    missing = [s for s in DOC_NOTE_SECTIONS if s not in note]
+    assert not missing, f"docs/rules/{path.stem}.md lacks {missing}"
+    assert "later step" not in note

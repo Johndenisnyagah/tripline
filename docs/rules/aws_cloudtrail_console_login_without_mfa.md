@@ -31,8 +31,9 @@
   - `tp/invictus_20230710T1225Z_4iD2boYSOwmb6sWd.json` (Invictus).
   - `tp/root_login_with_mfa.json` (synthetic, root branch).
   - 2 benign files, listed above.
-  - Results table: generated in a later step.
-- **Background corpora** (hits on unlabelled logs: not pass/fail, not a false-positive rate; numbers from step 9):
+  - Results: this rule's row in [docs/results.md](../results.md).
+- **Background corpora** (hits on unlabelled logs: not pass/fail, not a false-positive rate; current counts in
+  [docs/results.md](../results.md)):
   flaws.cloud file 00: 36.
     - 35 are root console sign-ins, all *with* MFA. The root branch fires on every root sign-in by design, and the owner used root routinely; surfacing that is what the branch is for.
     - 1 is IAM user `piper` signing in without MFA.

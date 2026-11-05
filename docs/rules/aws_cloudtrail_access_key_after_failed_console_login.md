@@ -35,8 +35,9 @@
   - `benign/stratus-2.37.2_iam-create-admin-user.json` (Stratus Red Team 2.37.2, real
     detonation): `CreateAccessKey` with no failed sign-in before it, which must stay silent.
   - 4 synthetic benign near-misses, listed above.
-  - Results table: generated in a later step.
-- **Background corpora** (hits on unlabelled logs: not pass/fail, not a false-positive rate; numbers from step 9):
+  - Results: this rule's row in [docs/results.md](../results.md).
+- **Background corpora** (hits on unlabelled logs: not pass/fail, not a false-positive rate; current counts in
+  [docs/results.md](../results.md)):
   flaws.cloud CloudTrail, file 00 (100,000 events, 2017-02 to 2018-04): 0. It has nine failed console sign-ins from four IPs, and none of those IPs created an access key within the following hour.
 - **SigmaHQ relation:** original. No SigmaHQ rule correlates a failed console sign-in with a
   later access key.

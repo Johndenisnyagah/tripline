@@ -33,8 +33,9 @@
     `tp/stratus-2.37.2_cloudtrail-delete.json` (`DeleteTrail`) and
     `tp/stratus-2.37.2_cloudtrail-event-selectors.json` (`PutEventSelectors`). The last one is
     the case SigmaHQ's original rule misses.
-  - Results table: generated in a later step.
-- **Background corpora** (hits on unlabelled logs: not pass/fail, not a false-positive rate; numbers from step 9):
+  - Results: this rule's row in [docs/results.md](../results.md).
+- **Background corpora** (hits on unlabelled logs: not pass/fail, not a false-positive rate; current counts in
+  [docs/results.md](../results.md)):
   flaws.cloud file 00: 1. A CTF player using the leaked `Level6` credentials tried `UpdateTrail` and got `AccessDenied`. This is a real attempt; the rule fires on denied attempts by design.
 - **SigmaHQ relation:** derived from `aws_cloudtrail_disable_logging.yml` ("AWS CloudTrail
   Important Change", vitaliy0x1). Differences:
@@ -42,4 +43,4 @@
     while the trail stays "on".
   - States explicitly that denied attempts fire.
   - Status `experimental`, level `high` instead of `medium`, and documented blind spots.
-- **KQL:** generated (single-event rule) on `AWSCloudTrail`, step 2.
+- **KQL:** generated (single-event rule) on `AWSCloudTrail`.

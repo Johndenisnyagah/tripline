@@ -28,8 +28,9 @@
 - **Validation:** `tests/fixtures/cloudtrail/aws_cloudtrail_iam_user_with_login_profile/`
   - `tp/stratus-2.37.2_iam-create-user-login-profile.json`: Stratus Red Team 2.37.2.
   - Two Invictus `aws_dataset` files (17 and 68 real records), one match each.
-  - Results table: generated in a later step.
-- **Background corpora** (hits on unlabelled logs: not pass/fail, not a false-positive rate; numbers from step 9):
+  - Results: this rule's row in [docs/results.md](../results.md).
+- **Background corpora** (hits on unlabelled logs: not pass/fail, not a false-positive rate; current counts in
+  [docs/results.md](../results.md)):
   flaws.cloud file 00: 2. One is root giving the owner's IAM user `piper` a console password, which is setup activity. The other is a player with the leaked `backup` credentials trying the same and getting `AccessDenied`, a real attempt.
 - **SigmaHQ relation:** partial. SigmaHQ's `aws_iam_s3browser_loginprofile_creation.yml`
   matches `CreateLoginProfile` only when the user agent is the S3 Browser tool. tripline's rule

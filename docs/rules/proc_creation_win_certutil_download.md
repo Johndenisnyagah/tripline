@@ -25,8 +25,9 @@
   - **Synthetic only.** No small, licence-compatible dataset with a real certutil download was
     found; Splunk's certutil dataset is 300 MB and about certificate extraction.
   - `tp/certutil_downloads.xml`: `-urlcache -split -f http://…` and `/verifyctl /f https://…`.
-  - Results table: generated in a later step; it will mark this rule synthetic-only.
-- **Background corpora** (hits on unlabelled logs: not pass/fail, not a false-positive rate; numbers from step 9):
+  - Results: marked synthetic-only in [docs/results.md](../results.md).
+- **Background corpora** (hits on unlabelled logs: not pass/fail, not a false-positive rate; current counts in
+  [docs/results.md](../results.md)):
   evtx-baseline Sysmon log (1,165 process creations): 0.
 - **SigmaHQ relation:** derived from `proc_creation_win_certutil_download.yml` (Florian Roth,
   Jonhnathan Ribeiro, oscd.community, Nasreddine Bencherchali). Differences:

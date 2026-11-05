@@ -35,8 +35,9 @@
     `-WindowStyle hidden … -enc`. 2 matches.
   - `tp/run_dialog_lures.xml` (synthetic): `mshta https://…` and a cmd with a `#` lure comment.
   - The plan expected "synthetic if Splunk data isn't available"; a real sample was found.
-  - Results table: generated in a later step.
-- **Background corpora** (hits on unlabelled logs: not pass/fail, not a false-positive rate; numbers from step 9):
+  - Results: this rule's row in [docs/results.md](../results.md).
+- **Background corpora** (hits on unlabelled logs: not pass/fail, not a false-positive rate; current counts in
+  [docs/results.md](../results.md)):
   evtx-baseline Sysmon log (1,165 process creations): 0. explorer.exe's children there are `mmc.exe`, `ie4uinit.exe`, `SecurityHealthSystray.exe` and `VBoxTray.exe`, with no lure traits.
 - **SigmaHQ relation:** derived from two SigmaHQ rules.
   - `proc_creation_win_susp_clickfix_filefix_whitespace_padding.yml` (Swachchhanda Shrawan

@@ -33,8 +33,9 @@
     in Attack Range): 50 accounts from `10.0.1.15` in 50 seconds.
   - `tp/boundary_five_accounts.xml` (synthetic).
   - 4 benign files, listed above.
-  - Results table: generated in a later step.
-- **Background corpora** (hits on unlabelled logs: not pass/fail, not a false-positive rate; numbers from step 9):
+  - Results: this rule's row in [docs/results.md](../results.md).
+- **Background corpora** (hits on unlabelled logs: not pass/fail, not a false-positive rate; current counts in
+  [docs/results.md](../results.md)):
   evtx-baseline Windows Server 2022 Security log (22,085 events): 0. The baseline has no 4625 at all, so the zero says nothing about false positives.
 - **SigmaHQ relation:** partial. SigmaHQ has no 4625 spraying correlation in
   `rules/windows/builtin/security`. tripline's rule is written from scratch, so it isn't marked

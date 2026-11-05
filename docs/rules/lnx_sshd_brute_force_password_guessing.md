@@ -31,10 +31,11 @@
   - `benign/boundary_four_failures_then_success.log`, `benign/slow_failures_outside_window.log`
     (5 failures, 3 minutes apart) and `benign/failures_from_many_sources.log` (synthetic): all
     must stay silent.
-  - Results table: generated in a later step.
-- **Background corpora** (hits on unlabelled logs: not pass/fail, not a false-positive rate; numbers from step 9):
+  - Results: this rule's row in [docs/results.md](../results.md).
+- **Background corpora** (hits on unlabelled logs: not pass/fail, not a false-positive rate; current counts in
+  [docs/results.md](../results.md)):
   Loghub OpenSSH 2k (internet-exposed lab server, about 4 hours): 450 alert windows from 9 source IPs. Expected: this is real password guessing. The top source, `183.62.140.253`, fails 286 times. The harness emits one row per qualifying window, so the 9 IPs, not the 450 rows, are what an analyst would triage.
 - **SigmaHQ relation:** original. SigmaHQ has no sshd brute-force correlation rule.
-- **KQL:** hand-written (`kql_manual/`, step 3). The Kusto backend can't convert correlation
+- **KQL:** hand-written (`kql_manual/`). The Kusto backend can't convert correlation
   rules, and the `Syslog` table has no source-IP column, so the KQL extracts it from
   `SyslogMessage`.

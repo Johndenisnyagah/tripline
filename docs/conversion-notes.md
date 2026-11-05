@@ -98,8 +98,8 @@ rebuilds them, and CI fails if the committed files differ.
 ## Correlation rules
 
 - The Kusto backend raises "Backend does not support correlation rules". Rules 1, 2, 3, 4, 7
-  and 12 therefore get no generated KQL. Their KQL is hand-written in `kql_manual/` (from step
-  3), and `convert.py` skips the KQL target for any file whose last document is a correlation.
+  and 12 therefore get no generated KQL. Their KQL is hand-written in `kql_manual/` and
+  executed in the Kusto emulator, and `convert.py` skips the KQL target for any file whose last document is a correlation.
 - The Splunk backend converts correlations, but **with tumbling windows**:
   `bin _time span=10m | stats count by _time src | search event_count >= 5`. Sigma's
   `timespan` and the SQLite harness use **sliding** windows. A burst that straddles a bin edge
@@ -167,5 +167,5 @@ the rules use, and matches the test data, which is Sysmon from Splunk attack_dat
 Trade-off: the README must say that the process rules need the Sysmon parser function
 deployed in Sentinel; they don't run against a default workspace.
 
-**Decision (John, 2026-11-04): (c), Microsoft's Sysmon parser function.** Implemented in step 8 as
-`pipelines/kusto_sysmon.yml` (`kusto_windows.yml` went to Windows Security in step 7).
+**Decision (John, 2026-11-04): (c), Microsoft's Sysmon parser function.** Implemented as
+`pipelines/kusto_sysmon.yml` (`kusto_windows.yml` holds the Windows Security pipeline).
