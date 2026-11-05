@@ -6,6 +6,8 @@ Decisions log in [CLAUDE.md](CLAUDE.md).
 ## [Unreleased]
 
 ### Added
+- soc-triage parity: CI job runs soc-triage's own detection (pinned commit, read-only) on its
+  sample logs and compares with tripline's rules 1-7 via `tests/parity_map.yml`.
 - Documentation: full README with the results summary (copied from `docs/results.md` and
   checked by `tests/test_readme.py`), SECURITY.md, and a test that every rule doc note has all
   the sections in spec §8.
