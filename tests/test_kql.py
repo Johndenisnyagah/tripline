@@ -8,6 +8,10 @@ hand-written query (kql_manual/). For correlation rules the `groups` expectation
 against the output columns named by the rule's group-by fields.
 """
 
+import json
+import os
+from pathlib import Path
+
 import pytest
 import yaml
 
@@ -17,12 +21,18 @@ from tripline.harness import Case, all_cases, rule_path
 pytestmark = pytest.mark.kql
 
 CASES = all_cases()
+#: Per-case outcomes, written to $TRIPLINE_KQL_RESULTS for the report job (docs/results.md).
+RESULTS: dict[str, dict] = {}
 
 
 @pytest.fixture(scope="module", autouse=True)
-def emulator() -> None:
+def emulator():
     kusto.wait_until_ready()
     kusto.create_tables()
+    yield
+    out = os.environ.get("TRIPLINE_KQL_RESULTS")
+    if out:
+        Path(out).write_text(json.dumps(RESULTS, indent=2, sort_keys=True) + "\n", "utf-8")
 
 
 def group_by_fields(rule_id: str) -> list[str]:
@@ -39,4 +49,5 @@ def test_kql_on_fixture(case: Case) -> None:
     columns = [kusto.sentinel_column(case.source, f) for f in group_by_fields(case.rule_id)]
     groups = {"|".join(str(row[c]) for c in columns) for row in rows} if columns else set()
     failure = case.check_counts(len(rows), groups)
+    RESULTS[case.test_id] = {"kql": kind, "passed": failure is None, "matches": len(rows)}
     assert failure is None, f"{case.test_id} ({kind} KQL): {failure}\nrows: {rows[:5]}"

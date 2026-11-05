@@ -37,7 +37,7 @@
   evtx-baseline Sysmon log (4,648 process-access events, 5 on LSASS): **1 false positive**.
     - The hit is `C:\Windows\System32\snmp.exe` (the SNMP service) opening LSASS with `0x1410`. It's legitimate, and the rule doesn't filter it.
     - `wininit` and `csrss` with full access are filtered as intended.
-    - Not tuned: adding `snmp.exe` to the filter changes the rule, and that needs John's OK. A deployment with SNMP should add it.
+    - Kept as is (John, 2026-11-05): SNMP is often not installed, so the shared rule doesn't filter it; a deployment that runs SNMP should add `snmp.exe` to `filter_os`.
     - The corpus also exposed a parser bug that had hidden every match. python-evtx renders `GrantedAccess` zero-padded (`0x00001410`), while Windows, Sentinel and Splunk show `0x1410`. The parser now strips the padding for EVTX input.
 - **SigmaHQ relation:** derived from `proc_access_win_lsass_susp_access_flag.yml` (Florian Roth
   et al.). SigmaHQ matches hundreds of mask endings, filters every process under
