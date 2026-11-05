@@ -16,7 +16,7 @@ synthetic logs, converted to Sentinel KQL and Splunk SPL, KQL executed in the Ku
 
 ## Current phase
 Step 11 (docs): README per spec §14 with numbers quoted from docs/results.md (tested), complete
-doc notes (tested), CHANGELOG cleaned up, SECURITY.md. README claims await John's approval.
+doc notes (tested), CHANGELOG cleaned up, SECURITY.md. README claims approved by John.
 Next: step 12 (soc-triage parity test).
 
 ## Decisions
@@ -88,3 +88,4 @@ Next: step 12 (soc-triage parity test).
 - 2026-11-05 — results.md gains a totals block (logic, KQL, SPL counts); the README quotes it verbatim between results-summary markers and tests/test_readme.py fails if they differ, so README numbers come only from results.md — Claude
 - 2026-11-05 — doc notes no longer mention build steps; every note must have the spec §8 sections (tested) — Claude
 - 2026-11-05 — SECURITY.md points to GitHub private vulnerability reporting, which is off in the repo settings; John to enable it — Claude
+- 2026-11-05 — README approved as written: the one-line summary, the "beyond SigmaHQ" claims (rules 1-4 original; rule 12 phrased as "SigmaHQ's Windows Security rules have no 4625 spraying correlation"), the statement that soc-triage samples count as real though hand-written, and the AI-assistance note — John
