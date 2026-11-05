@@ -5,6 +5,8 @@ All notable changes to this project are recorded here.
 ## [Unreleased]
 
 ### Added
+- Results table (`docs/results.md`) and ATT&CK Navigator layer (`coverage/tripline-layer.json`)
+  generated from test results by `python -m tripline.report`; CI `report` job; README link.
 - Background corpora (Loghub OpenSSH, flaws.cloud CloudTrail, Nextron evtx-baseline Security and
   Sysmon): manifest with sha256, cached downloads and parsed events, `python -m tripline.corpora`,
   CI `corpora` job; hit counts investigated in the doc notes.

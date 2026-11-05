@@ -36,7 +36,7 @@
   flaws.cloud file 00: 36.
     - 35 are root console sign-ins, all *with* MFA. The root branch fires on every root sign-in by design, and the owner used root routinely; surfacing that is what the branch is for.
     - 1 is IAM user `piper` signing in without MFA.
-    - Not tuned: excluding MFA-protected root sign-ins would change what the rule claims to detect, and that's John's decision.
+    - Kept as is (John, 2026-11-05): every root console sign-in fires, with or without MFA, because routine root use is itself worth surfacing.
 - **SigmaHQ relation:** derived from `aws_cloudtrail_console_login_success_without_mfa.yml`
   (Thuya@Hacktilizer, Ivan Saakov). It adds the root branch and an `eventSource` condition, and
   documents the federation false positive (SigmaHQ lists false positives as "Unlikely").

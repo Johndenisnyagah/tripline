@@ -15,9 +15,9 @@ synthetic logs, converted to Sentinel KQL and Splunk SPL, KQL executed in the Ku
 - Ask John before changing rules, thresholds, datasets, README claims or anything in soc-triage.
 
 ## Current phase
-Step 9 (background corpora): Loghub OpenSSH, flaws.cloud CloudTrail, evtx-baseline Security and
-Sysmon; hit counts per rule and corpus, investigated in the doc notes.
-Next: step 10 (results table, Navigator layer, report job).
+Step 10 (results): docs/results.md and coverage/tripline-layer.json generated from test results by
+tripline/report.py in the CI report job; README links the layer in the hosted Navigator.
+Next: step 11 (README, all doc notes, CHANGELOG, SECURITY.md).
 
 ## Decisions
 - 2026-11-04 — second backend is Splunk SPL; it converts all four sources and supports correlations — John
@@ -81,3 +81,7 @@ Next: step 10 (results table, Navigator layer, report job).
 - 2026-11-04 — harness creates only the columns a rule references (real logs have hundreds of keys; SQLite caps tables at 2000 columns) — Claude
 - 2026-11-04 — corpus findings fixed in parsers (not rules): sshd source IP without "port N" (older OpenSSH, Loghub), EVTX SystemTime rendered with a space by python-evtx, EVTX hex values zero-padded by python-evtx (hid every GrantedAccess match); KQL sshd IP regex updated to match — Claude
 - 2026-11-04 — corpus hit counts are reported, not tuned: e.g. rule 19 hits snmp.exe (0x1410) on the benign baseline and rule 9 hits 35 routine root sign-ins on flaws; tuning needs John — Claude
+- 2026-11-05 — rule 19 keeps its filter as is (snmp.exe not filtered in the shared rule; deployments with SNMP add it) and rule 9 keeps firing on every root console sign-in, MFA or not — John
+- 2026-11-05 — results.md and the Navigator layer are built by tripline/report.py from live harness runs, the test-kql job's per-case results (kql-results.json) and the corpora job's hits; no timestamps or commit ids, so they stay stable while the inputs do — Claude
+- 2026-11-05 — the report job fails on push to main if the committed files are stale and only warns on PRs; a PR commits the files from the job's `report` artifact (the emulator results only exist in CI) — Claude
+- 2026-11-05 — layer colour per technique: failing if any of its rules fails, validated if any rule is validated, else synthetic-only; no tactic set; parents of tagged sub-techniques listed with showSubtechniques — Claude
