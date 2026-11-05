@@ -169,3 +169,38 @@ deployed in Sentinel; they don't run against a default workspace.
 
 **Decision (John, 2026-11-04): (c), Microsoft's Sysmon parser function.** Implemented as
 `pipelines/kusto_sysmon.yml` (`kusto_windows.yml` holds the Windows Security pipeline).
+
+## soc-triage parity
+
+The CI `parity` job checks out soc-triage at the commit pinned in `tests/parity_map.yml`. It runs
+soc-triage's own detection over its sample logs, read-only, through
+`tests/parity/soc_triage_findings.py`. That script takes the same path as soc-triage's
+`scripts/run_detection.py`: ingest through `POST /api/ingest`, read the stored events back, then
+`run_rules`. `tests/test_parity.py` compares the result with tripline's rules on tripline's copies
+of the same files, and also checks that the copies match.
+
+- **What is compared.** soc-triage reports a finding under every entity it touches (`ip:`,
+  `user:`, `host:`, `account:`, `principal:`). tripline's correlation rules group by source IP
+  only, so correlation rules are compared on the set of IPs that fire. Single-event rules are
+  compared on the set of matching events (by timestamp).
+- **Seven pairs, six identical.** soc-triage's source-agnostic `brute_force_auth` is paired with
+  both tripline rule 1 (sshd) and rule 7 (console sign-ins).
+- **One known difference, listed in the map with its reason.** `admin_policy_attached` also
+  fires on the 04:50:20 `IAMFullAccess` attachment. soc-triage counts IAMFullAccess and
+  PowerUserAccess as admin; tripline's rule 6 matches AdministratorAccess only, as the build
+  spec defines it.
+- **Semantic differences the samples don't reach** (in the map as notes, not as differences):
+  - Rule 2 measures its window from the 5th failure; soc-triage needs 5 failures in the
+    10 minutes before the success.
+  - Rule 4 needs a failed *console* sign-in; soc-triage accepts any authentication failure,
+    sshd included.
+  - soc-triage's brute force counts failures across sources per IP, while tripline counts per
+    source.
+
+  On these samples both sides fire for the same IPs anyway.
+- **Not compared.** soc-triage's incident correlation (merging findings by shared entity and
+  scoring severity by tactic count) has no tripline counterpart; see the README.
+- **Dependencies.** soc-triage's `requirements.txt` uses `>=` ranges and lives in soc-triage, so
+  the parity job installs whatever is newest. A future soc-triage dependency release could
+  break the job without a tripline change; the job's `soc-findings` artifact shows what
+  soc-triage produced.

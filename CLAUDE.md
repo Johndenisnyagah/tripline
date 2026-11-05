@@ -15,9 +15,9 @@ synthetic logs, converted to Sentinel KQL and Splunk SPL, KQL executed in the Ku
 - Ask John before changing rules, thresholds, datasets, README claims or anything in soc-triage.
 
 ## Current phase
-Step 11 (docs): README per spec §14 with numbers quoted from docs/results.md (tested), complete
-doc notes (tested), CHANGELOG cleaned up, SECURITY.md. README claims approved by John.
-Next: step 12 (soc-triage parity test).
+Step 12 (parity): CI parity job runs soc-triage's own detection (pinned, read-only) on the shared
+samples and compares with rules 1-7; one known difference (rule 6, IAMFullAccess) in parity_map.yml.
+Next: all 13 steps of the build spec are done; further work only on John's request.
 
 ## Decisions
 - 2026-11-04 — second backend is Splunk SPL; it converts all four sources and supports correlations — John
@@ -89,3 +89,5 @@ Next: step 12 (soc-triage parity test).
 - 2026-11-05 — doc notes no longer mention build steps; every note must have the spec §8 sections (tested) — Claude
 - 2026-11-05 — SECURITY.md points to GitHub private vulnerability reporting, which is off in the repo settings; John to enable it — Claude
 - 2026-11-05 — README approved as written: the one-line summary, the "beyond SigmaHQ" claims (rules 1-4 original; rule 12 phrased as "SigmaHQ's Windows Security rules have no 4625 spraying correlation"), the statement that soc-triage samples count as real though hand-written, and the AI-assistance note — John
+- 2026-11-05 — parity: tests/parity/soc_triage_findings.py imports soc-triage (pinned commit, read-only) and follows run_detection.py's ingest -> read back -> run_rules path, emitting JSON; correlation rules compared on firing IPs, single-event rules on matching event timestamps; soc-triage's brute_force_auth paired with rules 1 and 7 — Claude
+- 2026-11-05 — parity known difference: rule 6 vs admin_policy_attached on the 04:50:20 IAMFullAccess attach (listed in tests/parity_map.yml); rule 2/4 window and source semantics differ but the samples don't reach the edge — Claude

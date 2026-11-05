@@ -1,0 +1,68 @@
+# soc-triage <-> tripline parity on the shared sample logs (spec step 12).
+#
+# CI checks out soc-triage at `commit`, runs its own detection over sample_logs/ through
+# tests/parity/soc_triage_findings.py (read-only), and tests/test_parity.py compares the result
+# with tripline's rule on its copy of the same file.
+#
+# compare: ips    -> correlation rules: the source IPs that fire. soc-triage findings with an
+#                    `ip:` entity key vs tripline's group-by values.
+# compare: events -> single-event rules: the event timestamps that match.
+# Any difference must be listed under `expected_difference` with a reason; a new difference,
+# or a listed one that disappears, fails the test.
+soc_triage:
+  repository: Johndenisnyagah/soc-triage
+  commit: efd910cd7b881a5d4e95088670b1b7cfe5e1c64b
+
+pairs:
+  - soc_rule: brute_force_auth
+    tripline_rule: lnx_sshd_brute_force_password_guessing
+    sample: auth.log
+    compare: ips
+
+  - soc_rule: brute_force_auth
+    tripline_rule: aws_cloudtrail_console_brute_force
+    sample: cloudtrail.json
+    compare: ips
+    note: >-
+      soc-triage's brute-force rule is source-agnostic (any authentication failure); tripline
+      splits it into rule 1 (sshd) and rule 7 (console sign-ins).
+
+  - soc_rule: brute_force_success
+    tripline_rule: lnx_sshd_brute_force_success
+    sample: auth.log
+    compare: ips
+    note: >-
+      The rules measure the 10-minute window differently (tripline: success within 10 minutes
+      of the 5th failure; soc-triage: 5 failures within the 10 minutes before the success).
+      The samples don't reach that edge, so both fire for the same IP.
+
+  - soc_rule: invalid_user_enumeration
+    tripline_rule: lnx_sshd_invalid_user_enumeration
+    sample: auth.log
+    compare: ips
+
+  - soc_rule: access_key_after_suspicious_auth
+    tripline_rule: aws_cloudtrail_access_key_after_failed_console_login
+    sample: cloudtrail.json
+    compare: ips
+    note: >-
+      soc-triage accepts any authentication failure before the key (sshd included);
+      tripline requires a failed console sign-in. In the sample the IP has both.
+
+  - soc_rule: cloud_logging_disabled
+    tripline_rule: aws_cloudtrail_logging_disabled
+    sample: cloudtrail.json
+    compare: events
+
+  - soc_rule: admin_policy_attached
+    tripline_rule: aws_cloudtrail_admin_policy_attached
+    sample: cloudtrail.json
+    compare: events
+    expected_difference:
+      soc_only: ["2026-08-02T04:50:20Z"]
+      tripline_only: []
+    reason: >-
+      The 04:50:20 event attaches arn:aws:iam::aws:policy/IAMFullAccess. soc-triage treats
+      IAMFullAccess, PowerUserAccess and AdministratorAccess as admin; tripline's rule 6 matches
+      AdministratorAccess only, as the build spec defines it (docs/rules/
+      aws_cloudtrail_admin_policy_attached.md).

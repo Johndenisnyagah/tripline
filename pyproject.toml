@@ -46,7 +46,8 @@ select = ["E", "F", "W", "I", "B", "UP", "SIM"]
 testpaths = ["tests"]
 markers = [
     "kql: runs KQL against the Kusto emulator (CI test-kql job only)",
+    "parity: compares with soc-triage's detection (CI parity job only)",
 ]
-addopts = "-m 'not kql'"
+addopts = "-m 'not kql and not parity'"
 # A mistyped "\\" in a Windows path silently becomes an escape sequence; fail instead.
 filterwarnings = ["error::SyntaxWarning"]

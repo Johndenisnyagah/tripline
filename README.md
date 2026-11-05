@@ -110,7 +110,9 @@ logic, blind spots, false positives, fixtures and corpus hits.
 rule engine. Rules 1–6 are its six detections written in Sigma, and they reuse its sample
 logs as fixtures. soc-triage does not consume these rules.
 
-Two differences are deliberate and documented:
+A CI job runs soc-triage's own detection on those sample logs and compares what fires with
+tripline's rules ([tests/parity_map.yml](tests/parity_map.yml)). Any difference must be listed
+there with a reason, or the job fails. Two differences are deliberate and documented:
 - Rule 6 matches only the AdministratorAccess policy, while soc-triage also counts
   IAMFullAccess and PowerUserAccess.
 - Rule 2 measures its 10 minutes from the fifth failure, the way the Sigma correlation is
