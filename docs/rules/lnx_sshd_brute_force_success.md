@@ -39,8 +39,9 @@
     in.
   - `tp/boundary_five_failures_then_success.log` (synthetic): exactly 5 failures, then success.
   - 4 benign near-misses (synthetic), listed above.
-  - Results table: generated in a later step.
-- **Background corpora** (hits on unlabelled logs: not pass/fail, not a false-positive rate; numbers from step 9):
+  - Results: this rule's row in [docs/results.md](../results.md).
+- **Background corpora** (hits on unlabelled logs: not pass/fail, not a false-positive rate; current counts in
+  [docs/results.md](../results.md)):
   Loghub OpenSSH 2k: 0. The corpus has one `Accepted password` (user `fztu` from `119.137.62.142`), and that IP has no failed passwords.
 - **SigmaHQ relation:** original. SigmaHQ has no sshd success-after-brute-force correlation.
 - **KQL:** hand-written (`kql_manual/`). The Kusto backend can't convert correlations, and

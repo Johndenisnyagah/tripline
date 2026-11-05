@@ -30,8 +30,9 @@
     Public Access technique, and the Invictus dataset contains no such events.
   - `tp/block_public_policy_turned_off.json` (one flag false) and
     `tp/public_access_block_deleted.json`.
-  - Results table: generated in a later step; it will mark this rule synthetic-only.
-- **Background corpora** (hits on unlabelled logs: not pass/fail, not a false-positive rate; numbers from step 9):
+  - Results: marked synthetic-only in [docs/results.md](../results.md).
+- **Background corpora** (hits on unlabelled logs: not pass/fail, not a false-positive rate; current counts in
+  [docs/results.md](../results.md)):
   flaws.cloud file 00: 0. The file has no Block Public Access events, so the zero says nothing about false positives.
 - **SigmaHQ relation:** derived from `aws_cloudtrail_bucket_block_public_access_weakened.yml`
   (Shoban Chiddarth). Differences:

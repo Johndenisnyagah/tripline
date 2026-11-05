@@ -32,8 +32,9 @@
     contains only the process start.
   - `tp/lsass_dumping_access.xml`: `0x1010` from an unknown binary, and full access from
     `rundll32` with `comsvcs.dll` in the call trace.
-  - Results table: generated in a later step; it will mark this rule synthetic-only.
-- **Background corpora** (hits on unlabelled logs: not pass/fail, not a false-positive rate; numbers from step 9):
+  - Results: marked synthetic-only in [docs/results.md](../results.md).
+- **Background corpora** (hits on unlabelled logs: not pass/fail, not a false-positive rate; current counts in
+  [docs/results.md](../results.md)):
   evtx-baseline Sysmon log (4,648 process-access events, 5 on LSASS): **1 false positive**.
     - The hit is `C:\Windows\System32\snmp.exe` (the SNMP service) opening LSASS with `0x1410`. It's legitimate, and the rule doesn't filter it.
     - `wininit` and `csrss` with full access are filtered as intended.

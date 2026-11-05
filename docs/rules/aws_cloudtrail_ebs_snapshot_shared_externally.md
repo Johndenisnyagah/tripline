@@ -24,8 +24,9 @@
   - `tp/invictus_20230710T1220Z_ovtmbuX3ENJ119uH.json` (Invictus).
   - `tp/snapshot_made_public.json` (synthetic, `group: all`).
   - 3 benign files, listed above.
-  - Results table: generated in a later step.
-- **Background corpora** (hits on unlabelled logs: not pass/fail, not a false-positive rate; numbers from step 9):
+  - Results: this rule's row in [docs/results.md](../results.md).
+- **Background corpora** (hits on unlabelled logs: not pass/fail, not a false-positive rate; current counts in
+  [docs/results.md](../results.md)):
   flaws.cloud file 00: 18.
     - 3 are the root user making snapshots public on purpose (the flaws.cloud level built around a public snapshot).
     - 15 are CTF players using the leaked `backup` credentials, trying to share the snapshot with their own accounts or with `all`. All were denied (`Client.UnauthorizedOperation`). These are real exfiltration attempts, caught because the rule fires on denied attempts.

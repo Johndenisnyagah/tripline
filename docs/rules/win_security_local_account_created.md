@@ -27,8 +27,9 @@
   - 1 synthetic benign file.
   - Splunk's `attack_data` 4720 samples were not used, because they were generated with Atomic
     Red Team, which this project excludes.
-  - Results table: generated in a later step.
-- **Background corpora** (hits on unlabelled logs: not pass/fail, not a false-positive rate; numbers from step 9):
+  - Results: this rule's row in [docs/results.md](../results.md).
+- **Background corpora** (hits on unlabelled logs: not pass/fail, not a false-positive rate; current counts in
+  [docs/results.md](../results.md)):
   evtx-baseline Security log: 0. The baseline has no 4720, so the zero says nothing about false positives.
 - **SigmaHQ relation:** derived from `win_security_user_creation.yml` (Patrick Bareiss). Same
   logic. tripline raises the level from low to medium and documents the domain-controller

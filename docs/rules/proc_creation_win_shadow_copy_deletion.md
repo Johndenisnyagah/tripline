@@ -27,8 +27,9 @@
   - `tp/splunk-attack-data_shadowcopy_del.log` (Splunk attack_data, real Sysmon, DarkSide
     style): PowerShell running `WMIC.exe shadowcopy delete`.
   - `tp/vssadmin_and_wbadmin_deletion.xml` (synthetic): the other two tools.
-  - Results table: generated in a later step.
-- **Background corpora** (hits on unlabelled logs: not pass/fail, not a false-positive rate; numbers from step 9):
+  - Results: this rule's row in [docs/results.md](../results.md).
+- **Background corpora** (hits on unlabelled logs: not pass/fail, not a false-positive rate; current counts in
+  [docs/results.md](../results.md)):
   evtx-baseline Sysmon log (1,165 process creations): 0.
 - **SigmaHQ relation:** derived from `proc_creation_win_susp_shadow_copies_deletion.yml`
   (Florian Roth et al.).

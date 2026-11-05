@@ -4,6 +4,10 @@
 
 **20 rules:** 16 validated, 4 synthetic-only, 0 failing.
 
+- Logic: 87/87 fixture tests pass in the SQLite harness (45 true-positive, 42 benign); 16 rules have at least one real (non-synthetic) true positive.
+- KQL: all 20 rules executed in the Kusto emulator (14 generated, 6 hand-written queries); 87/87 fixture tests pass.
+- SPL: generated for 18 rules; 2 have none (the Splunk backend cannot convert `temporal_ordered`).
+
 - **validated**: every true-positive and benign test passes (SQLite harness and, where
   run, KQL in the Kusto emulator) and at least one true positive is a real log, not
   synthetic.

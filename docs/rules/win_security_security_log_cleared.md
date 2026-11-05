@@ -24,8 +24,9 @@
   - `tp/splunk-attack-data_windows_event_log_cleared.log`: Splunk attack_data, a real 1102
     from an Attack Range domain controller.
   - 1 synthetic benign file.
-  - Results table: generated in a later step.
-- **Background corpora** (hits on unlabelled logs: not pass/fail, not a false-positive rate; numbers from step 9):
+  - Results: this rule's row in [docs/results.md](../results.md).
+- **Background corpora** (hits on unlabelled logs: not pass/fail, not a false-positive rate; current counts in
+  [docs/results.md](../results.md)):
   evtx-baseline Security log: 0. The baseline has no 1102, so the zero says nothing about false positives.
 - **SigmaHQ relation:** derived from `win_security_audit_log_cleared.yml` (Florian Roth). It
   keeps the 1102 + provider selection and drops the legacy Windows 2003 event 517.

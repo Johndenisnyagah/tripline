@@ -15,9 +15,9 @@ synthetic logs, converted to Sentinel KQL and Splunk SPL, KQL executed in the Ku
 - Ask John before changing rules, thresholds, datasets, README claims or anything in soc-triage.
 
 ## Current phase
-Step 10 (results): docs/results.md and coverage/tripline-layer.json generated from test results by
-tripline/report.py in the CI report job; README links the layer in the hosted Navigator.
-Next: step 11 (README, all doc notes, CHANGELOG, SECURITY.md).
+Step 11 (docs): README per spec §14 with numbers quoted from docs/results.md (tested), complete
+doc notes (tested), CHANGELOG cleaned up, SECURITY.md. README claims await John's approval.
+Next: step 12 (soc-triage parity test).
 
 ## Decisions
 - 2026-11-04 — second backend is Splunk SPL; it converts all four sources and supports correlations — John
@@ -85,3 +85,6 @@ Next: step 11 (README, all doc notes, CHANGELOG, SECURITY.md).
 - 2026-11-05 — results.md and the Navigator layer are built by tripline/report.py from live harness runs, the test-kql job's per-case results (kql-results.json) and the corpora job's hits; no timestamps or commit ids, so they stay stable while the inputs do — Claude
 - 2026-11-05 — the report job fails on push to main if the committed files are stale and only warns on PRs; a PR commits the files from the job's `report` artifact (the emulator results only exist in CI) — Claude
 - 2026-11-05 — layer colour per technique: failing if any of its rules fails, validated if any rule is validated, else synthetic-only; no tactic set; parents of tagged sub-techniques listed with showSubtechniques — Claude
+- 2026-11-05 — results.md gains a totals block (logic, KQL, SPL counts); the README quotes it verbatim between results-summary markers and tests/test_readme.py fails if they differ, so README numbers come only from results.md — Claude
+- 2026-11-05 — doc notes no longer mention build steps; every note must have the spec §8 sections (tested) — Claude
+- 2026-11-05 — SECURITY.md points to GitHub private vulnerability reporting, which is off in the repo settings; John to enable it — Claude

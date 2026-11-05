@@ -150,6 +150,36 @@ def _corpus_cell(r: RuleResult, corpora: dict) -> str:
     return "<br>".join(parts)
 
 
+def summary_lines(results: list[RuleResult]) -> list[str]:
+    """Totals the README quotes verbatim (tests/test_readme.py checks they match)."""
+    tests = sum(r.tp_total + r.benign_total for r in results)
+    passed = sum(r.tp_passed + r.benign_passed for r in results)
+    tp = sum(r.tp_total for r in results)
+    real = sum(r.non_synthetic_tp for r in results)
+    kinds = [r.kql_kind for r in results]
+    spl = sum(r.spl == "generated" for r in results)
+    lines = [
+        f"- Logic: {passed}/{tests} fixture tests pass in the SQLite harness "
+        f"({tp} true-positive, {tests - tp} benign); {real} rules have at least one real "
+        "(non-synthetic) true positive.",
+    ]
+    if all(r.kql_passed is not None for r in results):
+        kql_passed = sum(r.kql_passed for r in results)
+        kql_total = sum(r.kql_total for r in results)
+        lines.append(
+            f"- KQL: all {len(results)} rules executed in the Kusto emulator "
+            f"({kinds.count('generated')} generated, {kinds.count('hand-written')} hand-written "
+            f"queries); {kql_passed}/{kql_total} fixture tests pass."
+        )
+    else:
+        lines.append("- KQL: not run.")
+    lines.append(
+        f"- SPL: generated for {spl} rules; {len(results) - spl} have none "
+        "(the Splunk backend cannot convert `temporal_ordered`)."
+    )
+    return lines
+
+
 def render_markdown(results: list[RuleResult], corpus_hits: dict | None) -> str:
     index = load_index()
     corpora = (corpus_hits or {}).get("corpora", {})
@@ -161,6 +191,8 @@ def render_markdown(results: list[RuleResult], corpus_hits: dict | None) -> str:
         "",
         f"**{len(results)} rules:** {counts[VALIDATED]} validated, "
         f"{counts[SYNTHETIC_ONLY]} synthetic-only, {counts[FAILING]} failing.",
+        "",
+        *summary_lines(results),
         "",
         "- **validated**: every true-positive and benign test passes (SQLite harness and, where",
         "  run, KQL in the Kusto emulator) and at least one true positive is a real log, not",
