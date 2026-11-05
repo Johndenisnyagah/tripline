@@ -34,6 +34,8 @@
     `tp/stratus-2.37.2_cloudtrail-event-selectors.json` (`PutEventSelectors`). The last one is
     the case SigmaHQ's original rule misses.
   - Results table: generated in a later step.
+- **Background corpora** (hits on unlabelled logs: not pass/fail, not a false-positive rate; numbers from step 9):
+  flaws.cloud file 00: 1. A CTF player using the leaked `Level6` credentials tried `UpdateTrail` and got `AccessDenied`. This is a real attempt; the rule fires on denied attempts by design.
 - **SigmaHQ relation:** derived from `aws_cloudtrail_disable_logging.yml` ("AWS CloudTrail
   Important Change", vitaliy0x1). Differences:
   - Adds `PutEventSelectors`, which can silently stop logging write or management events

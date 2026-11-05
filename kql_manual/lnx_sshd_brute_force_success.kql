@@ -11,7 +11,7 @@
 // Output:  one row per source IP whose guessing was followed by a successful login.
 let window = 10m;
 let threshold = 5;
-let ip_pattern = @" from ([0-9A-Fa-f.:]+) port \d+";
+let ip_pattern = @" from ([0-9A-Fa-f.:]+?)(?: port \d+|:? |$)";
 let failures = Syslog
     | where ProcessName =~ "sshd" and SyslogMessage contains "Failed password for "
     | extend SourceIp = extract(ip_pattern, 1, SyslogMessage)

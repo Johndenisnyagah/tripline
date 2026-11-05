@@ -99,9 +99,11 @@ def run_rule(path: Path, events: Iterable[dict]) -> list[sqlite3.Row]:
     """Return every row (match or correlation alert) the rule produces on the events."""
     queries, fields = _converted(path)
     events = [_fold_case(e) for e in events]
+    # Only the columns the converted rule can reference (its fields, group-by and the
+    # timestamp): real logs carry hundreds of keys, and SQLite caps a table at 2000 columns.
     # SQLite column names are case-insensitive: one column per case-folded name.
     columns: dict[str, str] = {}
-    for name in sorted({"timestamp", *fields, *(k for e in events for k in e)}):
+    for name in sorted({"timestamp", *fields}):
         columns.setdefault(name.lower(), name)
 
     db = sqlite3.connect(":memory:")
@@ -213,12 +215,16 @@ def rule_category(rule_id: str) -> str | None:
     return next((d["logsource"].get("category") for d in docs if "logsource" in d), None)
 
 
-def case_events(case: Case) -> list[dict]:
-    events = case.events()
-    if case.source == "sysmon":
-        event_id = SYSMON_CATEGORY_EVENT_ID[rule_category(case.rule_id)]
-        events = [e for e in events if e.get("EventID") == event_id]
+def events_for_rule(source: str, rule_id: str, events: list[dict]) -> list[dict]:
+    """The events a rule sees from a log of `source` (Sysmon: only its category's EventID)."""
+    if source == "sysmon":
+        event_id = SYSMON_CATEGORY_EVENT_ID[rule_category(rule_id)]
+        return [e for e in events if e.get("EventID") == event_id]
     return events
+
+
+def case_events(case: Case) -> list[dict]:
+    return events_for_rule(case.source, case.rule_id, case.events())
 
 
 def run_case(case: Case) -> list[sqlite3.Row]:

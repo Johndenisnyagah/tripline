@@ -13,7 +13,7 @@ let threshold = 3;
 let attempts = Syslog
     | where ProcessName =~ "sshd" and SyslogMessage contains "Invalid user "
     | extend
-        SourceIp = extract(@" from ([0-9A-Fa-f.:]+) port \d+", 1, SyslogMessage),
+        SourceIp = extract(@" from ([0-9A-Fa-f.:]+?)(?: port \d+|:? |$)", 1, SyslogMessage),
         User = tolower(extract(@"(?i)invalid user (\S+) from ", 1, SyslogMessage))
     | where isnotempty(SourceIp) and isnotempty(User)
     | project TimeGenerated, SourceIp, User;

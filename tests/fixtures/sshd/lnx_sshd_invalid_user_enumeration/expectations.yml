@@ -10,6 +10,11 @@ tests:
     origin: synthetic
     synthetic: true
     expect: {min_matches: 1, groups: ["192.0.2.70"]}
+  # Older OpenSSH format (as in the Loghub corpus): "Invalid user X from <ip>" with no port.
+  - file: tp/older_openssh_without_port.log
+    origin: synthetic
+    synthetic: true
+    expect: {min_matches: 1, groups: ["192.0.2.71"]}
   # Volume, not variety: admin/Admin/ADMIN count as one account, plus "test" = 2 distinct.
   - file: benign/same_invalid_user_retried.log
     origin: synthetic

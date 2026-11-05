@@ -40,6 +40,8 @@
   - `tp/boundary_three_invalid_users.log` (synthetic): exactly 3 names in 9m45s.
   - 3 benign near-misses (synthetic), listed above.
   - Results table: generated in a later step.
+- **Background corpora** (hits on unlabelled logs: not pass/fail, not a false-positive rate; numbers from step 9):
+  Loghub OpenSSH 2k: 164 alert windows from 5 source IPs. Expected: internet scanners trying lists of account names (`187.141.143.180` probes 24 distinct names). The corpus also exposed a parser bug: this older OpenSSH logs `Invalid user X from <ip>` without `port N`, so the source IP was empty on those lines. With the parser and KQL fixed, the count rose from 96 to 164. `tp/older_openssh_without_port.log` now covers that format.
 - **SigmaHQ relation:** original. SigmaHQ has no sshd username-enumeration correlation.
 - **KQL:** hand-written (`kql_manual/`). The Kusto backend can't convert correlations, and
   `Syslog` has no source-IP or user column. The KQL uses `count_distinct(tolower(User))`.
